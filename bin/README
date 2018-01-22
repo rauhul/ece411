@@ -1,0 +1,98 @@
+In this directory, there are 4 files
+
+1. LC3bAssembler
+2. LC3bIDE
+3. LC3bSimulator
+4. load_memory.sh
+5. rereference.sh
+
+LC3bAssembler
+-------------
+Assembles an .asm file containing LC3b assembly code into one of many formats
+(in this class, we will only compile into a .obj object file). 
+
+The syntax for this program is:
+
+    ./LC3bAssembler -b test.asm 
+
+test.asm should be the path of an assembly file of LC3b code. This will create
+an object file with suffix .obj
+
+For additional help, run:
+
+    ./LC3bAssembler -h
+
+LC3bIDE
+-------
+A graphical simulating environment for LC3b assembly code.
+
+The syntax for this program is:
+
+    ./LC3bIDE
+
+1. Select Project, then Open File and navigate to the .asm file you wish
+   to simulate.
+2. In the AshIDE - AshOS_LC3b window, make sure your .asm file is selected
+   under LC3b Source Files.
+3. In the Project Settings box, uncheck "Use Ash Operating System",
+   "Support Old LC3 Syntax"
+4. In the File Settings box, select Language as "LC3b",
+   Source Type as "LC3b Source", then click Assemble. Most assembly warnings
+   may be ignored, such as "Program origin not specified".
+5. In the window that opened which is named after your .asm file, select
+   Go One Instruction from the Simulate menu (or press F6). This will
+   advance your program through the first instruction and open a
+   Simulator window.
+6. In the Simulator window, select Registers from the View menu. This will
+   allow you to view the register values as you step through your
+   LC3b program. You may also choose to view things such as your Memory.
+
+NOTE: LC3bIDE has R6 initialized to E000 when you begin your program. Don't
+      use R6 unless you initialize it to a proper value. This probably can be
+      fixed by some setting of AshIDE but I haven't track that down yet.
+
+LC3bSimulator
+-------------
+A command-line simulator for LC3b assembly code.
+
+The syntax for this program is:
+
+    ./LC3bSimulator test.asm
+
+test.asm is the path of an LC3b assembly file
+
+For additional usage instructions, type `help` at the LC3bSimulator prompt.
+
+load_memory.sh
+--------------
+A script to assist loading LC3b programs into memory by creating a memory
+initialization file from assembly code.
+
+The syntax for this program is:
+
+    ./load_memory.sh test.asm [memory-file]
+
+The `memory-file` argument is optional and defaults to the target provided
+at the top of the script. The script can be modified to change the default
+target, among other settings.
+
+To load memories that are not byte addressable, set the addressability (in
+number of bytes) by modifying the settings at the top of the script.
+
+rereference.sh
+--------------
+Rename a project by changing both file names and file contents. The main
+purpose of the script is to aid in creating copies of projects, e.g.,
+copying mp0 as a starting point for mp1.
+
+The syntax for this program is:
+
+    cd <directory>
+    ./path/to/rereference.sh . <orig> <new>
+
+This script renames any files in <directory> with <orig> in its name to
+contain <new> instead. It also changes any reference to <orig> in files to
+reference <new> instead.
+
+This is a simple text replacement script and will not handle any complex
+cases, so use with caution.
