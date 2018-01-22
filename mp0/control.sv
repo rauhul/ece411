@@ -136,13 +136,13 @@ begin : state_actions
         end
 
         br_taken: begin
-            // PC←PC + SEXT(IR[8:0] « 1);
+            // PC←PC+SEXT(IR[8:0]«1);
             pcmux_sel = 1;
             load_pc = 1;
         end
 
         calc_addr: begin
-            // MAR←A + SEXT(IR[5:0] « 1);
+            // MAR←A+SEXT(IR[5:0]«1);
             alumux_sel = 1;
             aluop = alu_add;
             marmux_sel = 0;
