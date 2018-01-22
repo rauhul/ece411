@@ -4,7 +4,7 @@ module cccomp
 (
     input lc3b_nzp a,
     input lc3b_nzp b,
-    output f,
+    output f
 );
 
 lc3b_nzp data;

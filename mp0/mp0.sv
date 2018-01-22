@@ -62,8 +62,8 @@ control _control
     .aluop,
 
     /* control->memory */
-    .mem_read
-    .mem_write
+    .mem_read,
+    .mem_write,
     .mem_byte_enable
 );
 

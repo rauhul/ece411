@@ -88,7 +88,7 @@ plus2 pc_plus2
 alu br_add
 (
     .aluop(alu_add),
-    .a(pcmux_out),
+    .a(pc_out),
     .b(adj9_out),
     .f(br_add_out)
 );
@@ -228,7 +228,7 @@ cccomp _cccomp
 (
     .a(dest),
     .b(cc_out),
-    .f(branch_enable),
+    .f(branch_enable)
 );
 
 endmodule : datapath

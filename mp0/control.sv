@@ -15,23 +15,23 @@ module control
 
     /* OUTPUTS */
     /* control->data */
-    output load_pc,
-    output load_ir,
-    output load_regfile,
-    output load_mar,
-    output load_mdr,
-    output load_cc,
-    output pcmux_sel,
-    output storemux_sel,
-    output alumux_sel,
-    output regfilemux_sel,
-    output marmux_sel,
-    output mdrmux_sel,
+    output logic load_pc,
+    output logic load_ir,
+    output logic load_regfile,
+    output logic load_mar,
+    output logic load_mdr,
+    output logic load_cc,
+    output logic pcmux_sel,
+    output logic storemux_sel,
+    output logic alumux_sel,
+    output logic regfilemux_sel,
+    output logic marmux_sel,
+    output logic mdrmux_sel,
     output lc3b_aluop aluop,
 
     /* control->memory */
-    output mem_read
-    output mem_write
+    output logic mem_read,
+    output logic mem_write,
     output lc3b_mem_wmask mem_byte_enable
 );
 
@@ -50,28 +50,28 @@ enum int unsigned {
     ldr1,
     ldr2,
     str1,
-    str2,
+    str2
 } state, next_state;
 
 always_comb
 begin : state_actions
     /* Default output assignments */
-    load_pc         = 1’b0;
-    load_ir         = 1’b0;
-    load_regfile    = 1’b0;
-    load_mar        = 1’b0;
-    load_mdr        = 1’b0;
-    load_cc         = 1’b0;
-    pcmux_sel       = 1’b0;
-    storemux_sel    = 1’b0;
-    alumux_sel      = 1’b0;
-    regfilemux_sel  = 1’b0;
-    marmux_sel      = 1’b0;
-    mdrmux_sel      = 1’b0;
+    load_pc         = 1'b0;
+    load_ir         = 1'b0;
+    load_regfile    = 1'b0;
+    load_mar        = 1'b0;
+    load_mdr        = 1'b0;
+    load_cc         = 1'b0;
+    pcmux_sel       = 1'b0;
+    storemux_sel    = 1'b0;
+    alumux_sel      = 1'b0;
+    regfilemux_sel  = 1'b0;
+    marmux_sel      = 1'b0;
+    mdrmux_sel      = 1'b0;
     aluop           = alu_add;
-    mem_read        = 1’b0;
-    mem_write       = 1’b0;
-    mem_byte_enable = 2’b11;
+    mem_read        = 1'b0;
+    mem_write       = 1'b0;
+    mem_byte_enable = 2'b11;
 
     /* Actions for each state */
     case(state)
