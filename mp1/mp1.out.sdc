@@ -1,4 +1,4 @@
-## Generated SDC file "mp0.out.sdc"
+## Generated SDC file "mp1.out.sdc"
 
 ## Copyright (C) 1991-2014 Altera Corporation
 ## Your use of Altera Corporation's design tools, logic functions 

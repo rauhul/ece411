@@ -1,6 +1,6 @@
 import lc3b_types::*;
 
-module mp0
+module mp1
 (
     input clk,
 
@@ -100,4 +100,4 @@ datapath _datapath
     .branch_enable
 );
 
-endmodule : mp0
+endmodule : mp1

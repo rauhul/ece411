@@ -1,4 +1,4 @@
-module mp0_tb;
+module mp1_tb;
 
 timeunit 1ns;
 timeprecision 1ns;
@@ -16,7 +16,7 @@ logic [15:0] mem_wdata;
 initial clk = 0;
 always #5 clk = ~clk;
 
-mp0 dut
+mp1 dut
 (
     .clk,
     .mem_resp,
@@ -40,4 +40,4 @@ magic_memory memory
     .rdata(mem_rdata)
 );
 
-endmodule : mp0_tb
+endmodule : mp1_tb
