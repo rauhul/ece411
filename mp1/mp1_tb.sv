@@ -28,7 +28,7 @@ mp1 dut
     .mem_wdata
 );
 
-magic_memory memory
+memory _memory
 (
     .clk,
     .read(mem_read),
