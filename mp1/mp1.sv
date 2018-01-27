@@ -15,6 +15,7 @@ module mp1
 );
 
 lc3b_opcode opcode;
+logic inst5;
 logic branch_enable;
 
 logic load_pc;
@@ -40,6 +41,7 @@ control _control
 
     /* datapath->control */
     .opcode,
+    .inst5,
     .branch_enable,
 
     /* memory->control */
@@ -97,6 +99,7 @@ datapath _datapath
 
     /* datapath->control */
     .opcode,
+    .inst5,
     .branch_enable
 );
 

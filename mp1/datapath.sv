@@ -18,7 +18,7 @@ module datapath
     input load_cc,
     input pcmux_sel,
     input storemux_sel,
-    input alumux_sel,
+    input [1:0] alumux_sel,
     input regfilemux_sel,
     input marmux_sel,
     input mdrmux_sel,
@@ -31,6 +31,7 @@ module datapath
 
     /* datapath->control */
     output lc3b_opcode opcode,
+    output inst5,
     output branch_enable
 );
 
@@ -44,6 +45,8 @@ lc3b_reg dest;
 lc3b_reg storemux_out;
 lc3b_word sr1_out;
 lc3b_word sr2_out;
+lc3b_imm5 imm5;
+lc3b_word sext5_out;
 lc3b_offset6 offset6;
 lc3b_offset9 offset9;
 lc3b_word adj6_out;
@@ -145,9 +148,11 @@ ir _ir
     .load(load_ir),
     .in(mem_wdata),
     .opcode,
+    .inst5,
     .dest,
     .src1(sr1),
     .src2(sr2),
+    .imm5,
     .offset6,
     .offset9
 );
@@ -190,11 +195,19 @@ adj #(.width(6)) adj6
     .out(adj6_out)
 );
 
-mux2 alumux
+sext #(.width(5)) sext5
+(
+    .in(imm5),
+    .out(sext5_out)
+);
+
+mux4 alumux
 (
     .sel(alumux_sel),
     .a(sr2_out),
     .b(adj6_out),
+    .c(sext5_out),
+    .d(16'bx),
     .f(alumux_out)
 );
 

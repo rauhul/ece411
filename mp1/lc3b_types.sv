@@ -6,6 +6,9 @@ typedef logic  [7:0] lc3b_byte;
 typedef logic  [8:0] lc3b_offset9;
 typedef logic  [5:0] lc3b_offset6;
 
+typedef logic  [4:0] lc3b_imm5;
+typedef logic  [3:0] lc3b_imm4;
+
 typedef logic  [2:0] lc3b_reg;
 typedef logic  [2:0] lc3b_nzp;
 typedef logic  [1:0] lc3b_mem_wmask;
