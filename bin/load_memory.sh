@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Settings
-DEFAULT_TARGET=$HOME/ece411/mp0/simulation/modelsim/memory.lst
+DEFAULT_TARGET=$HOME/ece411/mp1/simulation/modelsim/memory.lst
 ASSEMBLER=$HOME/ece411/bin/LC3bAssembler
 ADDRESSABILITY=1
 
