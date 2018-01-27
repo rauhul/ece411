@@ -18,7 +18,8 @@ module datapath
     input load_cc,
     input pcmux_sel,
     input storemux_sel,
-    input [1:0] alumux_sel,
+    input alumux1_sel,
+    input [1:0] alumux2_sel,
     input regfilemux_sel,
     input marmux_sel,
     input mdrmux_sel,
@@ -52,7 +53,8 @@ lc3b_offset9 offset9;
 lc3b_word adj6_out;
 lc3b_word adj9_out;
 lc3b_word pcmux_out;
-lc3b_word alumux_out;
+lc3b_word alumux1_out;
+lc3b_word alumux2_out;
 lc3b_word regfilemux_out;
 lc3b_word marmux_out;
 lc3b_word mdrmux_out;
@@ -201,21 +203,29 @@ sext #(.width(5)) sext5
     .out(sext5_out)
 );
 
-mux4 alumux
+mux2 alumux1
 (
-    .sel(alumux_sel),
+    .sel(alumux1_sel),
+    .a(sr1_out),
+    .b(pc_out),
+    .f(alumux1_out)
+);
+
+mux4 alumux2
+(
+    .sel(alumux2_sel),
     .a(sr2_out),
-    .b(adj6_out),
-    .c(sext5_out),
-    .d(16'bx),
-    .f(alumux_out)
+    .b(sext5_out),
+    .c(adj6_out),
+    .d(adj9_out),
+    .f(alumux2_out)
 );
 
 alu _alu
 (
     .aluop,
-    .a(sr1_out),
-    .b(alumux_out),
+    .a(alumux1_out),
+    .b(alumux2_out),
     .f(alu_out)
 );
 

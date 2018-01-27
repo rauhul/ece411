@@ -24,7 +24,8 @@ module control
     output logic load_cc,
     output logic pcmux_sel,
     output logic storemux_sel,
-    output logic [1:0] alumux_sel,
+    output logic alumux1_sel,
+    output logic [1:0] alumux2_sel,
     output logic regfilemux_sel,
     output logic marmux_sel,
     output logic mdrmux_sel,
@@ -51,7 +52,8 @@ enum int unsigned {
     ldr1,
     ldr2,
     str1,
-    str2
+    str2,
+    lea
 } state, next_state;
 
 always_comb
@@ -65,7 +67,8 @@ begin : state_actions
     load_cc         = 1'b0;
     pcmux_sel       = 1'b0;
     storemux_sel    = 1'b0;
-    alumux_sel      = 2'b0;
+    alumux1_sel     = 1'b0;
+    alumux2_sel     = 2'b00;
     regfilemux_sel  = 1'b0;
     marmux_sel      = 1'b0;
     mdrmux_sel      = 1'b0;
@@ -108,9 +111,9 @@ begin : state_actions
             // DR←A+sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux2_sel = 2'b00;
             else
-                alumux_sel = 2'b10;
+                alumux2_sel = 2'b01;
             aluop = alu_add;
             regfilemux_sel = 0;
             load_cc = 1;
@@ -122,9 +125,9 @@ begin : state_actions
             // DR←A&sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux2_sel = 2'b00;
             else
-                alumux_sel = 2'b10;
+                alumux2_sel = 2'b01;
             aluop = alu_and;
             regfilemux_sel = 0;
             load_cc = 1;
@@ -152,7 +155,7 @@ begin : state_actions
 
         calc_addr: begin
             // MAR←A+SEXT(IR[5:0]«1);
-            alumux_sel = 2'b01;
+            alumux2_sel = 2'b10;
             aluop = alu_add;
             marmux_sel = 0;
             load_mar = 1;
@@ -183,6 +186,16 @@ begin : state_actions
         str2: begin
             // M[MAR]←MDR;
             mem_write = 1;
+        end
+
+        lea: begin
+            // DR←PC+SEXT(IR[8:0]«1);
+            alumux1_sel = 1;
+            alumux2_sel = 2'b11;
+            aluop = alu_add;
+            regfilemux_sel = 0;
+            load_cc = 1;
+            load_regfile = 1;
         end
 
     endcase
@@ -218,6 +231,7 @@ begin : next_state_logic
             op_br:  next_state = br;
             op_ldr: next_state = calc_addr;
             op_str: next_state = calc_addr;
+            op_lea: next_state = lea;
             default: $display("Unknown opcode");
             endcase
         end
@@ -269,6 +283,10 @@ begin : next_state_logic
         str2: begin
             if (mem_resp == 1)
                 next_state = fetch1;
+        end
+
+        lea: begin
+            next_state = fetch1;
         end
 
         default: $display("Unknown state");
