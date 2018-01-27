@@ -26,7 +26,7 @@ logic load_mdr;
 logic load_cc;
 logic pcmux_sel;
 logic storemux_sel;
-logic alumux_sel;
+logic [1:0] alumux_sel;
 logic regfilemux_sel;
 logic marmux_sel;
 logic mdrmux_sel;

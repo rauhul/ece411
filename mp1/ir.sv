@@ -6,7 +6,7 @@ module ir
     input load,
     input lc3b_word in,
     output lc3b_opcode opcode,
-    output inst5,
+    output logic inst5,
     output lc3b_reg dest, src1, src2,
     output lc3b_imm5 imm5,
     output lc3b_offset6 offset6,
