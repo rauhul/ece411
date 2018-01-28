@@ -22,8 +22,9 @@ module control
     output logic load_mar,
     output logic load_mdr,
     output logic load_cc,
-    output logic pcmux_sel,
+    output logic [1:0] pcmux_sel,
     output logic storemux_sel,
+    output logic destmux_sel,
     output logic [1:0] alumux_sel,
     output logic [1:0] regfilemux_sel,
     output logic marmux_sel,
@@ -52,7 +53,8 @@ enum int unsigned {
     ldr2,
     str1,
     str2,
-    lea
+    lea,
+    jmp
 } state, next_state;
 
 always_comb
@@ -64,8 +66,9 @@ begin : state_actions
     load_mar        = 1'b0;
     load_mdr        = 1'b0;
     load_cc         = 1'b0;
-    pcmux_sel       = 1'b0;
+    pcmux_sel       = 2'b00;
     storemux_sel    = 1'b0;
+    destmux_sel     = 1'b0;
     alumux_sel      = 2'b00;
     regfilemux_sel  = 2'b00;
     marmux_sel      = 1'b0;
@@ -84,7 +87,7 @@ begin : state_actions
             load_mar = 1;
 
             //PC←PC+2;
-            pcmux_sel = 0;
+            pcmux_sel = 2'b00;
             load_pc = 1;
         end
 
@@ -147,7 +150,7 @@ begin : state_actions
 
         br_taken: begin
             // PC←PC+SEXT(IR[8:0]«1);
-            pcmux_sel = 1;
+            pcmux_sel = 2'b01;
             load_pc = 1;
         end
 
@@ -190,6 +193,15 @@ begin : state_actions
             // DR←PC+SEXT(IR[8:0]«1);
             regfilemux_sel = 2'b10;
             load_cc = 1;
+            load_regfile = 1;
+        end
+
+        jmp: begin
+            // PC←SR1;
+            // R7←PC;
+            pcmux_sel = 2'b10;
+            regfilemux_sel = 2'b11;
+            destmux_sel = 1;
             load_regfile = 1;
         end
 

@@ -16,8 +16,9 @@ module datapath
     input load_mar,
     input load_mdr,
     input load_cc,
-    input pcmux_sel,
+    input [1:0] pcmux_sel,
     input storemux_sel,
+    input destmux_sel,
     input [1:0] alumux_sel,
     input [1:0] regfilemux_sel,
     input marmux_sel,
@@ -43,6 +44,7 @@ lc3b_reg sr1;
 lc3b_reg sr2;
 lc3b_reg dest;
 lc3b_reg storemux_out;
+lc3b_reg destmux_out;
 lc3b_word sr1_out;
 lc3b_word sr2_out;
 lc3b_imm5 imm5;
@@ -66,11 +68,13 @@ lc3b_nzp cc_out;
 /*
  * PC
  */
-mux2 pcmux
+mux4 pcmux
 (
     .sel(pcmux_sel),
     .a(pc_plus2_out),
     .b(br_add_out),
+    .c(sr1_out),
+    .d(16'bx)
     .f(pcmux_out)
 );
 
@@ -159,6 +163,14 @@ mux2 #(.width(3)) storemux
     .f(storemux_out)
 );
 
+mux2 #(.width(3)) destmux
+(
+    .sel(destmux_sel),
+    .a(dest),
+    .b(3'b111),
+    .f(destmux_out)
+);
+
 regfile _regfile
 (
     .clk,
@@ -166,7 +178,7 @@ regfile _regfile
     .in(regfilemux_out),
     .src_a(storemux_out),
     .src_b(sr2),
-    .dest,
+    .dest(),
     .reg_a(sr1_out),
     .reg_b(sr2_out)
 );
@@ -177,7 +189,7 @@ mux4 regfilemux
     .a(alu_out),
     .b(mem_wdata),
     .c(br_add_out),
-    .d(16'bx),
+    .d(pc_out),
     .f(regfilemux_out)
 );
 

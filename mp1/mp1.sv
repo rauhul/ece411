@@ -24,14 +24,14 @@ logic load_regfile;
 logic load_mar;
 logic load_mdr;
 logic load_cc;
-logic pcmux_sel;
+logic [1:0] pcmux_sel;
 logic storemux_sel;
+logic destmux_sel;
 logic [1:0] alumux_sel;
 logic [1:0] regfilemux_sel;
 logic marmux_sel;
 logic mdrmux_sel;
 lc3b_aluop aluop;
-
 
 control _control
 (
@@ -57,6 +57,7 @@ control _control
     .load_cc,
     .pcmux_sel,
     .storemux_sel,
+    .destmux_sel,
     .alumux_sel,
     .regfilemux_sel,
     .marmux_sel,
@@ -86,6 +87,7 @@ datapath _datapath
     .load_cc,
     .pcmux_sel,
     .storemux_sel,
+    .destmux_sel,
     .alumux_sel,
     .regfilemux_sel,
     .marmux_sel,
