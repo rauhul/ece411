@@ -198,12 +198,11 @@ begin : state_actions
 
         jmp: begin
             // PC←SR1;
-            // R7←PC;
             pcmux_sel = 2'b10;
             load_pc = 1;
-            regfilemux_sel = 2'b11;
-            destmux_sel = 1;
-            load_regfile = 1;
+            // regfilemux_sel = 2'b11;
+            // destmux_sel = 1;
+            // load_regfile = 1;
         end
 
     endcase
