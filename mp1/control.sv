@@ -175,7 +175,7 @@ begin : state_actions
 
         str1: begin
             // MDR←SR;
-            storemux_sel = 2'b01;
+            storemux_sel = 1;
             aluop = alu_pass;
             mdrmux_sel = 0;
             load_mdr = 1;
