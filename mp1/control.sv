@@ -239,6 +239,7 @@ begin : next_state_logic
             op_ldr: next_state = calc_addr;
             op_str: next_state = calc_addr;
             op_lea: next_state = lea;
+            op_jmp: next_state = jmp;
             default: $display("Unknown opcode");
             endcase
         end
@@ -293,6 +294,10 @@ begin : next_state_logic
         end
 
         lea: begin
+            next_state = fetch1;
+        end
+
+        jmp: begin
             next_state = fetch1;
         end
 

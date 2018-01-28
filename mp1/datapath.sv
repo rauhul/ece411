@@ -74,7 +74,7 @@ mux4 pcmux
     .a(pc_plus2_out),
     .b(br_add_out),
     .c(sr1_out),
-    .d(16'bx)
+    .d(16'bx),
     .f(pcmux_out)
 );
 
@@ -178,7 +178,7 @@ regfile _regfile
     .in(regfilemux_out),
     .src_a(storemux_out),
     .src_b(sr2),
-    .dest(),
+    .dest(destmux_out),
     .reg_a(sr1_out),
     .reg_b(sr2_out)
 );
