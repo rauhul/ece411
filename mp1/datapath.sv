@@ -18,9 +18,8 @@ module datapath
     input load_cc,
     input pcmux_sel,
     input storemux_sel,
-    input alumux1_sel,
-    input [1:0] alumux2_sel,
-    input regfilemux_sel,
+    input [1:0] alumux_sel,
+    input [1:0] regfilemux_sel,
     input marmux_sel,
     input mdrmux_sel,
     input lc3b_aluop aluop,
@@ -53,8 +52,7 @@ lc3b_offset9 offset9;
 lc3b_word adj6_out;
 lc3b_word adj9_out;
 lc3b_word pcmux_out;
-lc3b_word alumux1_out;
-lc3b_word alumux2_out;
+lc3b_word alumux_out;
 lc3b_word regfilemux_out;
 lc3b_word marmux_out;
 lc3b_word mdrmux_out;
@@ -90,13 +88,7 @@ plus2 pc_plus2
     .out(pc_plus2_out)
 );
 
-alu br_add
-(
-    .aluop(alu_add),
-    .a(pc_out),
-    .b(adj9_out),
-    .f(br_add_out)
-);
+assign br_add_out = pc_out + adj9_out;
 
 adj #(.width(9)) adj9
 (
@@ -179,11 +171,13 @@ regfile _regfile
     .reg_b(sr2_out)
 );
 
-mux2 regfilemux
+mux4 regfilemux
 (
     .sel(regfilemux_sel),
     .a(alu_out),
     .b(mem_wdata),
+    .c(br_add_out),
+    .d(16'bx),
     .f(regfilemux_out)
 );
 
@@ -203,29 +197,21 @@ sext #(.width(5)) sext5
     .out(sext5_out)
 );
 
-mux2 alumux1
+mux4 alumux
 (
-    .sel(alumux1_sel),
-    .a(sr1_out),
-    .b(pc_out),
-    .f(alumux1_out)
-);
-
-mux4 alumux2
-(
-    .sel(alumux2_sel),
+    .sel(alumux_sel),
     .a(sr2_out),
     .b(sext5_out),
     .c(adj6_out),
-    .d(adj9_out),
-    .f(alumux2_out)
+    .d(16'bx),
+    .f(alumux_out)
 );
 
 alu _alu
 (
     .aluop,
-    .a(alumux1_out),
-    .b(alumux2_out),
+    .a(sr1_out),
+    .b(alumux_out),
     .f(alu_out)
 );
 

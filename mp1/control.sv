@@ -24,9 +24,8 @@ module control
     output logic load_cc,
     output logic pcmux_sel,
     output logic storemux_sel,
-    output logic alumux1_sel,
-    output logic [1:0] alumux2_sel,
-    output logic regfilemux_sel,
+    output logic [1:0] alumux_sel,
+    output logic [1:0] regfilemux_sel,
     output logic marmux_sel,
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
@@ -67,9 +66,8 @@ begin : state_actions
     load_cc         = 1'b0;
     pcmux_sel       = 1'b0;
     storemux_sel    = 1'b0;
-    alumux1_sel     = 1'b0;
-    alumux2_sel     = 2'b00;
-    regfilemux_sel  = 1'b0;
+    alumux_sel      = 2'b00;
+    regfilemux_sel  = 2'b00;
     marmux_sel      = 1'b0;
     mdrmux_sel      = 1'b0;
     aluop           = alu_add;
@@ -111,11 +109,11 @@ begin : state_actions
             // DR←A+sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux2_sel = 2'b00;
+                alumux_sel = 2'b00;
             else
-                alumux2_sel = 2'b01;
+                alumux_sel = 2'b01;
             aluop = alu_add;
-            regfilemux_sel = 0;
+            regfilemux_sel = 2'b00;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -125,11 +123,11 @@ begin : state_actions
             // DR←A&sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux2_sel = 2'b00;
+                alumux_sel = 2'b00;
             else
-                alumux2_sel = 2'b01;
+                alumux_sel = 2'b01;
             aluop = alu_and;
-            regfilemux_sel = 0;
+            regfilemux_sel = 2'b00;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -138,7 +136,7 @@ begin : state_actions
             // DR←NOT(A);
             storemux_sel = 0;
             aluop = alu_not;
-            regfilemux_sel = 0;
+            regfilemux_sel = 2'b00;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -155,7 +153,7 @@ begin : state_actions
 
         calc_addr: begin
             // MAR←A+SEXT(IR[5:0]«1);
-            alumux2_sel = 2'b10;
+            alumux_sel = 2'b10;
             aluop = alu_add;
             marmux_sel = 0;
             load_mar = 1;
@@ -170,14 +168,14 @@ begin : state_actions
 
         ldr2: begin
             // DR←MDR;
-            regfilemux_sel = 1;
+            regfilemux_sel = 2'b01;
             load_cc = 1;
             load_regfile = 1;
         end
 
         str1: begin
             // MDR←SR;
-            storemux_sel = 1;
+            storemux_sel = 2'b01;
             aluop = alu_pass;
             mdrmux_sel = 0;
             load_mdr = 1;
@@ -190,10 +188,7 @@ begin : state_actions
 
         lea: begin
             // DR←PC+SEXT(IR[8:0]«1);
-            alumux1_sel = 1;
-            alumux2_sel = 2'b11;
-            aluop = alu_add;
-            regfilemux_sel = 0;
+            regfilemux_sel = 2'b10;
             load_cc = 1;
             load_regfile = 1;
         end
