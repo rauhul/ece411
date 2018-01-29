@@ -39,22 +39,39 @@ module control
 
 enum int unsigned {
     /* List of states */
-    fetch1,
-    fetch2,
-    fetch3,
-    decode,
+    s_fetch1,
+    s_fetch2,
+    s_fetch3,
+    s_decode,
+    /* simple ops */
     s_add,
     s_and,
     s_not,
-    br,
-    br_taken,
-    calc_addr,
-    ldr1,
-    ldr2,
-    str1,
-    str2,
-    lea,
-    jmp
+    //SHF
+
+    /* jumps */
+    s_br,
+    s_br_taken,
+    s_lea,
+    s_jmp,
+    //JSR
+
+
+    /* mem access */
+    s_calc_addr,
+    //LDB
+    //STB
+    //LDI
+    //STI
+    s_ldr1,
+    s_ldr2,
+    s_str1,
+    s_str2
+
+
+    /* other */
+    // TRAP
+
 } state, next_state;
 
 always_comb
@@ -81,7 +98,7 @@ begin : state_actions
     /* Actions for each state */
     case(state)
 
-        fetch1: begin
+        s_fetch1: begin
             //MAR←PC;
             marmux_sel = 1;
             load_mar = 1;
@@ -91,19 +108,19 @@ begin : state_actions
             load_pc = 1;
         end
 
-        fetch2: begin
+        s_fetch2: begin
             // MDR←M[MAR];
             mem_read = 1;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
 
-        fetch3: begin
+        s_fetch3: begin
             // IR←MDR;
             load_ir = 1;
         end
 
-        decode: begin
+        s_decode: begin
             // NONE
         end
 
@@ -144,17 +161,17 @@ begin : state_actions
             load_regfile = 1;
         end
 
-        br: begin
+        s_br: begin
             // NONE
         end
 
-        br_taken: begin
+        s_br_taken: begin
             // PC←PC+SEXT(IR[8:0]«1);
             pcmux_sel = 2'b01;
             load_pc = 1;
         end
 
-        calc_addr: begin
+        s_calc_addr: begin
             // MAR←A+SEXT(IR[5:0]«1);
             alumux_sel = 2'b10;
             aluop = alu_add;
@@ -162,21 +179,21 @@ begin : state_actions
             load_mar = 1;
         end
 
-        ldr1: begin
+        s_ldr1: begin
             // MDR←M[MAR];
             mem_read = 1;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
 
-        ldr2: begin
+        s_ldr2: begin
             // DR←MDR;
             regfilemux_sel = 2'b01;
             load_cc = 1;
             load_regfile = 1;
         end
 
-        str1: begin
+        s_str1: begin
             // MDR←SR;
             storemux_sel = 1;
             aluop = alu_pass;
@@ -184,19 +201,19 @@ begin : state_actions
             load_mdr = 1;
         end
 
-        str2: begin
+        s_str2: begin
             // M[MAR]←MDR;
             mem_write = 1;
         end
 
-        lea: begin
+        s_lea: begin
             // DR←PC+SEXT(IR[8:0]«1);
             regfilemux_sel = 2'b10;
             load_cc = 1;
             load_regfile = 1;
         end
 
-        jmp: begin
+        s_jmp: begin
             // PC←SR1;
             pcmux_sel = 2'b10;
             load_pc = 1;
@@ -217,88 +234,88 @@ begin : next_state_logic
      * for transitioning between states */
     case(state)
 
-        fetch1: begin
-            next_state = fetch2;
+        s_fetch1: begin
+            next_state = s_fetch2;
         end
 
-        fetch2: begin
+        s_fetch2: begin
             if (mem_resp == 1)
-                next_state = fetch3;
+                next_state = s_fetch3;
         end
 
-        fetch3: begin
-            next_state = decode;
+        s_fetch3: begin
+            next_state = s_decode;
         end
 
-        decode: begin
+        s_decode: begin
             case(opcode)
             op_add: next_state = s_add;
             op_and: next_state = s_and;
             op_not: next_state = s_not;
-            op_br:  next_state = br;
-            op_ldr: next_state = calc_addr;
-            op_str: next_state = calc_addr;
-            op_lea: next_state = lea;
-            op_jmp: next_state = jmp;
+            op_br:  next_state = s_br;
+            op_ldr: next_state = s_calc_addr;
+            op_str: next_state = s_calc_addr;
+            op_lea: next_state = s_lea;
+            op_jmp: next_state = s_jmp;
             default: $display("Unknown opcode");
             endcase
         end
 
         s_add: begin
-            next_state = fetch1;
+            next_state = s_fetch1;
         end
 
         s_and: begin
-            next_state = fetch1;
+            next_state = s_fetch1;
         end
 
         s_not: begin
-            next_state = fetch1;
+            next_state = s_fetch1;
         end
 
-        br: begin
+        s_br: begin
             if (branch_enable == 1)
-                next_state = br_taken;
+                next_state = s_br_taken;
             else
-                next_state = fetch1;
+                next_state = s_fetch1;
         end
 
-        br_taken: begin
-            next_state = fetch1;
+        s_br_taken: begin
+            next_state = s_fetch1;
         end
 
-        calc_addr: begin
+        s_calc_addr: begin
             // Should this be a switch?
             if (opcode == op_ldr)
-                next_state = ldr1;
+                next_state = s_ldr1;
             else
-                next_state = str1;
+                next_state = s_str1;
         end
 
-        ldr1: begin
+        s_ldr1: begin
             if (mem_resp == 1)
                 next_state = ldr2;
         end
 
-        ldr2: begin
-            next_state = fetch1;
+        s_ldr2: begin
+            next_state = s_fetch1;
         end
 
-        str1: begin
-            next_state = str2;
+        s_str1: begin
+            next_state = s_str2;
         end
 
-        str2: begin
+        s_str2: begin
             if (mem_resp == 1)
-                next_state = fetch1;
+                next_state = s_fetch1;
         end
 
-        lea: begin
-            next_state = fetch1;
+        s_lea: begin
+            next_state = s_fetch1;
         end
 
-        jmp: begin
-            next_state = fetch1;
+        s_jmp: begin
+            next_state = s_fetch1;
         end
 
         default: $display("Unknown state");
