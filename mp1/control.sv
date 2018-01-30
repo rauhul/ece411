@@ -8,6 +8,7 @@ module control
 
     /* datapath->control */
     input lc3b_opcode opcode,
+    input inst4,
     input inst5,
     input branch_enable,
 
@@ -47,7 +48,7 @@ enum int unsigned {
     s_add,
     s_and,
     s_not,
-    //SHF
+    s_shf,
 
     /* jumps */
     s_br,
@@ -161,6 +162,25 @@ begin : state_actions
             load_regfile = 1;
         end
 
+        s_shf: begin
+            // DR←       SR«imm4;
+            // DR←   [0],SR»imm4;
+            // DR←SR[15],SR»imm4;
+
+            storemux_sel = 0;
+            alumux_sel = 2'b11;
+            if (inst4 == 0)
+                aluop = alu_sll;
+            else
+                if (inst5 == 0)
+                    aluop = alu_srl;
+                else
+                    aluop = alu_sra;
+            regfilemux_sel = 2'b00;
+            load_cc = 1;
+            load_regfile = 1;
+        end
+
         s_br: begin
             // NONE
         end
@@ -252,6 +272,7 @@ begin : next_state_logic
             op_add: next_state = s_add;
             op_and: next_state = s_and;
             op_not: next_state = s_not;
+            op_shf: next_state = s_shf;
             op_br:  next_state = s_br;
             op_ldr: next_state = s_calc_addr;
             op_str: next_state = s_calc_addr;
@@ -270,6 +291,10 @@ begin : next_state_logic
         end
 
         s_not: begin
+            next_state = s_fetch1;
+        end
+
+        s_shf: begin
             next_state = s_fetch1;
         end
 
@@ -294,7 +319,7 @@ begin : next_state_logic
 
         s_ldr1: begin
             if (mem_resp == 1)
-                next_state = ldr2;
+                next_state = s_ldr2;
         end
 
         s_ldr2: begin

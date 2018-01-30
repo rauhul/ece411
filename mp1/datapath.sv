@@ -32,6 +32,7 @@ module datapath
 
     /* datapath->control */
     output lc3b_opcode opcode,
+    output inst4,
     output inst5,
     output branch_enable
 );
@@ -47,7 +48,9 @@ lc3b_reg storemux_out;
 lc3b_reg destmux_out;
 lc3b_word sr1_out;
 lc3b_word sr2_out;
+lc3b_imm4 imm4;
 lc3b_imm5 imm5;
+lc3b_word zext4_out;
 lc3b_word sext5_out;
 lc3b_offset6 offset6;
 lc3b_offset9 offset9;
@@ -146,10 +149,12 @@ ir _ir
     .load(load_ir),
     .in(mem_wdata),
     .opcode,
+    .inst4,
     .inst5,
     .dest,
     .src1(sr1),
     .src2(sr2),
+    .imm4,
     .imm5,
     .offset6,
     .offset9
@@ -209,13 +214,19 @@ sext #(.width(5)) sext5
     .out(sext5_out)
 );
 
+zext #(.width(4)) zext4
+(
+    .in(imm4),
+    .out(zext4_out)
+);
+
 mux4 alumux
 (
     .sel(alumux_sel),
     .a(sr2_out),
     .b(sext5_out),
     .c(adj6_out),
-    .d(16'bx),
+    .d(zext4_out),
     .f(alumux_out)
 );
 
