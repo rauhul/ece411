@@ -8,11 +8,13 @@ module ir
     output lc3b_opcode opcode,
     output logic inst4,
     output logic inst5,
+    output logic inst11,
     output lc3b_reg dest, src1, src2,
     output lc3b_imm4 imm4,
     output lc3b_imm5 imm5,
-    output lc3b_offset6 offset6,
-    output lc3b_offset9 offset9
+    output lc3b_offset6  offset6,
+    output lc3b_offset9  offset9,
+    output lc3b_offset11 offset11
 );
 
 lc3b_word data;
@@ -28,8 +30,9 @@ end
 always_comb
 begin
     opcode = lc3b_opcode'(data[15:12]);
-    inst4 = data[4];
-    inst5 = data[5];
+    inst4  = data[4];
+    inst5  = data[5];
+    inst11 = data[11];
 
     dest = data[11:9];
     src1 = data[8:6];
@@ -38,9 +41,9 @@ begin
     imm4 = data[3:0];
     imm5 = data[4:0];
 
-    offset6 = data[5:0];
-    offset9 = data[8:0];
-
+    offset6  = data[5:0];
+    offset9  = data[8:0];
+    offset11 = data[10:0];
 end
 
 endmodule : ir

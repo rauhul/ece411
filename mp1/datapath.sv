@@ -16,6 +16,7 @@ module datapath
     input load_mar,
     input load_mdr,
     input load_cc,
+    input brmux_sel,
     input [1:0] pcmux_sel,
     input storemux_sel,
     input destmux_sel,
@@ -34,6 +35,7 @@ module datapath
     output lc3b_opcode opcode,
     output inst4,
     output inst5,
+    output inst11,
     output branch_enable
 );
 
@@ -52,10 +54,12 @@ lc3b_imm4 imm4;
 lc3b_imm5 imm5;
 lc3b_word zext4_out;
 lc3b_word sext5_out;
-lc3b_offset6 offset6;
-lc3b_offset9 offset9;
+lc3b_offset6  offset6;
+lc3b_offset9  offset9;
+lc3b_offset11 offset11;
 lc3b_word adj6_out;
 lc3b_word adj9_out;
+lc3b_word adj11_out;
 lc3b_word pcmux_out;
 lc3b_word alumux_out;
 lc3b_word regfilemux_out;
@@ -63,7 +67,8 @@ lc3b_word marmux_out;
 lc3b_word mdrmux_out;
 lc3b_word alu_out;
 lc3b_word pc_out;
-lc3b_word br_add_out;
+lc3b_word bradd_out;
+lc3b_word brmux_out;
 lc3b_word pc_plus2_out;
 lc3b_nzp gencc_out;
 lc3b_nzp cc_out;
@@ -75,7 +80,7 @@ mux4 pcmux
 (
     .sel(pcmux_sel),
     .a(pc_plus2_out),
-    .b(br_add_out),
+    .b(bradd_out),
     .c(sr1_out),
     .d(16'bx),
     .f(pcmux_out)
@@ -95,12 +100,27 @@ plus2 pc_plus2
     .out(pc_plus2_out)
 );
 
-assign br_add_out = pc_out + adj9_out;
+mux2 brmux
+(
+    .sel(brmux_sel),
+    .a(adj9_out),
+    .b(adj11_out),
+    .f(brmux_out)
+);
+
+assign bradd_out = pc_out + adj9_out;
 
 adj #(.width(9)) adj9
 (
     .in(offset9),
     .out(adj9_out)
+);
+
+
+adj #(.width(11)) adj11
+(
+    .in(offset11),
+    .out(adj11_out)
 );
 
 
@@ -151,13 +171,15 @@ ir _ir
     .opcode,
     .inst4,
     .inst5,
+    .inst11,
     .dest,
     .src1(sr1),
     .src2(sr2),
     .imm4,
     .imm5,
     .offset6,
-    .offset9
+    .offset9,
+    .offset11
 );
 
 mux2 #(.width(3)) storemux
@@ -193,7 +215,7 @@ mux4 regfilemux
     .sel(regfilemux_sel),
     .a(alu_out),
     .b(mem_wdata),
-    .c(br_add_out),
+    .c(bradd_out),
     .d(pc_out),
     .f(regfilemux_out)
 );

@@ -17,6 +17,7 @@ module mp1
 lc3b_opcode opcode;
 logic inst4;
 logic inst5;
+logic inst11;
 logic branch_enable;
 
 logic load_pc;
@@ -25,6 +26,7 @@ logic load_regfile;
 logic load_mar;
 logic load_mdr;
 logic load_cc;
+logic brmux_sel;
 logic [1:0] pcmux_sel;
 logic storemux_sel;
 logic destmux_sel;
@@ -44,6 +46,7 @@ control _control
     .opcode,
     .inst4,
     .inst5,
+    .inst11,
     .branch_enable,
 
     /* memory->control */
@@ -57,6 +60,7 @@ control _control
     .load_mar,
     .load_mdr,
     .load_cc,
+    .brmux_sel,
     .pcmux_sel,
     .storemux_sel,
     .destmux_sel,
@@ -87,6 +91,7 @@ datapath _datapath
     .load_mar,
     .load_mdr,
     .load_cc,
+    .brmux_sel,
     .pcmux_sel,
     .storemux_sel,
     .destmux_sel,
@@ -105,6 +110,7 @@ datapath _datapath
     .opcode,
     .inst4,
     .inst5,
+    .inst11,
     .branch_enable
 );
 

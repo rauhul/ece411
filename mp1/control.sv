@@ -10,6 +10,7 @@ module control
     input lc3b_opcode opcode,
     input inst4,
     input inst5,
+    input inst11,
     input branch_enable,
 
     /* memory->control */
@@ -23,6 +24,7 @@ module control
     output logic load_mar,
     output logic load_mdr,
     output logic load_cc,
+    output logic brmux_sel,
     output logic [1:0] pcmux_sel,
     output logic storemux_sel,
     output logic destmux_sel,
@@ -44,6 +46,7 @@ enum int unsigned {
     s_fetch2,
     s_fetch3,
     s_decode,
+
     /* simple ops */
     s_add,
     s_and,
@@ -53,10 +56,9 @@ enum int unsigned {
     /* jumps */
     s_br,
     s_br_taken,
-    s_lea,
     s_jmp,
-    //JSR
-
+    s_jsr,
+    s_lea,
 
     /* mem access */
     s_calc_addr,
@@ -84,6 +86,7 @@ begin : state_actions
     load_mar        = 1'b0;
     load_mdr        = 1'b0;
     load_cc         = 1'b0;
+    brmux_sel       = 1'b0;
     pcmux_sel       = 2'b00;
     storemux_sel    = 1'b0;
     destmux_sel     = 1'b0;
@@ -125,6 +128,7 @@ begin : state_actions
             // NONE
         end
 
+        /* simple ops */
         s_add: begin
             // DR←A+B;
             // DR←A+sext(imm5);
@@ -181,16 +185,49 @@ begin : state_actions
             load_regfile = 1;
         end
 
+        /* jumps */
         s_br: begin
             // NONE
         end
 
         s_br_taken: begin
             // PC←PC+SEXT(IR[8:0]«1);
+            brmux_sel = 0;
             pcmux_sel = 2'b01;
             load_pc = 1;
         end
 
+        s_jmp: begin
+            // PC←SR1;
+            pcmux_sel = 2'b10;
+            load_pc = 1;
+        end
+
+        s_jsr: begin
+            // R7←PC;
+            // PC←SR1;
+            // PC←PC+SEXT(IR[10:0]«1);
+            regfilemux_sel = 2'b11; // sel pc
+            destmux_sel = 1; // sel R7
+            load_regfile = 1; // load reg
+
+            brmux_sel = 1;
+            if (inst11 == 0)
+                pcmux_sel = 2'b10;
+            else
+                pcmux_sel = 2'b01;
+            load_pc = 1;
+        end
+
+        s_lea: begin
+            // DR←PC+SEXT(IR[8:0]«1);
+            brmux_sel = 0;
+            regfilemux_sel = 2'b10;
+            load_cc = 1;
+            load_regfile = 1;
+        end
+
+        /* mem access */
         s_calc_addr: begin
             // MAR←A+SEXT(IR[5:0]«1);
             alumux_sel = 2'b10;
@@ -224,22 +261,6 @@ begin : state_actions
         s_str2: begin
             // M[MAR]←MDR;
             mem_write = 1;
-        end
-
-        s_lea: begin
-            // DR←PC+SEXT(IR[8:0]«1);
-            regfilemux_sel = 2'b10;
-            load_cc = 1;
-            load_regfile = 1;
-        end
-
-        s_jmp: begin
-            // PC←SR1;
-            pcmux_sel = 2'b10;
-            load_pc = 1;
-            // regfilemux_sel = 2'b11;
-            // destmux_sel = 1;
-            // load_regfile = 1;
         end
 
     endcase
@@ -282,6 +303,7 @@ begin : next_state_logic
             endcase
         end
 
+        /* simple ops */
         s_add: begin
             next_state = s_fetch1;
         end
@@ -298,6 +320,7 @@ begin : next_state_logic
             next_state = s_fetch1;
         end
 
+        /* jumps */
         s_br: begin
             if (branch_enable == 1)
                 next_state = s_br_taken;
@@ -309,6 +332,15 @@ begin : next_state_logic
             next_state = s_fetch1;
         end
 
+        s_jmp: begin
+            next_state = s_fetch1;
+        end
+
+        s_lea: begin
+            next_state = s_fetch1;
+        end
+
+        /* mem access */
         s_calc_addr: begin
             // Should this be a switch?
             if (opcode == op_ldr)
@@ -333,14 +365,6 @@ begin : next_state_logic
         s_str2: begin
             if (mem_resp == 1)
                 next_state = s_fetch1;
-        end
-
-        s_lea: begin
-            next_state = s_fetch1;
-        end
-
-        s_jmp: begin
-            next_state = s_fetch1;
         end
 
         default: $display("Unknown state");
