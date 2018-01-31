@@ -294,11 +294,14 @@ begin : next_state_logic
             op_and: next_state = s_and;
             op_not: next_state = s_not;
             op_shf: next_state = s_shf;
+
             op_br:  next_state = s_br;
+            op_jmp: next_state = s_jmp;
+            op_jsr: next_state = s_jsr;
+            op_lea: next_state = s_lea;
+
             op_ldr: next_state = s_calc_addr;
             op_str: next_state = s_calc_addr;
-            op_lea: next_state = s_lea;
-            op_jmp: next_state = s_jmp;
             default: $display("Unknown opcode");
             endcase
         end
