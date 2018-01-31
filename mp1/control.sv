@@ -97,7 +97,7 @@ begin : state_actions
     aluop           = alu_add;
     mem_read        = 1'b0;
     mem_write       = 1'b0;
-    mem_byte_enable = 2'b01;
+    mem_byte_enable = 2'b11;
 
     /* Actions for each state */
     case(state)
