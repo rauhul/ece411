@@ -336,6 +336,10 @@ begin : next_state_logic
             next_state = s_fetch1;
         end
 
+        s_jsr: begin
+            next_state = s_fetch1;
+        end
+
         s_lea: begin
             next_state = s_fetch1;
         end
