@@ -61,11 +61,14 @@ enum int unsigned {
     s_lea,
 
     /* mem access */
-    s_calc_addr,
-    //LDB
+    s_calc_addr_b,
+    s_ldb1,
+    s_ldb2,
     //STB
+
     //LDI
     //STI
+    s_calc_addr_w,
     s_ldr1,
     s_ldr2,
     s_str1,
@@ -228,7 +231,19 @@ begin : state_actions
         end
 
         /* mem access */
-        s_calc_addr: begin
+        s_calc_addr_b: begin
+
+        end
+
+        s_ldb1: begin
+
+        end
+
+        s_ldb2: begin
+
+        end
+
+        s_calc_addr_w: begin
             // MAR←A+SEXT(IR[5:0]«1);
             alumux_sel = 2'b10;
             aluop = alu_add;
@@ -300,8 +315,9 @@ begin : next_state_logic
             op_jsr: next_state = s_jsr;
             op_lea: next_state = s_lea;
 
-            op_ldr: next_state = s_calc_addr;
-            op_str: next_state = s_calc_addr;
+            op_ldb: next_state = s_calc_addr_b;
+            op_ldr: next_state = s_calc_addr_w;
+            op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
             endcase
         end
@@ -348,8 +364,20 @@ begin : next_state_logic
         end
 
         /* mem access */
-        s_calc_addr: begin
-            // Should this be a switch?
+        s_calc_addr_b: begin
+            next_state = s_ldb1;
+        end
+
+        s_ldb1: begin
+            if (mem_resp == 1)
+                next_state = s_ldr2;
+        end
+
+        s_ldb2: begin
+            next_state = s_fetch1;
+        end
+
+        s_calc_addr_w: begin
             if (opcode == op_ldr)
                 next_state = s_ldr1;
             else

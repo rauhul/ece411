@@ -4,6 +4,6 @@ module plus2 #(parameter width = 16)
     output logic [width-1:0] out
 );
 
-assign out = in + 4'h1;
+assign out = in + 4'h2;
 
 endmodule : plus2

@@ -54,6 +54,7 @@ lc3b_imm4 imm4;
 lc3b_imm5 imm5;
 lc3b_word zext4_out;
 lc3b_word sext5_out;
+lc3b_word sext6_out;
 lc3b_offset6  offset6;
 lc3b_offset9  offset9;
 lc3b_offset11 offset11;
@@ -230,6 +231,12 @@ adj #(.width(6)) adj6
     .out(adj6_out)
 );
 
+sext #(.width(6)) sext6
+(
+    .in(offset6),
+    .out(sext6_out)
+);
+
 sext #(.width(5)) sext5
 (
     .in(imm5),
@@ -242,14 +249,18 @@ zext #(.width(4)) zext4
     .out(zext4_out)
 );
 
-mux4 alumux
+mux8 alumux
 (
     .sel(alumux_sel),
-    .a(sr2_out),
-    .b(sext5_out),
-    .c(adj6_out),
-    .d(zext4_out),
-    .f(alumux_out)
+    .in000(sr2_out),
+    .in001(sext5_out),
+    .in010(adj6_out),
+    .in011(zext4_out),
+    .in100(sext6_out),
+    .in101(16'bx),
+    .in110(16'bx),
+    .in111(16'bx),
+    .out(alumux_out)
 );
 
 alu _alu
