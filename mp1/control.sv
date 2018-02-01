@@ -28,8 +28,8 @@ module control
     output logic [1:0] pcmux_sel,
     output logic storemux_sel,
     output logic destmux_sel,
-    output logic [1:0] alumux_sel,
-    output logic [1:0] regfilemux_sel,
+    output logic [2:0] alumux_sel,
+    output logic [2:0] regfilemux_sel,
     output logic marmux_sel,
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
@@ -93,8 +93,8 @@ begin : state_actions
     pcmux_sel       = 2'b00;
     storemux_sel    = 1'b0;
     destmux_sel     = 1'b0;
-    alumux_sel      = 2'b00;
-    regfilemux_sel  = 2'b00;
+    alumux_sel      = 3'b000;
+    regfilemux_sel  = 3'b000;
     marmux_sel      = 1'b0;
     mdrmux_sel      = 1'b0;
     aluop           = alu_add;
@@ -137,11 +137,11 @@ begin : state_actions
             // DR←A+sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux_sel = 3'b000;
             else
-                alumux_sel = 2'b01;
+                alumux_sel = 3'b001;
             aluop = alu_add;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -151,11 +151,11 @@ begin : state_actions
             // DR←A&sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux_sel = 3'b000;
             else
-                alumux_sel = 2'b01;
+                alumux_sel = 3'b001;
             aluop = alu_and;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -164,7 +164,7 @@ begin : state_actions
             // DR←NOT(A);
             storemux_sel = 0;
             aluop = alu_not;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -175,7 +175,7 @@ begin : state_actions
             // DR←SR[15],SR»imm4;
 
             storemux_sel = 0;
-            alumux_sel = 2'b11;
+            alumux_sel = 3'b011;
             if (inst4 == 0)
                 aluop = alu_sll;
             else
@@ -183,7 +183,7 @@ begin : state_actions
                     aluop = alu_srl;
                 else
                     aluop = alu_sra;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -210,7 +210,7 @@ begin : state_actions
             // R7←PC;
             // PC←SR1;
             // PC←PC+SEXT(IR[10:0]«1);
-            regfilemux_sel = 2'b11; // sel pc
+            regfilemux_sel = 3'b011; // sel pc
             destmux_sel = 1; // sel R7
             load_regfile = 1; // load reg
 
@@ -225,27 +225,38 @@ begin : state_actions
         s_lea: begin
             // DR←PC+SEXT(IR[8:0]«1);
             brmux_sel = 0;
-            regfilemux_sel = 2'b10;
+            regfilemux_sel = 3'b010;
             load_cc = 1;
             load_regfile = 1;
         end
 
         /* mem access */
         s_calc_addr_b: begin
-
+            // MAR←A+SEXT(IR[5:0]);
+            alumux_sel = 3'b100;
+            aluop = alu_add;
+            marmux_sel = 0;
+            load_mar = 1;
         end
 
         s_ldb1: begin
-
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
         end
 
         s_ldb2: begin
-
+            // DR←MDR_L;
+            // DR←MDR_U;
+            regfilemux_sel = 3'b100;
+            load_cc = 1;
+            load_regfile = 1;
         end
 
         s_calc_addr_w: begin
             // MAR←A+SEXT(IR[5:0]«1);
-            alumux_sel = 2'b10;
+            alumux_sel = 3'b010;
             aluop = alu_add;
             marmux_sel = 0;
             load_mar = 1;
@@ -260,7 +271,7 @@ begin : state_actions
 
         s_ldr2: begin
             // DR←MDR;
-            regfilemux_sel = 2'b01;
+            regfilemux_sel = 3'b001;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -370,7 +381,7 @@ begin : next_state_logic
 
         s_ldb1: begin
             if (mem_resp == 1)
-                next_state = s_ldr2;
+                next_state = s_ldb2;
         end
 
         s_ldb2: begin
