@@ -13,6 +13,9 @@ module control
     input inst11,
     input branch_enable,
 
+    /* datapath->memory (hijack) */
+    input lc3b_word mem_address,
+
     /* memory->control */
     input mem_resp,
 
@@ -28,8 +31,8 @@ module control
     output logic [1:0] pcmux_sel,
     output logic storemux_sel,
     output logic destmux_sel,
-    output logic [1:0] alumux_sel,
-    output logic [1:0] regfilemux_sel,
+    output logic [2:0] alumux_sel,
+    output logic [2:0] regfilemux_sel,
     output logic marmux_sel,
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
@@ -61,11 +64,15 @@ enum int unsigned {
     s_lea,
 
     /* mem access */
-    s_calc_addr,
-    //LDB
-    //STB
+    s_calc_addr_b,
+    s_ldb1,
+    s_ldb2,
+    s_stb1,
+    s_stb2,
+
     //LDI
     //STI
+    s_calc_addr_w,
     s_ldr1,
     s_ldr2,
     s_str1,
@@ -90,8 +97,8 @@ begin : state_actions
     pcmux_sel       = 2'b00;
     storemux_sel    = 1'b0;
     destmux_sel     = 1'b0;
-    alumux_sel      = 2'b00;
-    regfilemux_sel  = 2'b00;
+    alumux_sel      = 3'b000;
+    regfilemux_sel  = 3'b000;
     marmux_sel      = 1'b0;
     mdrmux_sel      = 1'b0;
     aluop           = alu_add;
@@ -134,11 +141,11 @@ begin : state_actions
             // DR←A+sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux_sel = 3'b000;
             else
-                alumux_sel = 2'b01;
+                alumux_sel = 3'b001;
             aluop = alu_add;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -148,11 +155,11 @@ begin : state_actions
             // DR←A&sext(imm5);
             storemux_sel = 0;
             if (inst5 == 0)
-                alumux_sel = 2'b00;
+                alumux_sel = 3'b000;
             else
-                alumux_sel = 2'b01;
+                alumux_sel = 3'b001;
             aluop = alu_and;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -161,7 +168,7 @@ begin : state_actions
             // DR←NOT(A);
             storemux_sel = 0;
             aluop = alu_not;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -172,7 +179,7 @@ begin : state_actions
             // DR←SR[15],SR»imm4;
 
             storemux_sel = 0;
-            alumux_sel = 2'b11;
+            alumux_sel = 3'b011;
             if (inst4 == 0)
                 aluop = alu_sll;
             else
@@ -180,7 +187,7 @@ begin : state_actions
                     aluop = alu_srl;
                 else
                     aluop = alu_sra;
-            regfilemux_sel = 2'b00;
+            regfilemux_sel = 3'b000;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -207,7 +214,7 @@ begin : state_actions
             // R7←PC;
             // PC←SR1;
             // PC←PC+SEXT(IR[10:0]«1);
-            regfilemux_sel = 2'b11; // sel pc
+            regfilemux_sel = 3'b011; // sel pc
             destmux_sel = 1; // sel R7
             load_regfile = 1; // load reg
 
@@ -222,15 +229,60 @@ begin : state_actions
         s_lea: begin
             // DR←PC+SEXT(IR[8:0]«1);
             brmux_sel = 0;
-            regfilemux_sel = 2'b10;
+            regfilemux_sel = 3'b010;
             load_cc = 1;
             load_regfile = 1;
         end
 
         /* mem access */
-        s_calc_addr: begin
+        s_calc_addr_b: begin
+            // MAR←A+SEXT(IR[5:0]);
+            alumux_sel = 3'b100;
+            aluop = alu_add;
+            marmux_sel = 0;
+            load_mar = 1;
+        end
+
+        s_ldb1: begin
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
+        end
+
+        s_ldb2: begin
+            // DR←MDR_L;
+            // DR←MDR_U;
+            if (mem_address[0] == 0)
+                regfilemux_sel = 3'b100;
+            else
+                regfilemux_sel = 3'b101;
+            load_cc = 1;
+            load_regfile = 1;
+        end
+
+        s_stb1: begin
+            storemux_sel = 1;
+            alumux_sel = 3'b101; //8 bit shift
+            if (mem_address[0] == 0)
+                aluop = alu_pass;
+            else
+                aluop = alu_sll;
+            mdrmux_sel = 0;
+            load_mdr = 1;
+        end
+
+        s_stb2: begin
+            mem_write = 1;
+            if (mem_address[0] == 0)
+                mem_byte_enable = 2'b01;
+            else
+                mem_byte_enable = 2'b10;
+        end
+
+        s_calc_addr_w: begin
             // MAR←A+SEXT(IR[5:0]«1);
-            alumux_sel = 2'b10;
+            alumux_sel = 3'b010;
             aluop = alu_add;
             marmux_sel = 0;
             load_mar = 1;
@@ -245,7 +297,7 @@ begin : state_actions
 
         s_ldr2: begin
             // DR←MDR;
-            regfilemux_sel = 2'b01;
+            regfilemux_sel = 3'b001;
             load_cc = 1;
             load_regfile = 1;
         end
@@ -300,8 +352,10 @@ begin : next_state_logic
             op_jsr: next_state = s_jsr;
             op_lea: next_state = s_lea;
 
-            op_ldr: next_state = s_calc_addr;
-            op_str: next_state = s_calc_addr;
+            op_ldb: next_state = s_calc_addr_b;
+            op_stb: next_state = s_calc_addr_b;
+            op_ldr: next_state = s_calc_addr_w;
+            op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
             endcase
         end
@@ -348,8 +402,32 @@ begin : next_state_logic
         end
 
         /* mem access */
-        s_calc_addr: begin
-            // Should this be a switch?
+        s_calc_addr_b: begin
+            if (opcode == op_ldb)
+                next_state = s_ldb1;
+            else
+                next_state = s_stb1;
+        end
+
+        s_ldb1: begin
+            if (mem_resp == 1)
+                next_state = s_ldb2;
+        end
+
+        s_ldb2: begin
+            next_state = s_fetch1;
+        end
+
+        s_stb1: begin
+            next_state = s_stb2;
+        end
+
+        s_stb2: begin
+            if (mem_resp == 1)
+                next_state = s_fetch1;
+        end
+
+        s_calc_addr_w: begin
             if (opcode == op_ldr)
                 next_state = s_ldr1;
             else

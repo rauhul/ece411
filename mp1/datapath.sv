@@ -20,8 +20,8 @@ module datapath
     input [1:0] pcmux_sel,
     input storemux_sel,
     input destmux_sel,
-    input [1:0] alumux_sel,
-    input [1:0] regfilemux_sel,
+    input [2:0] alumux_sel,
+    input [2:0] regfilemux_sel,
     input marmux_sel,
     input mdrmux_sel,
     input lc3b_aluop aluop,
@@ -54,6 +54,7 @@ lc3b_imm4 imm4;
 lc3b_imm5 imm5;
 lc3b_word zext4_out;
 lc3b_word sext5_out;
+lc3b_word sext6_out;
 lc3b_offset6  offset6;
 lc3b_offset9  offset9;
 lc3b_offset11 offset11;
@@ -63,8 +64,7 @@ lc3b_word adj11_out;
 lc3b_word pcmux_out;
 lc3b_word alumux_out;
 lc3b_word regfilemux_out;
-lc3b_word marmux_out;
-lc3b_word mdrmux_out;
+
 lc3b_word alu_out;
 lc3b_word pc_out;
 lc3b_word bradd_out;
@@ -72,6 +72,17 @@ lc3b_word brmux_out;
 lc3b_word pc_plus2_out;
 lc3b_nzp gencc_out;
 lc3b_nzp cc_out;
+
+
+/* memory */
+lc3b_word marmux_out;
+lc3b_word mar_out;
+
+lc3b_word mdrmux_out;
+lc3b_word mdr_out;
+lc3b_word mdr_lb_out;
+lc3b_word mdr_ub_out;
+lc3b_word mdr_bmux_out;
 
 /*
  * PC
@@ -108,7 +119,7 @@ mux2 brmux
     .f(brmux_out)
 );
 
-assign bradd_out = pc_out + adj9_out;
+assign bradd_out = pc_out + brmux_out;
 
 adj #(.width(9)) adj9
 (
@@ -140,8 +151,10 @@ register mar
     .clk,
     .load(load_mar),
     .in(marmux_out),
-    .out(mem_address)
+    .out(mar_out)
 );
+
+assign mem_address = mar_out;
 
 mux2 mdrmux
 (
@@ -156,7 +169,21 @@ register mdr
     .clk,
     .load(load_mdr),
     .in(mdrmux_out),
-    .out(mem_wdata)
+    .out(mdr_out)
+);
+
+assign mem_wdata = mdr_out;
+
+zext #(.width(8)) mdr_zext8_l
+(
+    .in(mdr_out[7:0]),
+    .out(mdr_lb_out)
+);
+
+zext #(.width(8)) mdr_zext8_u
+(
+    .in(mdr_out[15:8]),
+    .out(mdr_ub_out)
 );
 
 
@@ -210,16 +237,19 @@ regfile _regfile
     .reg_b(sr2_out)
 );
 
-mux4 regfilemux
+mux8 regfilemux
 (
     .sel(regfilemux_sel),
-    .a(alu_out),
-    .b(mem_wdata),
-    .c(bradd_out),
-    .d(pc_out),
-    .f(regfilemux_out)
+    .in000(alu_out),
+    .in001(mem_wdata),
+    .in010(bradd_out),
+    .in011(pc_out),
+    .in100(mdr_lb_out),
+    .in101(mdr_ub_out),
+    .in110(16'bx),
+    .in111(16'bx),
+    .out(regfilemux_out)
 );
-
 
 /*
  * ALU
@@ -228,6 +258,12 @@ adj #(.width(6)) adj6
 (
     .in(offset6),
     .out(adj6_out)
+);
+
+sext #(.width(6)) sext6
+(
+    .in(offset6),
+    .out(sext6_out)
 );
 
 sext #(.width(5)) sext5
@@ -242,14 +278,18 @@ zext #(.width(4)) zext4
     .out(zext4_out)
 );
 
-mux4 alumux
+mux8 alumux
 (
     .sel(alumux_sel),
-    .a(sr2_out),
-    .b(sext5_out),
-    .c(adj6_out),
-    .d(zext4_out),
-    .f(alumux_out)
+    .in000(sr2_out),
+    .in001(sext5_out),
+    .in010(adj6_out),
+    .in011(zext4_out),
+    .in100(sext6_out),
+    .in101(16'b1000), // 8 bit shift
+    .in110(16'bx),
+    .in111(16'bx),
+    .out(alumux_out)
 );
 
 alu _alu

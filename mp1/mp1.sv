@@ -30,8 +30,8 @@ logic brmux_sel;
 logic [1:0] pcmux_sel;
 logic storemux_sel;
 logic destmux_sel;
-logic [1:0] alumux_sel;
-logic [1:0] regfilemux_sel;
+logic [2:0] alumux_sel;
+logic [2:0] regfilemux_sel;
 logic marmux_sel;
 logic mdrmux_sel;
 lc3b_aluop aluop;
@@ -48,6 +48,9 @@ control _control
     .inst5,
     .inst11,
     .branch_enable,
+
+    /* datapath->memory (hijack) */
+    .mem_address,
 
     /* memory->control */
     .mem_resp,
