@@ -75,13 +75,14 @@ enum int unsigned {
     s_ldi2,
     s_ldi3,
     s_ldi4,
-    //STI
-
+    s_sti1,
+    s_sti2,
+    s_sti3,
+    s_sti4,
     s_ldr1,
     s_ldr2,
     s_str1,
     s_str2
-
 
     /* other */
     // TRAP
@@ -319,6 +320,32 @@ begin : state_actions
             load_regfile = 1;
         end
 
+        s_sti1: begin
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
+        end
+
+        s_sti2: begin
+            // MAR←MDR;
+            marmux_sel = 2'b10;
+            load_mar = 1;
+        end
+
+        s_sti3: begin
+            // MDR←SR;
+            storemux_sel = 1;
+            aluop = alu_pass;
+            mdrmux_sel = 0;
+            load_mdr = 1;
+        end
+
+        s_sti4: begin
+            // M[MAR]←MDR;
+            mem_write = 1;
+        end
+
         s_ldr1: begin
             // MDR←M[MAR];
             mem_read = 1;
@@ -386,6 +413,7 @@ begin : next_state_logic
             op_ldb: next_state = s_calc_addr_b;
             op_stb: next_state = s_calc_addr_b;
             op_ldi: next_state = s_calc_addr_w;
+            op_sti: next_state = s_calc_addr_w;
             op_ldr: next_state = s_calc_addr_w;
             op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
@@ -464,8 +492,10 @@ begin : next_state_logic
                 next_state = s_ldr1;
             else if (opcode == op_str)
                 next_state = s_str1;
-            else
+            else if (opcode == op_ldi)
                 next_state = s_ldi1;
+            else
+                next_state = s_sti1;
         end
 
         s_ldi1: begin
@@ -484,6 +514,24 @@ begin : next_state_logic
 
         s_ldi4: begin
             next_state = s_fetch1;
+        end
+
+        s_sti1: begin
+            if (mem_resp == 1)
+                next_state = s_sti2;
+        end
+
+        s_sti2: begin
+            next_state = s_sti3;
+        end
+
+        s_sti3: begin
+            next_state = s_sti4;
+        end
+
+        s_sti4: begin
+            if (mem_resp == 1)
+                next_state = s_fetch1;
         end
 
         s_ldr1: begin
