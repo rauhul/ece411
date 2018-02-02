@@ -82,10 +82,12 @@ enum int unsigned {
     s_ldr1,
     s_ldr2,
     s_str1,
-    s_str2
+    s_str2,
 
     /* other */
-    // TRAP
+    s_trap1,
+    s_trap2,
+    s_trap3
 
 } state, next_state;
 
@@ -373,6 +375,30 @@ begin : state_actions
             mem_write = 1;
         end
 
+        /* other */
+        s_trap1: begin
+            // R7←PC;
+            destmux_sel = 1;
+            load_regfile = 1;
+            regfilemux_sel = 3'b011;
+            // MAR←ZEXT(trapvect8«1);
+            marmux_sel = 2'b11;
+            load_mar = 1;
+        end
+
+        s_trap2: begin
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
+        end
+
+        s_trap3: begin
+            // PC←MDR
+            pcmux_sel = 2'b11;
+            load_pc = 1;
+        end
+
     endcase
 end
 
@@ -416,6 +442,8 @@ begin : next_state_logic
             op_sti: next_state = s_calc_addr_w;
             op_ldr: next_state = s_calc_addr_w;
             op_str: next_state = s_calc_addr_w;
+
+            op_trap: next_state = s_trap1;
             default: $display("Unknown opcode");
             endcase
         end
@@ -550,6 +578,20 @@ begin : next_state_logic
         s_str2: begin
             if (mem_resp == 1)
                 next_state = s_fetch1;
+        end
+
+        /* other */
+        s_trap1: begin
+            next_state = s_trap2;
+        end
+
+        s_trap2: begin
+            if (mem_resp == 1)
+                next_state = s_trap3;
+        end
+
+        s_trap3: begin
+            next_state = s_fetch1;
         end
 
         default: $display("Unknown state");

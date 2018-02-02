@@ -50,17 +50,21 @@ lc3b_reg storemux_out;
 lc3b_reg destmux_out;
 lc3b_word sr1_out;
 lc3b_word sr2_out;
-lc3b_imm4 imm4;
-lc3b_imm5 imm5;
+
+lc3b_imm4      imm4;
+lc3b_imm5      imm5;
+lc3b_offset6   offset6;
+lc3b_trapvect8 trapvect8;
+lc3b_offset9   offset9;
+lc3b_offset11  offset11;
 lc3b_word zext4_out;
 lc3b_word sext5_out;
 lc3b_word sext6_out;
-lc3b_offset6  offset6;
-lc3b_offset9  offset9;
-lc3b_offset11 offset11;
 lc3b_word adj6_out;
+lc3b_word zextj8_out;
 lc3b_word adj9_out;
 lc3b_word adj11_out;
+
 lc3b_word pcmux_out;
 lc3b_word alumux_out;
 lc3b_word regfilemux_out;
@@ -93,7 +97,7 @@ mux4 pcmux
     .a(pc_plus2_out),
     .b(bradd_out),
     .c(sr1_out),
-    .d(16'bx),
+    .d(mdr_out),
     .f(pcmux_out)
 );
 
@@ -138,13 +142,16 @@ adj #(.width(11)) adj11
 /*
  * Memory
  */
+
+assign zextj8_out = $unsigned({trapvect8, 1'b0});
+
 mux4 marmux
 (
     .sel(marmux_sel),
     .a(alu_out),
     .b(pc_out),
     .c(mdr_out),
-    .d(16'bx),
+    .d(zextj8_out),
     .f(marmux_out)
 );
 
@@ -207,6 +214,7 @@ ir _ir
     .imm4,
     .imm5,
     .offset6,
+    .trapvect8,
     .offset9,
     .offset11
 );
