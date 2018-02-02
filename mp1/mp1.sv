@@ -32,7 +32,7 @@ logic storemux_sel;
 logic destmux_sel;
 logic [2:0] alumux_sel;
 logic [2:0] regfilemux_sel;
-logic marmux_sel;
+logic [1:0] marmux_sel;
 logic mdrmux_sel;
 lc3b_aluop aluop;
 

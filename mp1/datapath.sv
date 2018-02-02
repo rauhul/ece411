@@ -22,7 +22,7 @@ module datapath
     input destmux_sel,
     input [2:0] alumux_sel,
     input [2:0] regfilemux_sel,
-    input marmux_sel,
+    input [1:0] marmux_sel,
     input mdrmux_sel,
     input lc3b_aluop aluop,
 
@@ -138,11 +138,13 @@ adj #(.width(11)) adj11
 /*
  * Memory
  */
-mux2 marmux
+mux4 marmux
 (
     .sel(marmux_sel),
     .a(alu_out),
     .b(pc_out),
+    .c(mdr_out),
+    .d(16'bx),
     .f(marmux_out)
 );
 
