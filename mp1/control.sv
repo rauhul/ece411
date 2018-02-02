@@ -267,7 +267,7 @@ begin : state_actions
             if (mem_address[0] == 0)
                 aluop = alu_pass;
             else
-                aluop = alu_srl;
+                aluop = alu_sll;
             mdrmux_sel = 0;
             load_mdr = 1;
         end
@@ -353,7 +353,7 @@ begin : next_state_logic
             op_lea: next_state = s_lea;
 
             op_ldb: next_state = s_calc_addr_b;
-            op_sdb: next_state = s_calc_addr_b;
+            op_stb: next_state = s_calc_addr_b;
             op_ldr: next_state = s_calc_addr_w;
             op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
