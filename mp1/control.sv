@@ -33,7 +33,7 @@ module control
     output logic destmux_sel,
     output logic [2:0] alumux_sel,
     output logic [2:0] regfilemux_sel,
-    output logic marmux_sel,
+    output logic [1:0] marmux_sel,
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
 
@@ -70,9 +70,13 @@ enum int unsigned {
     s_stb1,
     s_stb2,
 
-    //LDI
-    //STI
     s_calc_addr_w,
+    s_ldi1,
+    s_ldi2,
+    s_ldi3,
+    s_ldi4,
+    //STI
+
     s_ldr1,
     s_ldr2,
     s_str1,
@@ -99,7 +103,7 @@ begin : state_actions
     destmux_sel     = 1'b0;
     alumux_sel      = 3'b000;
     regfilemux_sel  = 3'b000;
-    marmux_sel      = 1'b0;
+    marmux_sel      = 2'b00;
     mdrmux_sel      = 1'b0;
     aluop           = alu_add;
     mem_read        = 1'b0;
@@ -111,7 +115,7 @@ begin : state_actions
 
         s_fetch1: begin
             //MAR←PC;
-            marmux_sel = 1;
+            marmux_sel = 2'b01;
             load_mar = 1;
 
             //PC←PC+2;
@@ -239,7 +243,7 @@ begin : state_actions
             // MAR←A+SEXT(IR[5:0]);
             alumux_sel = 3'b100;
             aluop = alu_add;
-            marmux_sel = 0;
+            marmux_sel = 2'b00;
             load_mar = 1;
         end
 
@@ -284,8 +288,35 @@ begin : state_actions
             // MAR←A+SEXT(IR[5:0]«1);
             alumux_sel = 3'b010;
             aluop = alu_add;
-            marmux_sel = 0;
+            marmux_sel = 2'b00;
             load_mar = 1;
+        end
+
+        s_ldi1: begin
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
+        end
+
+        s_ldi2: begin
+            // MAR←MDR;
+            marmux_sel = 2'b10;
+            load_mar = 1;
+        end
+
+        s_ldi3: begin
+            // MDR←M[MAR];
+            mem_read = 1;
+            mdrmux_sel = 1;
+            load_mdr = 1;
+        end
+
+        s_ldi4: begin
+            // DR←MDR;
+            regfilemux_sel = 3'b001;
+            load_cc = 1;
+            load_regfile = 1;
         end
 
         s_ldr1: begin
@@ -354,6 +385,7 @@ begin : next_state_logic
 
             op_ldb: next_state = s_calc_addr_b;
             op_stb: next_state = s_calc_addr_b;
+            op_ldi: next_state = s_calc_addr_w;
             op_ldr: next_state = s_calc_addr_w;
             op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
@@ -430,8 +462,28 @@ begin : next_state_logic
         s_calc_addr_w: begin
             if (opcode == op_ldr)
                 next_state = s_ldr1;
-            else
+            else if (opcode == op_str)
                 next_state = s_str1;
+            else
+                next_state = s_ldi1;
+        end
+
+        s_ldi1: begin
+            if (mem_resp == 1)
+                next_state = s_ldi2;
+        end
+
+        s_ldi2: begin
+            next_state = s_ldi3;
+        end
+
+        s_ldi3: begin
+            if (mem_resp == 1)
+                next_state = s_ldi4;
+        end
+
+        s_ldi4: begin
+            next_state = s_fetch1;
         end
 
         s_ldr1: begin
