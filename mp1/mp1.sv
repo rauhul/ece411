@@ -49,6 +49,9 @@ control _control
     .inst11,
     .branch_enable,
 
+    /* datapath->memory (hijack) */
+    .mem_address,
+
     /* memory->control */
     .mem_resp,
 

@@ -186,14 +186,6 @@ zext #(.width(8)) mdr_zext8_u
     .out(mdr_ub_out)
 );
 
-mux2 mdr_bmux
-(
-    .sel(mar_out[0]),
-    .a(mdr_lb_out),
-    .b(mdr_ub_out),
-    .f(mdr_bmux_out)
-);
-
 
 /*
  * Register File
@@ -252,8 +244,8 @@ mux8 regfilemux
     .in001(mem_wdata),
     .in010(bradd_out),
     .in011(pc_out),
-    .in100(mdr_bmux_out),
-    .in101(16'bx),
+    .in100(mdr_lb_out),
+    .in101(mdr_ub_out),
     .in110(16'bx),
     .in111(16'bx),
     .out(regfilemux_out)
@@ -294,7 +286,7 @@ mux8 alumux
     .in010(adj6_out),
     .in011(zext4_out),
     .in100(sext6_out),
-    .in101(16'bx),
+    .in101(16'b1000), // 8 bit shift
     .in110(16'bx),
     .in111(16'bx),
     .out(alumux_out)

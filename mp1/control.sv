@@ -13,6 +13,9 @@ module control
     input inst11,
     input branch_enable,
 
+    /* datapath->memory (hijack) */
+    input lc3b_word mem_address,
+
     /* memory->control */
     input mem_resp,
 
@@ -64,7 +67,8 @@ enum int unsigned {
     s_calc_addr_b,
     s_ldb1,
     s_ldb2,
-    //STB
+    s_stb1,
+    s_stb2,
 
     //LDI
     //STI
@@ -249,9 +253,31 @@ begin : state_actions
         s_ldb2: begin
             // DR←MDR_L;
             // DR←MDR_U;
-            regfilemux_sel = 3'b100;
+            if (mem_address[0] == 0)
+                regfilemux_sel = 3'b100;
+            else
+                regfilemux_sel = 3'b101;
             load_cc = 1;
             load_regfile = 1;
+        end
+
+        s_stb1: begin
+            storemux_sel = 1;
+            alumux_sel = 3'b101; //8 bit shift
+            if (mem_address[0] == 0)
+                aluop = alu_pass;
+            else
+                aluop = alu_srl;
+            mdrmux_sel = 0;
+            load_mdr = 1;
+        end
+
+        s_stb2: begin
+            mem_write = 1;
+            if (mem_address[0] == 0)
+                mem_byte_enable = 2'b01;
+            else
+                mem_byte_enable = 2'b10;
         end
 
         s_calc_addr_w: begin
@@ -327,6 +353,7 @@ begin : next_state_logic
             op_lea: next_state = s_lea;
 
             op_ldb: next_state = s_calc_addr_b;
+            op_sdb: next_state = s_calc_addr_b;
             op_ldr: next_state = s_calc_addr_w;
             op_str: next_state = s_calc_addr_w;
             default: $display("Unknown opcode");
@@ -376,7 +403,10 @@ begin : next_state_logic
 
         /* mem access */
         s_calc_addr_b: begin
-            next_state = s_ldb1;
+            if (opcode == op_ldb)
+                next_state = s_ldb1;
+            else
+                next_state = s_stb1;
         end
 
         s_ldb1: begin
@@ -386,6 +416,15 @@ begin : next_state_logic
 
         s_ldb2: begin
             next_state = s_fetch1;
+        end
+
+        s_stb1: begin
+            next_state = s_stb2;
+        end
+
+        s_stb2: begin
+            if (mem_resp == 1)
+                next_state = s_fetch1;
         end
 
         s_calc_addr_w: begin
