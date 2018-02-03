@@ -251,7 +251,7 @@ mux8 regfilemux
 (
     .sel(regfilemux_sel),
     .in000(alu_out),
-    .in001(mem_wdata),
+    .in001(mdr_out),
     .in010(bradd_out),
     .in011(pc_out),
     .in100(mdr_lb_out),
