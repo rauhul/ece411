@@ -76,8 +76,8 @@ set_global_assignment -name SYSTEMVERILOG_FILE cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE lc3b_types.sv
 set_global_assignment -name SYSTEMVERILOG_FILE adj.sv
 set_global_assignment -name SYSTEMVERILOG_FILE alu.sv
-set_global_assignment -name SYSTEMVERILOG_FILE control.sv
-set_global_assignment -name SYSTEMVERILOG_FILE datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cpu_control.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cpu_datapath.sv
 set_global_assignment -name SYSTEMVERILOG_FILE gencc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE mp2.sv

@@ -1,26 +1,26 @@
 import lc3b_types::*; /* Import types defined in lc3b_types.sv */
 
-module control
+module cpu_control
 (
     /* INPUTS */
-    /* global->control */
+    /* global->cpu_control */
     input clk,
 
-    /* datapath->control */
+    /* cpu_datapath->cpu_control */
     input lc3b_opcode opcode,
     input inst4,
     input inst5,
     input inst11,
     input branch_enable,
 
-    /* datapath->memory (hijack) */
+    /* cpu_datapath->memory (hijack) */
     input lc3b_word mem_address,
 
-    /* memory->control */
+    /* memory->cpu_control */
     input mem_resp,
 
     /* OUTPUTS */
-    /* control->data */
+    /* cpu_control->data */
     output logic load_pc,
     output logic load_ir,
     output logic load_regfile,
@@ -37,7 +37,7 @@ module control
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
 
-    /* control->memory */
+    /* cpu_control->memory */
     output logic mem_read,
     output logic mem_write,
     output lc3b_mem_wmask mem_byte_enable
@@ -605,4 +605,4 @@ begin: next_state_assignment
     state <= next_state;
 end
 
-endmodule : control
+endmodule : cpu_control
