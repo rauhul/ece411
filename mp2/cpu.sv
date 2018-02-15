@@ -4,9 +4,11 @@ module cpu
 (
     input clk,
 
-    /* Memory signals */
+    /* Cache -> CPU */
     input mem_resp,
     input lc3b_word mem_rdata,
+
+    /* CPU -> Cache */
     output mem_read,
     output mem_write,
     output lc3b_mem_wmask mem_byte_enable,
@@ -117,4 +119,4 @@ cpu_datapath _cpu_datapath
     .branch_enable
 );
 
-endmodule : mp2
+endmodule : cpu
