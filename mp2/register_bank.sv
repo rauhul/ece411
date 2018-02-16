@@ -12,14 +12,14 @@ module register_bank
     input lc3b_cacheline_word data_all_in,
 
     /* Outputs */
-    output lc3b_word data_out
+    output lc3b_word data_out,
     output lc3b_cacheline_word data_all_out
 );
 
 assign data_in_high = data_in[15:8];
 assign data_in_low  = data_in[7:0];
 
-assign data_out = data[offset*16 +: 16;
+assign data_out = data[offset*16 +: 16];
 assign data_all_out = data;
 
 lc3b_cacheline_word data;
@@ -39,4 +39,4 @@ always_ff @(posedge clk) begin
     end
 end
 
-endmodule : register
+endmodule : register_bank

@@ -2,20 +2,22 @@ import lc3b_types::*;
 
 module cpu
 (
-    input clk,
-
-    /* Cache -> CPU */
-    input mem_resp,
-    input lc3b_word mem_rdata,
-
-    /* CPU -> Cache */
-    output mem_read,
-    output mem_write,
-    output lc3b_mem_wmask mem_byte_enable,
-    output lc3b_word mem_address,
-    output lc3b_word mem_wdata
+    /* CPU <-> Cache */
+    wishbone.master cache_wishbone
 );
 
+/* cache_wishbone */
+assign cache_wishbone.DAT_M[127:16] = 1'b0;
+assign cache_wishbone.SEL[15:2] = 1'b0;
+
+logic mem_read;
+logic mem_write;
+
+assign cache_wishbone.CYC = mem_read | mem_write;
+assign cache_wishbone.STB = cache_wishbone.CYC;
+assign cache_wishbone.WE  = mem_write;
+
+/* datapath <-> control interconnect */
 lc3b_opcode opcode;
 logic inst4;
 logic inst5;
@@ -42,7 +44,7 @@ cpu_control _cpu_control
 (
     /* INPUTS */
     /* global->cpu_control */
-    .clk,
+    .clk(cache_wishbone.CLK),
 
     /* cpu_datapath->cpu_control */
     .opcode,
@@ -52,10 +54,10 @@ cpu_control _cpu_control
     .branch_enable,
 
     /* cpu_datapath->memory (hijack) */
-    .mem_address,
+    .mem_address(cache_wishbone.ADR),
 
     /* memory->cpu_control */
-    .mem_resp,
+    .mem_resp(cache_wishbone.ACK),
 
     /* OUTPUTS */
     /* cpu_control->data */
@@ -78,16 +80,16 @@ cpu_control _cpu_control
     /* cpu_control->memory */
     .mem_read,
     .mem_write,
-    .mem_byte_enable
+    .mem_byte_enable(cache_wishbone.SEL[1:0])
 );
 
 cpu_datapath _cpu_datapath
 (
     /* INPUTS */
-    .clk,
+    .clk(cache_wishbone.CLK),
 
     /* memory->cpu_datapath */
-    .mem_rdata,
+    .mem_rdata(cache_wishbone.DAT_S[15:0]),
 
     /* cpu_control->cpu_datapath */
     .load_pc,
@@ -108,8 +110,8 @@ cpu_datapath _cpu_datapath
 
     /* OUTPUTS */
     /* cpu_datapath->memory */
-    .mem_address,
-    .mem_wdata,
+    .mem_address(cache_wishbone.ADR),
+    .mem_wdata(cache_wishbone.DAT_M[15:0]),
 
     /* cpu_datapath->cpu_control */
     .opcode,

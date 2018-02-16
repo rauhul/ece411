@@ -9,10 +9,16 @@ logic clk;
 initial clk = 0;
 always #5 clk = ~clk;
 
-wishbone wb(clk);
+wishbone memory_wishbone(clk);
 
-mp2 dut(wb);
+mp2 dut
+(
+    .memory_wishbone
+);
 
-physical_memory memory(wb);
+physical_memory memory
+(
+    .wb(memory_wishbone)
+);
 
 endmodule : mp2_tb

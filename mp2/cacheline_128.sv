@@ -4,7 +4,8 @@ module cacheline_128 (
     input clk,
 
     /* Inputs */
-    input load, load_all,
+    input load,
+    input load_all,
 
     input lc3b_cacheline_tag tag_in,
     input lc3b_cacheline_offset offset,
@@ -18,7 +19,7 @@ module cacheline_128 (
     output dirty_out,
     output lc3b_cacheline_tag tag_out,
     output lc3b_word data_out,
-    output lc3b_cacheline_word data_all_out,
+    output lc3b_cacheline_word data_all_out
 );
 
 
