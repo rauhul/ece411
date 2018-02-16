@@ -1,5 +1,3 @@
-import lc3b_types::*;
-
 module cache_control (
     /* INPUTS */
     /* global->cpu_control */
@@ -21,19 +19,19 @@ module cache_control (
 
     /* OUTPUTS */
     /* cache_control->cache_datapath */
-    output cacheline_sel,
-    output tag_source_sel,
-    output load,
-    output load_all,
-    output load_lru,
-    output lru_in,
+    output logic cacheline_sel,
+    output logic tag_source_sel,
+    output logic load,
+    output logic load_all,
+    output logic load_lru,
+    output logic lru_in,
 
     /* cache_control->CPU */
-    output cpu_resp,
+    output logic cpu_resp,
 
     /* cache_control->memory */
-    output mem_read,
-    output mem_write
+    output logic mem_read,
+    output logic mem_write
 );
 
 logic cpu_req;
