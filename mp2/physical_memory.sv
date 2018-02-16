@@ -33,7 +33,7 @@ always @(posedge wb.CLK)
 begin
     /* Default */
     resp = 1'b0;
-	 data = 128'bX;
+    data = 128'bX;
 
     next_state = state;
 
@@ -41,7 +41,7 @@ begin
         idle: begin
             if (wb.CYC & wb.STB) begin
                 next_state = busy;
-					 internal_address = wb.ADR[15:4];
+                internal_address = wb.ADR[15:4];
                 ready <= #DELAY_MEM 1;
             end
         end
@@ -53,15 +53,15 @@ begin
         end
 
         respond: begin
-		      //bad things happen if you change the address in the middle of the transaction
-		      if (wb.ADR[15:4] == internal_address) begin
+            //bad things happen if you change the address in the middle of the transaction
+            if (wb.ADR[15:4] == internal_address) begin
                 if (wb.WE) begin
                     mem[internal_address] = wb.DAT_M;
                 end else begin
-					     data = mem[internal_address];
-					 end
+                    data = mem[internal_address];
+                end
                 resp = 1;
-		      end
+            end
             ready <= 0;
             next_state = idle;
         end

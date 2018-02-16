@@ -41,7 +41,9 @@ enum int unsigned {
     /* List of states */
     s_idle_hit,
     s_write_back,
-    s_read_in
+    s_write_back_2,
+    s_read_in,
+    s_read_in_2
 } state, next_state;
 
 always_comb
@@ -84,11 +86,19 @@ begin : state_actions
             mem_write = 1'b1;
         end
 
+        s_write_back_2: begin
+
+        end
+
         s_read_in: begin
             cacheline_sel = lru_out;
             tag_source_sel = 1'b1;
             load_all = 1'b1;
             mem_read = 1'b1;
+        end
+
+        s_read_in_2: begin
+
         end
     endcase
 end
@@ -113,11 +123,21 @@ begin : next_state_logic
 
         s_write_back: begin
             if (mem_resp == 1)
+                next_state = s_write_back_2;
+        end
+
+        s_write_back_2: begin
+            if (mem_resp == 0)
                 next_state = s_read_in;
         end
 
         s_read_in: begin
             if (mem_resp == 1)
+                next_state = s_read_in_2;
+        end
+
+        s_read_in_2: begin
+            if (mem_resp == 0)
                 next_state = s_idle_hit;
         end
     endcase // state
