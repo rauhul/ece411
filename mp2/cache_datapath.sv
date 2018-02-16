@@ -57,17 +57,6 @@ register #(.width(1)) lru
 /*
  * MUXES
  */
-lc3b_cacheline_tag tag_source_mux_out;
-assign mem_address = {tag_source_mux_out, 4'b0};
-mux2 #(.width(12)) tag_source_mux
-(
-    .sel(tag_source_sel),
-    .a(tag_mux_out),
-    .b(tag_in),
-    .f(tag_source_mux_out)
-);
-
-
 lc3b_cacheline_tag tag_out_0;
 lc3b_cacheline_tag tag_out_1;
 lc3b_cacheline_tag tag_mux_out;
@@ -77,6 +66,17 @@ mux2 #(.width(12)) tag_mux
     .a(tag_out_0),
     .b(tag_out_1),
     .f(tag_mux_out)
+);
+
+
+lc3b_cacheline_tag tag_source_mux_out;
+assign mem_address = {tag_source_mux_out, 4'b0};
+mux2 #(.width(12)) tag_source_mux
+(
+    .sel(tag_source_sel),
+    .a(tag_mux_out),
+    .b(tag_in),
+    .f(tag_source_mux_out)
 );
 
 
