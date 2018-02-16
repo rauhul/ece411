@@ -16,6 +16,9 @@ module register_bank
     output lc3b_cacheline_word data_all_out
 );
 
+lc3b_byte data_in_high;
+lc3b_byte data_in_low;
+
 assign data_in_high = data_in[15:8];
 assign data_in_low  = data_in[7:0];
 

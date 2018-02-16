@@ -10,6 +10,10 @@ module cache (
 assign cache_wishbone.DAT_S[127:16] = 1'b0;
 assign cache_wishbone.RTY = 1'b0;
 
+logic cpu_req;
+logic cpu_read;
+logic cpu_write;
+
 assign cpu_req = cache_wishbone.STB & cache_wishbone.CYC;
 assign cpu_read = cpu_req & (~cache_wishbone.WE);
 assign cpu_write = cpu_req & cache_wishbone.WE;
@@ -38,7 +42,7 @@ logic hit_0;
 logic hit_1;
 logic hit_any;
 logic dirty_out;
-logic lru_ou;
+logic lru_out;
 
 
 /* modules */
@@ -69,7 +73,7 @@ cache_datapath _cache_datapath (
     .hit_1,
     .hit_any,
     .dirty_out,
-    .lru_out
+    .lru_out,
 
     /* cache_datapath->CPU */
     .cpu_rdata(cache_wishbone.DAT_S[15:0]),

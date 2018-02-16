@@ -36,6 +36,7 @@ module cache_control (
     output mem_write
 );
 
+logic cpu_req;
 assign cpu_req = cpu_read | cpu_write;
 
 enum int unsigned {

@@ -55,6 +55,7 @@ register #(.width(1)) valid
  * HIT
  */
 
+logic tag_hit;
 assign tag_hit = tag_out == tag_in;
 assign hit = tag_hit & valid_out;
 
@@ -64,6 +65,8 @@ assign hit = tag_hit & valid_out;
  */
 
 // LOAD and LOAD all should never be asserted together
+logic dirty_bit_load;
+logic dirty_bit_load_val;
 assign dirty_bit_load = load | load_all;
 assign dirty_bit_load_val = load;
 

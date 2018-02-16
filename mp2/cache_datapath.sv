@@ -27,17 +27,19 @@ module cache_datapath (
     output hit_1,
     output hit_any,
     output dirty_out,
-    output lru_out
+    output lru_out,
 
     /* cache_datapath->CPU */
     output lc3b_word cpu_rdata,
 
     /* cache_datapath->memory */
     output lc3b_word mem_address,
-    output lc3b_cacheline_word mem_wdata,
+    output lc3b_cacheline_word mem_wdata
 
 );
 
+lc3b_cacheline_tag tag_in;
+lc3b_cacheline_offset offset;
 assign tag_in = cpu_address[15:4];
 assign offset = cpu_address[3:1];
 
@@ -62,7 +64,7 @@ mux2 #(.width(12)) tag_source_mux
     .sel(tag_source_sel),
     .a(tag_mux_out),
     .b(tag_in),
-    .f(tag_source_mux)
+    .f(tag_source_mux_out)
 );
 
 
@@ -94,8 +96,8 @@ lc3b_cacheline_word data_all_out_1;
 mux2 #(.width(128)) data_all_mux
 (
     .sel(cacheline_sel),
-    .a(tag_out_0),
-    .b(tag_out_1),
+    .a(data_all_out_0),
+    .b(data_all_out_1),
     .f(mem_wdata)
 );
 
@@ -114,21 +116,24 @@ mux2 #(.width(1)) dirty_mux
 /*
  * DEMUXES
  */
-
+logic load_out_0;
+logic load_out_1;
 demux2 #(.width(1)) load_demux
 (
     .sel(cacheline_sel),
     .f(load),
     .a(load_out_0),
-    .b(load_out_1),
+    .b(load_out_1)
 );
 
+logic load_all_out_0;
+logic load_all_out_1;
 demux2 #(.width(1)) load_all_demux
 (
     .sel(cacheline_sel),
     .f(load_all),
     .a(load_all_out_0),
-    .b(load_all_out_1),
+    .b(load_all_out_1)
 );
 
 /*

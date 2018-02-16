@@ -16,7 +16,7 @@ cpu _cpu
 cache _cache
 (
     /* CPU <-> Cache */
-    .cache_wishbone
+    .cache_wishbone,
 
     /* Cache <-> Memory */
     .memory_wishbone
