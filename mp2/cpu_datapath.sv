@@ -1,15 +1,15 @@
 import lc3b_types::*;
 
-module datapath
+module cpu_datapath
 (
     /* INPUTS */
-    /* global->datapath */
+    /* global->cpu_datapath */
     input clk,
 
-    /* memory->datapath */
+    /* memory->cpu_datapath */
     input lc3b_word mem_rdata,
 
-    /* control->datapath */
+    /* cpu_control->cpu_datapath */
     input load_pc,
     input load_ir,
     input load_regfile,
@@ -27,11 +27,11 @@ module datapath
     input lc3b_aluop aluop,
 
     /* OUTPUTS */
-    /* datapath->memory */
+    /* cpu_datapath->memory */
     output lc3b_word mem_address,
     output lc3b_word mem_wdata,
 
-    /* datapath->control */
+    /* cpu_datapath->cpu_control */
     output lc3b_opcode opcode,
     output inst4,
     output inst5,
@@ -335,4 +335,4 @@ cccomp _cccomp
     .f(branch_enable)
 );
 
-endmodule : datapath
+endmodule : cpu_datapath
