@@ -16,29 +16,29 @@ module register_bank
     output lc3b_cacheline_word data_all_out
 );
 
+lc3b_cacheline_word data;
+
 lc3b_byte data_in_high;
 lc3b_byte data_in_low;
 
 assign data_in_high = data_in[15:8];
 assign data_in_low  = data_in[7:0];
 
-assign data_out = data_arr[offset*16 +: 16];
-assign data_all_out = data_arr;
-
-lc3b_cacheline_word data_arr;
+assign data_out = data[offset*16 +: 16];
+assign data_all_out = data;
 
 initial begin
-    data_arr = 1'b0;
+    data = 1'b0;
 end
 
 always_ff @(posedge clk) begin
     if (load_all) begin
-        data_arr = data_all_in;
+        data = data_all_in;
     end else if (load) begin
         if (byte_enable[1])
-            data_arr[offset*16+8 +: 8] = data_in_high;
+            data[offset*16+8 +: 8] = data_in_high;
         if (byte_enable[0])
-            data_arr[offset*16+0 +: 8] = data_in_low;
+            data[offset*16+0 +: 8] = data_in_low;
     end
 end
 
