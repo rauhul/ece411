@@ -22,10 +22,10 @@ module cache_datapath (
 
     /* OUTPUTS */
     /* cache_datapath->cache_control */
-    output hit_0,
-    output hit_1,
-    output dirty,
-    output lru,
+    output logic hit_0,
+    output logic hit_1,
+    output logic dirty,
+    output logic lru,
 
     /* cache_datapath->CPU */
     output lc3b_cache_word cpu_data_out,
@@ -37,22 +37,6 @@ module cache_datapath (
 
 );
 
-logic lru_arr [7:0];
-assign lru = lru_arr[index];
-
-initial begin
-    for (int i = 0; i < 8; i++) begin
-        lru_arr[i] = 0;
-    end
-end
-
-always_ff @(posedge clk) begin
-    if (load_lru) begin
-        lru_arr[index] = ~cache_way_sel;
-    end
-end
-
-
 /*
  * MUXES
  */
@@ -63,16 +47,18 @@ mux2 #(.width(128)) data_in_mux
     .sel(data_source_sel),
     .a(cpu_data_in),
     .b(memory_data_in),
-    .f(data_in),
+    .f(data_in)
 );
 
-lc3b_cache_word byte_sel;
-mux2 #(.width(128)) byte_sel_mux
+assign memory_byte_sel = 16'hFFFF;
+
+logic [15:0] byte_sel;
+mux2 #(.width(16)) byte_sel_mux
 (
     .sel(data_source_sel),
     .a(cpu_byte_sel),
     .b(memory_byte_sel),
-    .f(byte_sel),
+    .f(byte_sel)
 );
 
 lc3b_cache_tag tag_in;
@@ -96,29 +82,27 @@ lc3b_cache_index index;
 assign index = cpu_address[6:4];
 
 /* output muxes */
-lc3b_cache_word data_out_0;
-lc3b_cache_word data_out_1;
+lc3b_cache_word data_0;
+lc3b_cache_word data_1;
 lc3b_cache_word data_out;
 assign cpu_data_out = data_out;
 assign memory_data_out = data_out;
 mux2 #(.width(128)) data_mux
 (
     .sel(cache_way_sel),
-    .a(data_out_0),
-    .b(data_out_1),
+    .a(data_0),
+    .b(data_1),
     .f(data_out)
 );
 
-assign memory_byte_sel = 16'hFFFF;
-
-lc3b_cache_tag tag_out_0;
-lc3b_cache_tag tag_out_1;
+lc3b_cache_tag tag_0;
+lc3b_cache_tag tag_1;
 lc3b_cache_tag tag_out;
 mux2 #(.width(9)) tag_mux
 (
     .sel(cache_way_sel),
-    .a(tag_out_0),
-    .b(tag_out_1),
+    .a(tag_0),
+    .b(tag_1),
     .f(tag_out)
 );
 
@@ -132,7 +116,9 @@ mux2 #(.width(9)) tag_bypass_mux
     .f(tag_bypass_mux_out)
 );
 
-mux #(.width(1)) dirty_mux
+logic dirty_0;
+logic dirty_1;
+mux2 #(.width(1)) dirty_mux
 (
     .sel(lru),
     .a(dirty_0),
@@ -192,6 +178,21 @@ cache_way cache_way_1 (
     .hit(hit_1)
 );
 
+/* lru */
+logic lru_arr [7:0];
+assign lru = lru_arr[index];
+
+initial begin
+    for (int i = 0; i < 8; i++) begin
+        lru_arr[i] = 0;
+    end
+end
+
+always_ff @(posedge clk) begin
+    if (load_lru) begin
+        lru_arr[index] = ~cache_way_sel;
+    end
+end
 
 
 endmodule : cache_datapath

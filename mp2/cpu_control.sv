@@ -128,7 +128,7 @@ begin : state_actions
 
         s_fetch2: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -253,7 +253,7 @@ begin : state_actions
 
         s_ldb1: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -282,7 +282,7 @@ begin : state_actions
         end
 
         s_stb2: begin
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 1;
             if (mem_address[0] == 0)
                 mem_byte_mask = 2'b01;
@@ -300,7 +300,7 @@ begin : state_actions
 
         s_ldi1: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -314,7 +314,7 @@ begin : state_actions
 
         s_ldi3: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -329,7 +329,7 @@ begin : state_actions
 
         s_sti1: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -351,13 +351,13 @@ begin : state_actions
 
         s_sti4: begin
             // M[MAR]←MDR;
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 1;
         end
 
         s_ldr1: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
@@ -380,7 +380,7 @@ begin : state_actions
 
         s_str2: begin
             // M[MAR]←MDR;
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 1;
         end
 
@@ -397,7 +397,7 @@ begin : state_actions
 
         s_trap2: begin
             // MDR←M[MAR];
-            mem_request = 1
+            mem_request = 1;
             mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;

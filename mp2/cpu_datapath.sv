@@ -31,7 +31,7 @@ module cpu_datapath
     /* cpu_datapath->memory */
     output lc3b_word mem_address,
     output lc3b_cache_word mem_data_out,
-    output [15:0] mem_byte_sel,
+    output logic [15:0] mem_byte_sel,
 
     /* cpu_datapath->cpu_control */
     output lc3b_opcode opcode,
@@ -167,8 +167,8 @@ register mar
 
 assign mem_address = mar_out;
 
-logic mem_word_in;
-assign mem_word_in = mem_data_in[[mar_out[3:1]*16 +: 16]];
+lc3b_word mem_word_in;
+assign mem_word_in = mem_data_in[mar_out[3:1]*16 +: 16];
 
 mux2 mdrmux
 (
@@ -213,7 +213,7 @@ ir _ir
 (
     .clk,
     .load(load_ir),
-    .in(mem_data_out),
+    .in(mdr_out),
     .opcode,
     .inst4,
     .inst5,

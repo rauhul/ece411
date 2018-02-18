@@ -22,7 +22,6 @@ module cache_control (
     output logic data_source_sel,
     output logic tag_bypass_sel,
     output logic load,
-    output logic load_type,
     output logic load_lru,
 
     /* cache_control->CPU */
@@ -49,8 +48,11 @@ begin : state_actions
     data_source_sel     = 0;
     tag_bypass_sel      = 0;
     load                = 0;
-    load_type           = 0;
     load_lru            = 0;
+
+    cpu_response        = 0;
+    memory_request      = 0;
+    memory_read_write   = 0;
 
     /* Actions for each state */
     case(state)
@@ -112,7 +114,7 @@ begin : next_state_logic
      * for transitioning between states */
     case(state)
         s_idle_hit: begin
-            if (cpu_req & ~(hit_0 | hit_1)) begin
+            if (cpu_request & ~(hit_0 | hit_1)) begin
                 if (dirty)
                     next_state = s_write_back;
                 else

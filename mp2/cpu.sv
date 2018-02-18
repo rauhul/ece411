@@ -8,8 +8,8 @@ module cpu
 
 /* memory_wishbone */
 logic mem_request;
-assign memory_wishbone.CYC = memory_request;
-assign memory_wishbone.STB = memory_request;
+assign memory_wishbone.CYC = mem_request;
+assign memory_wishbone.STB = mem_request;
 
 /* datapath <-> control interconnect */
 lc3b_opcode opcode;
@@ -109,7 +109,7 @@ cpu_datapath _cpu_datapath
     /* cpu_datapath->memory */
     .mem_address(memory_wishbone.ADR),
     .mem_data_out(memory_wishbone.DAT_M),
-    .mem_byte_sel(memory_wishbone.SEL)
+    .mem_byte_sel(memory_wishbone.SEL),
 
     /* cpu_datapath->cpu_control */
     .opcode,

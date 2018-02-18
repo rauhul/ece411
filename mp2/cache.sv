@@ -17,11 +17,10 @@ assign memory_wishbone.CYC = memory_request;
 assign memory_wishbone.STB = memory_request;
 
 /* datapath <-> control interconnect */
-logic cache_way_sel,
-logic data_source_sel,
-logic tag_bypass_sel,
+logic cache_way_sel;
+logic data_source_sel;
+logic tag_bypass_sel;
 logic load;
-logic load_type;
 logic load_lru;
 
 logic hit_0;
@@ -41,13 +40,12 @@ cache_datapath _cache_datapath
     .data_source_sel,
     .tag_bypass_sel,
     .load,
-    .load_type,
     .load_lru,
 
     /* CPU->cache_datapath */
     .cpu_address(cpu_wishbone.ADR),
     .cpu_byte_sel(cpu_wishbone.SEL),
-    .cpu_data(cpu_wishbone.DAT_M),
+    .cpu_data_in(cpu_wishbone.DAT_M),
 
     /* memory->cache_datapath */
     .memory_data_in(memory_wishbone.DAT_S),
@@ -93,7 +91,6 @@ cache_control _cache_control
     .data_source_sel,
     .tag_bypass_sel,
     .load,
-    .load_type,
     .load_lru,
 
     /* cache_control->CPU */

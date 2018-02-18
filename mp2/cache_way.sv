@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module cache_way (
     /* INPUTS */
     input clk,
@@ -23,19 +25,19 @@ module cache_way (
 
 lc3b_cache_word data  [7:0];
 lc3b_cache_tag  tag   [7:0];
-logic           dirty [7:0];
+logic          _dirty [7:0];
 logic           valid [7:0];
 
 assign data_out = data[index];
 assign tag_out  = tag[index];
-assign dirty    = dirty[index];
+assign dirty    = _dirty[index];
 assign hit      = valid[index] && (tag_out == tag_in);
 
 initial begin
     for (int i = 0; i < 8; i++) begin
         data[i] = 0;
         tag[i] = 0;
-        dirty[i] = 0;
+        _dirty[i] = 0;
         valid[i] = 0;
     end
 end
@@ -92,7 +94,7 @@ always_ff @(posedge clk) begin
 
         valid[index] = 1;
         tag[index] = tag_in;
-        dirty[index] = ~load_type;
+        _dirty[index] = ~load_type;
     end
 end
 
