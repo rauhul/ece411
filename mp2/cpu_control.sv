@@ -36,11 +36,11 @@ module cpu_control
     output logic [1:0] marmux_sel,
     output logic mdrmux_sel,
     output lc3b_aluop aluop,
+    output lc3b_mem_wmask mem_byte_mask,
 
     /* cpu_control->memory */
-    output logic mem_read,
-    output logic mem_write,
-    output lc3b_mem_wmask mem_byte_enable
+    output logic mem_request,
+    output logic mem_read_write
 );
 
 enum int unsigned {
@@ -109,9 +109,9 @@ begin : state_actions
     marmux_sel      = 2'b00;
     mdrmux_sel      = 1'b0;
     aluop           = alu_add;
-    mem_read        = 1'b0;
-    mem_write       = 1'b0;
-    mem_byte_enable = 2'b11;
+    mem_request     = 1'b0;
+    mem_read_write  = 1'b0;
+    mem_byte_mask   = 2'b11;
 
     /* Actions for each state */
     case(state)
@@ -128,7 +128,8 @@ begin : state_actions
 
         s_fetch2: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -252,7 +253,8 @@ begin : state_actions
 
         s_ldb1: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -280,11 +282,12 @@ begin : state_actions
         end
 
         s_stb2: begin
-            mem_write = 1;
+            mem_request = 1
+            mem_read_write = 1;
             if (mem_address[0] == 0)
-                mem_byte_enable = 2'b01;
+                mem_byte_mask = 2'b01;
             else
-                mem_byte_enable = 2'b10;
+                mem_byte_mask = 2'b10;
         end
 
         s_calc_addr_w: begin
@@ -297,7 +300,8 @@ begin : state_actions
 
         s_ldi1: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -310,7 +314,8 @@ begin : state_actions
 
         s_ldi3: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -324,7 +329,8 @@ begin : state_actions
 
         s_sti1: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -345,12 +351,14 @@ begin : state_actions
 
         s_sti4: begin
             // M[MAR]←MDR;
-            mem_write = 1;
+            mem_request = 1
+            mem_read_write = 1;
         end
 
         s_ldr1: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
@@ -372,7 +380,8 @@ begin : state_actions
 
         s_str2: begin
             // M[MAR]←MDR;
-            mem_write = 1;
+            mem_request = 1
+            mem_read_write = 1;
         end
 
         /* other */
@@ -388,7 +397,8 @@ begin : state_actions
 
         s_trap2: begin
             // MDR←M[MAR];
-            mem_read = 1;
+            mem_request = 1
+            mem_read_write = 0;
             mdrmux_sel = 1;
             load_mdr = 1;
         end
