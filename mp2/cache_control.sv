@@ -6,36 +6,31 @@ module cache_control (
     /* cache_datapath->cache_control */
     input hit_0,
     input hit_1,
-    input hit_any,
-    input dirty_out,
-    input lru_out,
+    input dirty,
+    input lru,
 
     /* CPU->cache_control */
-    input cpu_read,
-    input cpu_write,
+    input cpu_request,
+    input cpu_read_write,
 
     /* memory->cache_control */
-    input mem_resp,
+    input memory_response,
 
     /* OUTPUTS */
     /* cache_control->cache_datapath */
-    output logic cacheline_sel,
-    output logic tag_source_sel,
+    output logic cache_way_sel,
+    output logic data_source_sel,
+    output logic tag_bypass_sel,
     output logic load,
-    output logic load_all,
     output logic load_lru,
-    output logic lru_in,
 
     /* cache_control->CPU */
-    output logic cpu_resp,
+    output logic cpu_response,
 
     /* cache_control->memory */
-    output logic mem_read,
-    output logic mem_write
+    output logic memory_request,
+    output logic memory_read_write
 );
-
-logic cpu_req;
-assign cpu_req = cpu_read | cpu_write;
 
 enum int unsigned {
     /* List of states */
@@ -49,41 +44,41 @@ enum int unsigned {
 always_comb
 begin : state_actions
     /* Default output assignments */
-    cacheline_sel   = 1'b0;
-    tag_source_sel  = 1'b0;
-    load            = 1'b0;
-    load_all        = 1'b0;
-    load_lru        = 1'b0;
-    lru_in          = 1'b0;
-    cpu_resp        = 1'b0;
-    mem_write       = 1'b0;
-    mem_read        = 1'b0;
+    cache_way_sel       = 0;
+    data_source_sel     = 0;
+    tag_bypass_sel      = 0;
+    load                = 0;
+    load_lru            = 0;
+
+    cpu_response        = 0;
+    memory_request      = 0;
+    memory_read_write   = 0;
 
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
-            if ((cpu_req == 1) && (hit_any == 1)) begin
-                if (hit_0 == 1) begin
-                    cacheline_sel = 1'b0;
-                    lru_in = 1'b1;
-                end else begin
-                    cacheline_sel = 1'b1;
-                    lru_in = 1'b0;
-                end
-
-                load_lru = 1'b1;
-                cpu_resp = 1'b1;
-
-                if (cpu_write == 1) begin
-                    load = 1'b1;
-                end
+            if (cpu_request & (hit_0 | hit_1)) begin
+                // select correct way
+                cache_way_sel = hit_1;
+                // update lru bit
+                load_lru = 1;
+                // set input data source to cpu
+                data_source_sel = 0;
+                // load if cpu_write
+                load = cpu_read_write;
+                // repond to request
+                cpu_response = 1;
             end
         end
 
         s_write_back: begin
-            cacheline_sel = lru_out;
-            tag_source_sel = 1'b0;
-            mem_write = 1'b1;
+            // select the lru
+            cache_way_sel = lru;
+            // pass the cache_line tag to the memory_address
+            tag_bypass_sel = 0;
+            // signal a memory write request
+            memory_request = 1;
+            memory_read_write = 1;
         end
 
         s_write_back_2: begin
@@ -91,10 +86,17 @@ begin : state_actions
         end
 
         s_read_in: begin
-            cacheline_sel = lru_out;
-            tag_source_sel = 1'b1;
-            load_all = 1'b1;
-            mem_read = 1'b1;
+            // select the lru
+            cache_way_sel = lru;
+            // pass the cpu_address tag to the memory_address
+            tag_bypass_sel = 1;
+            // set input data source to memory
+            data_source_sel = 1;
+            // load if cpu_write
+            load = 1;
+            // signal a memory read request
+            memory_request = 1;
+            memory_read_write = 0;
         end
 
         s_read_in_2: begin
@@ -112,32 +114,31 @@ begin : next_state_logic
      * for transitioning between states */
     case(state)
         s_idle_hit: begin
-            if ((cpu_req == 1) && (hit_any == 0)) begin
-                if (dirty_out == 1) begin
+            if (cpu_request & ~(hit_0 | hit_1)) begin
+                if (dirty)
                     next_state = s_write_back;
-                end else begin
+                else
                     next_state = s_read_in;
-                end
             end
         end
 
         s_write_back: begin
-            if (mem_resp == 1)
+            if (memory_response == 1)
                 next_state = s_write_back_2;
         end
 
         s_write_back_2: begin
-            if (mem_resp == 0)
+            if (memory_response == 0)
                 next_state = s_read_in;
         end
 
         s_read_in: begin
-            if (mem_resp == 1)
+            if (memory_response == 1)
                 next_state = s_read_in_2;
         end
 
         s_read_in_2: begin
-            if (mem_resp == 0)
+            if (memory_response == 0)
                 next_state = s_idle_hit;
         end
     endcase // state

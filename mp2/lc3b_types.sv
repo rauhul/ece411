@@ -43,8 +43,11 @@ typedef enum bit [3:0] {
     alu_sra
 } lc3b_aluop;
 
-typedef logic [127:0] lc3b_cacheline_word;
-typedef logic  [11:0] lc3b_cacheline_tag;
-typedef logic   [2:0] lc3b_cacheline_offset;
+typedef logic [127:0] lc3b_cache_word;
+// ADDR: {[15:7] tag, [6:4] index, [3:0] offset }
+typedef logic [8:0] lc3b_cache_tag;
+typedef logic [2:0] lc3b_cache_index;
+typedef logic [3:0] lc3b_cache_offset;
+
 
 endpackage : lc3b_types

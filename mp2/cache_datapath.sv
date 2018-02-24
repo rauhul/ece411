@@ -6,187 +6,193 @@ module cache_datapath (
     input clk,
 
     /* cache_control->cache_datapath */
-    input cacheline_sel,
-    input tag_source_sel,
+    input cache_way_sel,
+    input data_source_sel,
+    input tag_bypass_sel,
     input load,
-    input load_all,
     input load_lru,
-    input lru_in,
 
     /* CPU->cache_datapath */
     input lc3b_word cpu_address,
-    input lc3b_word cpu_wdata,
-    input lc3b_mem_wmask byte_enable,
+    input [15:0] cpu_byte_sel,
+    input lc3b_cache_word cpu_data_in,
 
     /* memory->cache_datapath */
-    input lc3b_cacheline_word mem_rdata,
+    input lc3b_cache_word memory_data_in,
 
     /* OUTPUTS */
     /* cache_datapath->cache_control */
-    output hit_0,
-    output hit_1,
-    output hit_any,
-    output dirty_out,
-    output lru_out,
+    output logic hit_0,
+    output logic hit_1,
+    output logic dirty,
+    output logic lru,
 
     /* cache_datapath->CPU */
-    output lc3b_word cpu_rdata,
+    output lc3b_cache_word cpu_data_out,
 
     /* cache_datapath->memory */
-    output lc3b_word mem_address,
-    output lc3b_cacheline_word mem_wdata
+    output lc3b_word memory_address,
+    output [15:0] memory_byte_sel,
+    output lc3b_cache_word memory_data_out
 
-);
-
-lc3b_cacheline_tag tag_in;
-lc3b_cacheline_offset offset;
-assign tag_in = cpu_address[15:4];
-assign offset = cpu_address[3:1];
-
-/*
- * LRU
- */
-register #(.width(1)) lru
-(
-    .clk,
-    .load(load_lru),
-    .in(lru_in),
-    .out(lru_out)
 );
 
 /*
  * MUXES
  */
-lc3b_cacheline_tag tag_out_0;
-lc3b_cacheline_tag tag_out_1;
-lc3b_cacheline_tag tag_mux_out;
-mux2 #(.width(12)) tag_mux
+/* input muxes */
+lc3b_cache_word data_in;
+mux2 #(.width(128)) data_in_mux
 (
-    .sel(cacheline_sel),
-    .a(tag_out_0),
-    .b(tag_out_1),
-    .f(tag_mux_out)
+    .sel(data_source_sel),
+    .a(cpu_data_in),
+    .b(memory_data_in),
+    .f(data_in)
 );
 
+assign memory_byte_sel = 16'hFFFF;
 
-lc3b_cacheline_tag tag_source_mux_out;
-assign mem_address = {tag_source_mux_out, 4'b0};
-mux2 #(.width(12)) tag_source_mux
+logic [15:0] byte_sel;
+mux2 #(.width(16)) byte_sel_mux
 (
-    .sel(tag_source_sel),
-    .a(tag_mux_out),
+    .sel(data_source_sel),
+    .a(cpu_byte_sel),
+    .b(memory_byte_sel),
+    .f(byte_sel)
+);
+
+lc3b_cache_tag tag_in;
+// mux2 #(.width(9)) tag_in_mux
+// (
+//     .sel(data_source_sel),
+//     .a(cpu_address[15:7]),
+//     .b(memory_address[15:7]),
+//     .f(tag_in),
+// );
+assign tag_in = cpu_address[15:7];
+
+lc3b_cache_index index;
+// mux2 #(.width(3)) index_mux
+// (
+//     .sel(data_source_sel),
+//     .a(cpu_address[6:4]),
+//     .b(memory_address[6:4]),
+//     .f(index),
+// );
+assign index = cpu_address[6:4];
+
+/* output muxes */
+lc3b_cache_word data_0;
+lc3b_cache_word data_1;
+lc3b_cache_word data_out;
+assign cpu_data_out = data_out;
+assign memory_data_out = data_out;
+mux2 #(.width(128)) data_mux
+(
+    .sel(cache_way_sel),
+    .a(data_0),
+    .b(data_1),
+    .f(data_out)
+);
+
+lc3b_cache_tag tag_0;
+lc3b_cache_tag tag_1;
+lc3b_cache_tag tag_out;
+mux2 #(.width(9)) tag_mux
+(
+    .sel(cache_way_sel),
+    .a(tag_0),
+    .b(tag_1),
+    .f(tag_out)
+);
+
+lc3b_cache_tag tag_bypass_mux_out;
+assign memory_address = {tag_bypass_mux_out, index, 4'b0};
+mux2 #(.width(9)) tag_bypass_mux
+(
+    .sel(tag_bypass_sel),
+    .a(tag_out),
     .b(tag_in),
-    .f(tag_source_mux_out)
+    .f(tag_bypass_mux_out)
 );
 
-
-lc3b_word data_out_0;
-lc3b_word data_out_1;
-mux2 data_mux
-(
-    .sel(cacheline_sel),
-    .a(data_out_0),
-    .b(data_out_1),
-    .f(cpu_rdata)
-);
-
-
-lc3b_cacheline_word data_all_out_0;
-lc3b_cacheline_word data_all_out_1;
-mux2 #(.width(128)) data_all_mux
-(
-    .sel(cacheline_sel),
-    .a(data_all_out_0),
-    .b(data_all_out_1),
-    .f(mem_wdata)
-);
-
-
-logic dirty_out_0;
-logic dirty_out_1;
+logic dirty_0;
+logic dirty_1;
 mux2 #(.width(1)) dirty_mux
 (
-    .sel(lru_out),
-    .a(dirty_out_0),
-    .b(dirty_out_1),
-    .f(dirty_out)
+    .sel(lru),
+    .a(dirty_0),
+    .b(dirty_1),
+    .f(dirty)
 );
-
 
 /*
  * DEMUXES
  */
-logic load_out_0;
-logic load_out_1;
+ /* load */
+logic load_0;
+logic load_1;
 demux2 #(.width(1)) load_demux
 (
-    .sel(cacheline_sel),
+    .sel(cache_way_sel),
     .f(load),
-    .a(load_out_0),
-    .b(load_out_1)
-);
-
-logic load_all_out_0;
-logic load_all_out_1;
-demux2 #(.width(1)) load_all_demux
-(
-    .sel(cacheline_sel),
-    .f(load_all),
-    .a(load_all_out_0),
-    .b(load_all_out_1)
+    .a(load_0),
+    .b(load_1)
 );
 
 /*
- * LINES
+ * WAYS
  */
-
-assign hit_any = hit_0 | hit_1;
-
-cacheline_128 line0
-(
+cache_way cache_way_0 (
+    /* INPUTS */
     .clk,
-
-    /* Inputs */
-    .load(load_out_0),
-    .load_all(load_all_out_0),
-
+    .load(load_0),
+    .load_type(data_source_sel),
+    .byte_sel,
     .tag_in,
-    .offset,
+    .index,
+    .data_in,
 
-    .byte_enable,
-    .data_in(cpu_wdata),
-    .data_all_in(mem_rdata),
 
-    /* Outputs */
-    .hit(hit_0),
-    .dirty_out(dirty_out_0),
-    .tag_out(tag_out_0),
-    .data_out(data_out_0),
-    .data_all_out(data_all_out_0)
+    /* OUTPUTS */
+    .tag_out(tag_0),
+    .data_out(data_0),
+    .dirty(dirty_0),
+    .hit(hit_0)
 );
 
-cacheline_128 line1
-(
+cache_way cache_way_1 (
+    /* INPUTS */
     .clk,
-
-    /* Inputs */
-    .load(load_out_1),
-    .load_all(load_all_out_1),
-
+    .load(load_1),
+    .load_type(data_source_sel),
+    .byte_sel,
     .tag_in,
-    .offset,
+    .index,
+    .data_in,
 
-    .byte_enable,
-    .data_in(cpu_wdata),
-    .data_all_in(mem_rdata),
-
-    /* Outputs */
-    .hit(hit_1),
-    .dirty_out(dirty_out_1),
-    .tag_out(tag_out_1),
-    .data_out(data_out_1),
-    .data_all_out(data_all_out_1)
+    /* OUTPUTS */
+    .tag_out(tag_1),
+    .data_out(data_1),
+    .dirty(dirty_1),
+    .hit(hit_1)
 );
+
+/* lru */
+logic lru_arr [7:0];
+assign lru = lru_arr[index];
+
+initial begin
+    for (int i = 0; i < 8; i++) begin
+        lru_arr[i] = 0;
+    end
+end
+
+always_ff @(posedge clk) begin
+    if (load_lru) begin
+        lru_arr[index] = ~cache_way_sel;
+    end
+end
 
 
 endmodule : cache_datapath

@@ -1,122 +1,104 @@
 module cache (
     /* CPU <-> Cache */
-    wishbone.slave cache_wishbone,
+    wishbone.slave cpu_wishbone,
 
     /* Cache <-> Memory */
     wishbone.master memory_wishbone
 );
 
-/* cache_wishbone */
-assign cache_wishbone.DAT_S[127:16] = 1'b0;
-assign cache_wishbone.RTY = 1'b0;
-
-logic cpu_req;
-logic cpu_read;
-logic cpu_write;
-
-assign cpu_req = cache_wishbone.STB & cache_wishbone.CYC;
-assign cpu_read = cpu_req & (~cache_wishbone.WE);
-assign cpu_write = cpu_req & cache_wishbone.WE;
-
+/* cpu_wishbone */
+logic cpu_request;
+assign cpu_request = cpu_wishbone.CYC & cpu_wishbone.STB;
+assign cpu_wishbone.RTY = 1'b0;
 
 /* memory_wishbone */
-assign memory_wishbone.SEL = 16'hFFFF;
-
-logic mem_read;
-logic mem_write;
-
-assign memory_wishbone.CYC = mem_read | mem_write;
-assign memory_wishbone.STB = memory_wishbone.CYC;
-assign memory_wishbone.WE  = mem_write;
-
+logic memory_request;
+assign memory_wishbone.CYC = memory_request;
+assign memory_wishbone.STB = memory_request;
 
 /* datapath <-> control interconnect */
-logic cacheline_sel;
-logic tag_source_sel;
+logic cache_way_sel;
+logic data_source_sel;
+logic tag_bypass_sel;
 logic load;
-logic load_all;
 logic load_lru;
-logic lru_in;
 
 logic hit_0;
 logic hit_1;
-logic hit_any;
-logic dirty_out;
-logic lru_out;
-
+logic dirty;
+logic lru;
 
 /* modules */
-cache_datapath _cache_datapath (
+cache_datapath _cache_datapath
+(
     /* INPUTS */
     /* global->cpu_control */
-    .clk(cache_wishbone.CLK),
+    .clk(cpu_wishbone.CLK),
 
     /* cache_control->cache_datapath */
-    .cacheline_sel,
-    .tag_source_sel,
+    .cache_way_sel,
+    .data_source_sel,
+    .tag_bypass_sel,
     .load,
-    .load_all,
     .load_lru,
-    .lru_in,
 
     /* CPU->cache_datapath */
-    .cpu_address(cache_wishbone.ADR),
-    .cpu_wdata(cache_wishbone.DAT_M[15:0]),
-    .byte_enable(cache_wishbone.SEL[1:0]),
+    .cpu_address(cpu_wishbone.ADR),
+    .cpu_byte_sel(cpu_wishbone.SEL),
+    .cpu_data_in(cpu_wishbone.DAT_M),
 
     /* memory->cache_datapath */
-    .mem_rdata(memory_wishbone.DAT_S),
+    .memory_data_in(memory_wishbone.DAT_S),
 
     /* OUTPUTS */
     /* cache_datapath->cache_control */
     .hit_0,
     .hit_1,
-    .hit_any,
-    .dirty_out,
-    .lru_out,
+    .dirty,
+    .lru,
 
     /* cache_datapath->CPU */
-    .cpu_rdata(cache_wishbone.DAT_S[15:0]),
+    .cpu_data_out(cpu_wishbone.DAT_S),
 
     /* cache_datapath->memory */
-    .mem_address(memory_wishbone.ADR),
-    .mem_wdata(memory_wishbone.DAT_M)
+    .memory_address(memory_wishbone.ADR),
+    .memory_byte_sel(memory_wishbone.SEL),
+    .memory_data_out(memory_wishbone.DAT_M)
 );
 
-cache_control _cache_control (
+cache_control _cache_control
+(
     /* INPUTS */
     /* global->cpu_control */
-    .clk(cache_wishbone.CLK),
+    .clk(cpu_wishbone.CLK),
 
     /* cache_datapath->cache_control */
     .hit_0,
     .hit_1,
-    .hit_any,
-    .dirty_out,
-    .lru_out,
+    .dirty,
+    .lru,
 
     /* CPU->cache_control */
-    .cpu_read,
-    .cpu_write,
+    .cpu_request,
+    .cpu_read_write(cpu_wishbone.WE),
 
     /* memory->cache_control */
-    .mem_resp(memory_wishbone.ACK),
+    .memory_response(memory_wishbone.ACK),
 
     /* OUTPUTS */
     /* cache_control->cache_datapath */
-    .cacheline_sel,
-    .tag_source_sel,
+    .cache_way_sel,
+    .data_source_sel,
+    .tag_bypass_sel,
     .load,
-    .load_all,
     .load_lru,
-    .lru_in,
 
     /* cache_control->CPU */
-    .cpu_resp(cache_wishbone.ACK),
+    .cpu_response(cpu_wishbone.ACK),
 
     /* cache_control->memory */
-    .mem_read,
-    .mem_write
+    .memory_request,
+    .memory_read_write(memory_wishbone.WE)
 );
 
-endmodule
+endmodule : cache

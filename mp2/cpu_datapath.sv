@@ -7,7 +7,7 @@ module cpu_datapath
     input clk,
 
     /* memory->cpu_datapath */
-    input lc3b_word mem_rdata,
+    input lc3b_cache_word mem_data_in,
 
     /* cpu_control->cpu_datapath */
     input load_pc,
@@ -25,11 +25,13 @@ module cpu_datapath
     input [1:0] marmux_sel,
     input mdrmux_sel,
     input lc3b_aluop aluop,
+    input lc3b_mem_wmask mem_byte_mask,
 
     /* OUTPUTS */
     /* cpu_datapath->memory */
     output lc3b_word mem_address,
-    output lc3b_word mem_wdata,
+    output lc3b_cache_word mem_data_out,
+    output logic [15:0] mem_byte_sel,
 
     /* cpu_datapath->cpu_control */
     output lc3b_opcode opcode,
@@ -165,11 +167,14 @@ register mar
 
 assign mem_address = mar_out;
 
+lc3b_word mem_word_in;
+assign mem_word_in = mem_data_in[mar_out[3:1]*16 +: 16];
+
 mux2 mdrmux
 (
     .sel(mdrmux_sel),
     .a(alu_out),
-    .b(mem_rdata),
+    .b(mem_word_in),
     .f(mdrmux_out)
 );
 
@@ -181,7 +186,12 @@ register mdr
     .out(mdr_out)
 );
 
-assign mem_wdata = mdr_out;
+always_comb begin
+    mem_data_out = 1'b0;
+    mem_data_out[mar_out[3:1]*16 +: 16] = mdr_out;
+    mem_byte_sel = 1'b0;
+    mem_byte_sel[mar_out[3:1]*2 +: 2] = mem_byte_mask;
+end
 
 zext #(.width(8)) mdr_zext8_l
 (
@@ -203,7 +213,7 @@ ir _ir
 (
     .clk,
     .load(load_ir),
-    .in(mem_wdata),
+    .in(mdr_out),
     .opcode,
     .inst4,
     .inst5,

@@ -10,13 +10,13 @@ wishbone cache_wishbone(memory_wishbone.CLK);
 cpu _cpu
 (
     /* CPU <-> Cache */
-    .cache_wishbone
+    .memory_wishbone(cache_wishbone)
 );
 
 cache _cache
 (
     /* CPU <-> Cache */
-    .cache_wishbone,
+    .cpu_wishbone(cache_wishbone),
 
     /* Cache <-> Memory */
     .memory_wishbone

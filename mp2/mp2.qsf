@@ -73,7 +73,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE alu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache_control.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache_datapath.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cacheline_128.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu_control.sv
@@ -90,7 +90,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE physical_memory.sv
 set_global_assignment -name SYSTEMVERILOG_FILE plus2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE regfile.sv
 set_global_assignment -name SYSTEMVERILOG_FILE register.sv
-set_global_assignment -name SYSTEMVERILOG_FILE register_bank.sv
 set_global_assignment -name SYSTEMVERILOG_FILE sext.sv
 set_global_assignment -name SYSTEMVERILOG_FILE wishbone.sv
 set_global_assignment -name SYSTEMVERILOG_FILE zext.sv
