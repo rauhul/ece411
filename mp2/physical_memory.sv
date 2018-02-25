@@ -31,7 +31,7 @@ enum int unsigned {
 
 always_comb begin
     for (int i = 0; i < 16; i++)
-        wdata[i*8+:8] = wb.SEL[i]?wb.DAT_M[i*8+:8] : mem[internal_address][i*8 +:8];
+        wdata[i*8+:8] = wb.SEL[i] ? wb.DAT_M[i*8+:8] : mem[internal_address][i*8 +:8];
 
     /* Default */
     data       = 128'bX;
