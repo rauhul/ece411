@@ -1,0 +1,14 @@
+         ps delta memory_wishbone.WE                 memory_wishbone.ADR
+                    memory_wishbone.DAT_M
+          0    +0 x xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxx
+          0    +1 0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxX
+    5305000    +3 1 600d600d600d600d600d600d600d0030 005
+    5535000    +3 0 600d600d600d600d600d600d600d0030 005
+    5865000    +3 1 baadbaadbaadbaadbaad0130baadbaad 015
+    6095000    +3 0 52205220522052205220522000b05220 00d
+    6415000    +7 1 baadbaadbaadbaadbaad0130baadbaad 015
+    6645000    +3 0 baadbaadbaadbaadbaad0130baadbaad 015
+    6975000    +7 1 52205220522052205220522000b05220 00d
+    7205000    +3 0 600d600d600d0130600d600d600d0030 005
+   11955000    +7 1 600d600d0060600d600d600d600d60fa 003
+   12185000    +3 0 600d600d0060600d600d600d600d60fa 003
