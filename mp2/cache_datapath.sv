@@ -13,7 +13,7 @@ module cache_datapath (
     input load_lru,
 
     /* CPU->cache_datapath */
-    input lc3b_word cpu_address,
+    input [11:0] cpu_address,
     input [15:0] cpu_byte_sel,
     input lc3b_cache_word cpu_data_in,
 
@@ -31,7 +31,7 @@ module cache_datapath (
     output lc3b_cache_word cpu_data_out,
 
     /* cache_datapath->memory */
-    output lc3b_word memory_address,
+    output [11:0] memory_address,
     output [15:0] memory_byte_sel,
     output lc3b_cache_word memory_data_out
 
@@ -62,24 +62,10 @@ mux2 #(.width(16)) byte_sel_mux
 );
 
 lc3b_cache_tag tag_in;
-// mux2 #(.width(9)) tag_in_mux
-// (
-//     .sel(data_source_sel),
-//     .a(cpu_address[15:7]),
-//     .b(memory_address[15:7]),
-//     .f(tag_in),
-// );
-assign tag_in = cpu_address[15:7];
+assign tag_in = cpu_address[11:3];
 
 lc3b_cache_index index;
-// mux2 #(.width(3)) index_mux
-// (
-//     .sel(data_source_sel),
-//     .a(cpu_address[6:4]),
-//     .b(memory_address[6:4]),
-//     .f(index),
-// );
-assign index = cpu_address[6:4];
+assign index = cpu_address[2:0];
 
 /* output muxes */
 lc3b_cache_word data_0;
@@ -107,7 +93,7 @@ mux2 #(.width(9)) tag_mux
 );
 
 lc3b_cache_tag tag_bypass_mux_out;
-assign memory_address = {tag_bypass_mux_out, index, 4'b0};
+assign memory_address = {tag_bypass_mux_out, index};
 mux2 #(.width(9)) tag_bypass_mux
 (
     .sel(tag_bypass_sel),

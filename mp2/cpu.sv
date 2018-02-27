@@ -11,6 +11,9 @@ logic mem_request;
 assign memory_wishbone.CYC = mem_request;
 assign memory_wishbone.STB = mem_request;
 
+lc3b_word mem_address;
+assign memory_wishbone.ADR = mem_address[15:4];
+
 /* datapath <-> control interconnect */
 lc3b_opcode opcode;
 logic inst4;
@@ -35,7 +38,6 @@ logic mdrmux_sel;
 lc3b_aluop aluop;
 lc3b_mem_wmask mem_byte_mask;
 
-
 cpu_control _cpu_control
 (
     /* INPUTS */
@@ -50,7 +52,7 @@ cpu_control _cpu_control
     .branch_enable,
 
     /* cpu_datapath->memory (hijack) */
-    .mem_address(memory_wishbone.ADR),
+    .mem_address,
 
     /* memory->cpu_control */
     .mem_resp(memory_wishbone.ACK),
@@ -107,7 +109,7 @@ cpu_datapath _cpu_datapath
 
     /* OUTPUTS */
     /* cpu_datapath->memory */
-    .mem_address(memory_wishbone.ADR),
+    .mem_address,
     .mem_data_out(memory_wishbone.DAT_M),
     .mem_byte_sel(memory_wishbone.SEL),
 
