@@ -47,7 +47,6 @@ $\frac{seconds}{cycle}$
 #### how to improve performance
 
 reduce number of instructions for a program
-
 reduce the clock period/increase frequency or clock rate
 
 $\frac{seconds}{program} = \frac{cycles}{program} \frac{seconds}{cycle}$
@@ -149,9 +148,7 @@ not as good of an improvement
 #### evaluating ISAs
 
 design metrics, how long it takes to implement
-
 static metrics, how densely can you store a program in memory 
-
 dynamic metrics
 
 -   how many instructions are executed
@@ -206,8 +203,9 @@ $$
 -   speed up the most common case
 -   $\text{speedup}=\frac{\text{Perf}_{new}}{\text{Perf}_{old}}=\frac{\text{T}_{old}}{\text{T}_{new}}$
 
-example
+![IMG_787FE35B4929-1](/Users/rauhul/Downloads/IMG_787FE35B4929-1.jpeg)
 
+example
 -   floating point instructions are improved to run 2 times faster but only comprise 10% of the total instructions, what is the observed speedup?
 
 $$
@@ -221,7 +219,104 @@ f&= 0.1; P=2\\
 \end{align*}
 $$
 
-#### parallelism vs speedup
+#### gustafson's law
+
+![IMG_A0FC7C5C1D06-1](/Users/rauhul/Downloads/IMG_A0FC7C5C1D06-1.jpeg)
+
+$\text{old workload} = \text{seq} + P*\text{parallel time}$
+
+$\text{new workload} = \text{seq} + \text{parallel time}$
+
+$\text{speedup} = \text{seq} + P*(1-\text{seq})$
+
+if the sequential time decreases with increased problem size, the speedup approaches P
+
+#### power dissipation
+
+##### dynamic 
+
+$$
+\begin{align*}
+\frac{energy}{transition}&=C_LV_{DD}^2P_{0 -> 1} \\
+power&=C_LV_{DD}^2f \\
+\end{align*}
+$$
+
+C\_L is the capacitive load
+V\_DD is the source voltage
+P\_(0 -> 1) is the probabillity of the signal switching, also known as activity factor
+f is the switching frequency
+
+##### short circuit
+
+$$
+\begin{align*}
+\frac{energy}{transition}&=t_{sc}V_{DD}I_{peak}P_{0 -> 1} \\
+power&=t_{sc}V_{DD}I_{peak}f \\
+\end{align*}
+$$
+
+t\_sc is the time the transistor is short circuiting during the switch
+V\_DD is the source voltage
+I\_peak is the peak current load
+P\_(0 -> 1) is the probabillity of the signal switching, also known as activity factor
+f is the switching frequency
+
+#####overall power and energy
+
+$$
+\begin{align*}
+E&=C_LV_{DD}^2P_{0 -> 1} + t_{sc}V_{DD}I_{peak}P_{0 -> 1} + V_{DD}I_{leak} \\
+f_{0 -> 1} &= P_{0 -> 1}f_{clock} \\
+P&=C_LV_{DD}^2f_{0 -> 1} + t_{sc}V_{DD}I_{peak}f_{0 -> 1} + V_{DD}I_{leak} \\
+\end{align*}
+$$
+
+V\_DD \* I\_leak represents the leakage power
+
+dynamic power makes up roughly 40-70% of the total today, and its percentage of the total is decreasing
+short circuit power ~10%, absolute is decreasing
+leakage power is ~20-50% and is increasing
+
+#### efficieny
+
+power in Watts
+
+-   design constraint
+    -   processor can only work fast enough to max out the power delivery or cooling solution 
+-   peak power requirements
+    -   determins power/ground circuit design
+    -   sets packaging/cooling limits
+    -   impacts signal/noise margin 
+
+energy in Joules
+
+-   defines the "true" cost of performing a fixed task
+    -   combination of time and efficiency $E= P*t$
+
+example
+
+processor A consumes 1.2x power of processor B, but finishes in 30% less time. which is more energy efficient and by how much?
+
+$$
+\begin{align*}
+P_b &= 1; t_b = 1 \\
+P_a &= 1.2; t_a = 0.7 \\
+E_b &= P_b * t_b \\
+&= 1 * 1 \\
+&= 1 \\
+E_a &= P_a * t_a \\
+&= 1.2 * 0.7 \\
+&= 0.84 \\
+\frac{E_b}{E_a} &= \frac{1}{0.84} = 1.19 \\
+\end{align*}
+$$
+
+processor A is 1.19 times more efficient than proccessor B
+
+
+
+
 
 
 
