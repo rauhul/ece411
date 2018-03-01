@@ -190,7 +190,7 @@ measureing speedup vs reference machine
 -   independent of chosen reference
 -   not good metric for total execution time
 
-![IMG_F1A142FD8D3D-1](/Users/rauhul/Downloads/IMG_F1A142FD8D3D-1.jpeg)
+![IMG_F1A142FD8D3D-1](./IMG_F1A142FD8D3D-1.jpeg)
 
 #### Amdahl's law
 
@@ -203,7 +203,7 @@ $$
 -   speed up the most common case
 -   $\text{speedup}=\frac{\text{Perf}_{new}}{\text{Perf}_{old}}=\frac{\text{T}_{old}}{\text{T}_{new}}$
 
-![IMG_787FE35B4929-1](/Users/rauhul/Downloads/IMG_787FE35B4929-1.jpeg)
+![IMG_787FE35B4929-1](./IMG_787FE35B4929-1.jpeg)
 
 example
 -   floating point instructions are improved to run 2 times faster but only comprise 10% of the total instructions, what is the observed speedup?
@@ -221,7 +221,7 @@ $$
 
 #### gustafson's law
 
-![IMG_A0FC7C5C1D06-1](/Users/rauhul/Downloads/IMG_A0FC7C5C1D06-1.jpeg)
+![IMG_A0FC7C5C1D06-1](./IMG_A0FC7C5C1D06-1.jpeg)
 
 $\text{old workload} = \text{seq} + P*\text{parallel time}$
 

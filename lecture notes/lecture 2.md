@@ -102,7 +102,7 @@ register-register machine
 
 #### operand locations in ISA classes
 
-![IMG_F748186339DE-1](/Users/rauhul/Downloads/IMG_F748186339DE-1.jpeg)
+![IMG_F748186339DE-1](./IMG_F748186339DE-1.jpeg)
 
 #### comparing ISA classes
 
