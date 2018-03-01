@@ -66,7 +66,7 @@ $\frac{instructions}{program}*\frac{cycles}{instruction}*\frac{seconds}{cycle}$
 
 computeing effective CPI
 
-	- be able to do this
+- be able to do this
 
 Evaluate effectivenes of architecture
 
