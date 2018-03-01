@@ -132,6 +132,96 @@ AMAT substantially faster than the single level Implementation
 
 ![IMG_4C286D22440E-1](./IMG_4C286D22440E-1.jpeg)
 
+#### three Cs, cache miss terms
+
+-   compulsory misses
+    -   cold start miss
+    -   cache does not have valid data at the start of the program
+-   capacity misses
+    -   increase cache size
+-   conflict misses
+    -   increase cache size or
+    -   increase associativity
+
+#### four questions when designing a cache
+
+P-I-R-W
+
+-   placement, where can a block of memory go?
+    -   associativity
+-   identification, how do I find a block of memory?
+    -   tag + index bits
+-   replacement, how do I make space for a new block?
+    -   how to determine which block to evict if multiple
+    -   LRU
+-   write policy, how do I propagate changes?
+    -   write through
+    -   write back
+
+must consider this for all cache levels
+
+-   only L1, L2, L3 for now
+
+#### describing caches, 7 parameters
+
+-   access time, $T_{hit}$
+-   capacity
+    -   total size of the cache
+    -   $\text{#lines}\times\text{line size}$
+-   line size
+    -   amount of dtaa that moves in or out of the cache as a chunk
+    -   similar to page size for virtual memory
+-   replacement policy
+    -   what data if any is replaced on a miss
+    -   write-allocate
+    -   no write-allocate
+-   associativity
+    -   how many locations can a line be placed in
+    -   DM, SA, FA
+-   data type
+    -   unified, data, instructions
+    -   what data is in the cache
+
+#### example
+
+1kB DM cache, 32-Byte line, 32 sets
+
+-   address, 32 bits long
+    -   offset, bottom 5 bits, used to address bytes within the cache line $2^5 = 32$
+    -   index, next 5 bits, used to index to the correct line (not set because DM)
+    -   rest of the bits are tag
+    -   tag[31:10], index[9:5], offset[4:0]
+
+#### example 2
+
+2MB DM cache, 64-Byte line, 52 bit physical address
+
+$$
+\begin{align*}
+2MB &= 2*2^{20} \\
+64B &= 2^6 \\
+\text{# cache lines}&=\frac{2MB}{64B}=\frac{2*2^{20}}{2^6}=2^{15} \\
+\text{# bits for index} &= \log_2(2^{15}) = 15 \\
+\text{# bits for offset} &= \log_2(64) = 6 \\
+\end{align*}
+$$
+
+-   address, 52 bits long
+    -   offset, bottom 6 bits, used to address bytes within the cache line
+    -   index, next 15 bits, used to index to the correct line (not set because DM)
+    -   rest of the bits are tag
+    -   tag[51:21], index[20:6], offset[5:0]
 
 
+now change it to 16-way
 
+-   \# cache lines decreases by factor of 16, $\frac{2^{15}}{2^{4}}=2^{11}$
+-   offset, bottom 6 bits, used to address bytes within the cache line
+-   index, next **11** bits, used to index to the correct set
+-   tag[51:17], index[16:6], offset[5:0]
+
+now change it to fully associative 
+
+-   offset, bottom 6 bits, used to address bytes within the cache line
+-   no index bits
+-   tag[51:6], offset[5:0]
