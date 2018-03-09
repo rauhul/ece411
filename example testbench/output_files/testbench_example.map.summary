@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Wed Mar  7 18:39:04 2018
+Quartus II 32-bit Version : 13.1.4 Build 182 03/12/2014 SJ Full Version
+Revision Name : testbench_example
+Top-level Entity Name : xor2
+Family : Stratix III
+Logic utilization : N/A
+    Combinational ALUTs : 1
+    Memory ALUTs : 0
+    Dedicated logic registers : 0
+Total registers : 0
+Total pins : 3
+Total virtual pins : 0
+Total block memory bits : 0
+DSP block 18-bit elements : 0
+Total PLLs : 0
+Total DLLs : 0

@@ -1,0 +1,6 @@
+module xor2(
+	input a, b,
+	output f
+);
+
+endmodule : xor2

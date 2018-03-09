@@ -1,0 +1,51 @@
+m255
+K3
+13
+cModel Technology
+Z0 d/home/cccoats2/ece411/sp18/testbench_example/simulation/modelsim
+vtestbench
+Z1 DXx6 sv_std 3 std 0 22 F[19LRNL:5;XmIFh[XOPn1
+!i10b 1
+!s100 zoC:]T`7PT;MUOEI<ZL?b0
+I>nOZI=fDj`:EAW3d0Wgn@0
+VhGfW:390DM[oDMzegDH9`2
+!s105 testbench_sv_unit
+S1
+Z2 d/home/cccoats2/ece411/sp18/testbench_example/simulation/modelsim
+w1520469525
+8/home/cccoats2/ece411/sp18/testbench_example/testbench.sv
+F/home/cccoats2/ece411/sp18/testbench_example/testbench.sv
+L0 1
+Z3 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1520471137.344464
+!s107 /home/cccoats2/ece411/sp18/testbench_example/testbench.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+/home/cccoats2/ece411/sp18/testbench_example|/home/cccoats2/ece411/sp18/testbench_example/testbench.sv|
+!s101 -O0
+Z4 o-sv -work work -O0
+Z5 !s92 -sv -work work +incdir+/home/cccoats2/ece411/sp18/testbench_example -O0
+vxor2
+R1
+I`1W>WBMKhn[_PC:^<@43G2
+VF<:ZbSfNX2QE;:cC;VVm30
+S1
+R2
+w1520458948
+8/home/cccoats2/ece411/sp18/testbench_example/xor2.sv
+F/home/cccoats2/ece411/sp18/testbench_example/xor2.sv
+L0 1
+R3
+r1
+31
+R4
+!i10b 1
+!s100 YW7AKF5@ZVUL6PbjLz5d91
+!s105 xor2_sv_unit
+!s85 0
+!s108 1520471137.226764
+!s107 /home/cccoats2/ece411/sp18/testbench_example/xor2.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+/home/cccoats2/ece411/sp18/testbench_example|/home/cccoats2/ece411/sp18/testbench_example/xor2.sv|
+!s101 -O0
+R5
