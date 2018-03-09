@@ -1,8 +1,8 @@
-module stage_MEM (
+module stage_IF (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule: stage_MEM
+endmodule: stage_IF

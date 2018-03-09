@@ -1,8 +1,8 @@
-module stage_writeback (
+module stage_WB (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule
+endmodule: stage_WB

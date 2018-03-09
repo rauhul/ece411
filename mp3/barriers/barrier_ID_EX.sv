@@ -1,8 +1,8 @@
-module stage_MEM (
+module barrier_ID_EX (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule: stage_MEM
+endmodule: barrier_ID_EX

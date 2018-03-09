@@ -1,8 +1,8 @@
-module stage_decode (
+module barrier_MEM_WB (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule
+endmodule: barrier_MEM_WB

@@ -1,8 +1,8 @@
-module stage_mem (
+module stage_EX (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule
+endmodule: stage_EX

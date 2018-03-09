@@ -1,8 +1,8 @@
-module stage_execute (
+module barrier_EX_MEM (
     /* INPUTS */
     input clk
 
     /* OUTPUTS */
 );
 
-endmodule
+endmodule: barrier_EX_MEM
