@@ -6,6 +6,7 @@ module control_rom
 	output lc3b_control_word ctrl
 );
 
+
 always_comb
 begin
 	/* Default assignments */
@@ -15,10 +16,10 @@ begin
 	/* Assign control signals based on opcode */
 	case(opcode)
 		op_add: begin
-		ctrl.aluop = alu_add;
+		    ctrl.aluop = alu_add;
 		end
 		op_and: begin
-		ctrl.aluop = alu_and;
+		    ctrl.aluop = alu_and;
 		end
 		/* ... other opcodes ... */
 		default: begin

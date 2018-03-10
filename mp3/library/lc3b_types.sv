@@ -16,6 +16,7 @@ typedef struct packed {
              lc3b_aluop aluop;
              logic load_cc;
              logic load_regfile;
+
              /* ... other signals ... */
 } lc3b_control_word;
 

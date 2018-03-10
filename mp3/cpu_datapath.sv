@@ -98,6 +98,13 @@ stage_EX _stage_EX (
     .pcn_out(stage_EX_pcn)
 );
 
+lc3b_control_word barrier_EX_MEM_control;
+lc3b_word barrier_EX_MEM_alu_out;
+lc3b_word barrier_EX_MEM_ir;
+lc3b_word barrier_EX_MEM_pc;
+lc3b_word barrier_EX_MEM_pcn;
+lc3b_word barrier_EX_MEM_sr2;
+
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
@@ -109,35 +116,71 @@ barrier_EX_MEM _barrier_EX_MEM (
     .sr2_in(barrier_ID_EX_sr2),
 
     /* OUTPUTS */
-    .control_out(control_out),
-    .alu_out(alu_out),
-    .ir_out(ir_out),
-    .pc_out(pc_out),
-    .pcn_out(pcn_out),
-    .sr2_out(sr2_out)
+    .control_out(barrier_EX_MEM_control),
+    .alu_out(barrier_EX_MEM_alu_out),
+    .ir_out(barrier_EX_MEM_ir),
+    .pc_out(barrier_EX_MEM_pc),
+    .pcn_out(barrier_EX_MEM_pcn),
+    .sr2_out(barrier_EX_MEM_sr2)
 );
 
 
+//Internal signals: outputs of MEM stage
+lc3b_word stage_MEM_dcache_out;
+lc3b_word stage_MEM_gencc_out;
+//To Do:MEM stage
+
+
+
+
+//Internal signals: outputs of barrier_MEM_WB
+lc3b_cc barrier_MEM_WB_cc_out;
+lc3b_control_word barrier_MEM_WB_control;
+lc3b_word barrier_MEM_WB_alu_out;
+lc3b_word barrier_MEM_WB_ir;
+lc3b_word barrier_MEM_WB_mdr_out;
+lc3b_word barrier_MEM_WB_pc;
+lc3b_word barrier_MEM_WB_pcn;
 
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
-    .cc_in(cc_in),
-    .control_in(control_in),
-    .alu_in(alu_in),
-    .ir_in(ir_in),
-    .mdr_in(mdr_in),
-    .pc_in(pc_in),
-    .pcn_in(pcn_in),
+    .cc_in(stage_MEM_gencc_out),
+    .control_in(barrier_EX_MEM_control),
+    .alu_in(barrier_EX_MEM_alu_out),
+    .ir_in(barrier_EX_MEM_ir),
+    .mdr_in(stage_MEM_dcache_out),
+    .pc_in(barrier_EX_MEM_pc),
+    .pcn_in(barrier_EX_MEM_pcn),
 
     /* OUTPUTS */
-    .cc_out(cc_out),
-    .control_out(control_out),
-    .alu_out(alu_out),
-    .ir_out(ir_out),
-    .mdr_out(mdr_out),
-    .pc_out(pc_out),
-    .pcn_out(pcn_out)
+    .cc_out(barrier_MEM_WB_cc_out),
+    .control_out(barrier_MEM_WB_control),
+    .alu_out(barrier_MEM_WB_alu_out),
+    .ir_out(barrier_MEM_WB_ir),
+    .mdr_out(barrier_MEM_WB_mdr_out),
+    .pc_out(barrier_MEM_WB_pc),
+    .pcn_out(barrier_MEM_WB_pcn)
+);
+
+
+lc3b_word regfiledatamux_out;
+lc3b_word stage_WB_mux2_out;
+lc3b_word stage_WB_control_out;
+
+module stage_WB (
+    /* INPUTS */
+    .clk,
+    .pc_in(barrier_MEM_WB_pc),
+    .pcn_in(barrier_MEM_WB_pcn),
+    .control_in(barrier_MEM_WB_controrl),
+    .ir_in(barrier_MEM_WB_ir),
+    .mdr_in(barrier_MEM_WB_mdr_out),
+    .alu_in(barrier_MEM_WB_alu_out),
+    /* OUTPUTS */
+    .regfiledatamux_out(regfiledatamux_out),
+    .WB_mux2_out(stage_WB_mux2_out),
+    .control_out(stage_WB_control_out)
 );
 
 
