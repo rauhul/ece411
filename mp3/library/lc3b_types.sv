@@ -33,11 +33,6 @@ typedef struct packed {
 
 } lc3b_control_word;
 
-/* OLD */
-typedef logic  [7:0] lc3b_byte;
-
-typedef logic  [1:0] lc3b_mem_wmask;
-
 typedef enum bit [3:0] {
     op_add  = 4'b0001,
     op_and  = 4'b0101,
@@ -56,6 +51,13 @@ typedef enum bit [3:0] {
     op_str  = 4'b0111,
     op_trap = 4'b1111
 } lc3b_opcode;
+
+
+/* OLD */
+typedef logic  [7:0] lc3b_byte;
+
+typedef logic  [1:0] lc3b_mem_wmask;
+
 
 typedef enum bit [3:0] {
     alu_add,

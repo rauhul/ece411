@@ -17,10 +17,12 @@ module stage_ID (
 lc3b_word regfile_sr1_mux_out;
 lc3b_word regfile_sr2_mux_out;
 
-// TODO: Complete control_rom
-control_rom rom (
-    .opcode(ir_in[15:12]),
-    .ctrl(control_out),
+control_rom _control_rom (
+    /* INPUTS */
+    .ir_in,
+
+    /* OUTPUTS */
+    .control_out
 );
 
 mux2 #(.width(3)) regfile_sr1_mux (
