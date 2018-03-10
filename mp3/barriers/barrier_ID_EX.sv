@@ -43,9 +43,9 @@ end
 
 /* ALWAYS */
 assign control_out = control;
-assign ir_out = ir;
-assign pc_out = pc;
-assign sr1_out = sr1;
-assign sr2_out = sr2;
+assign ir_out      = ir;
+assign pc_out      = pc;
+assign sr1_out     = sr1;
+assign sr2_out     = sr2;
 
 endmodule : barrier_ID_EX

@@ -2,6 +2,7 @@ package lc3b_types;
 
 /* MP3 */
 typedef logic [15:0] lc3b_word;
+typedef logic  [2:0] lc3b_cc;
 
 typedef struct packed {
              lc3b_opcode opcode;
@@ -22,7 +23,6 @@ typedef logic  [4:0] lc3b_imm5;
 typedef logic  [3:0] lc3b_imm4;
 
 typedef logic  [2:0] lc3b_reg;
-typedef logic  [2:0] lc3b_nzp;
 typedef logic  [1:0] lc3b_mem_wmask;
 
 typedef enum bit [3:0] {
