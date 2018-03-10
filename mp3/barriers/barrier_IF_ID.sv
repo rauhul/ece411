@@ -20,13 +20,13 @@ initial begin
     pc = 0;
 end
 
-/* CLOCK */
+/* FF */
 always_ff @(posedge clk) begin
     ir = ir_in;
     pc = pc_in;
 end
 
-/* ALWAYS */
+/* COMB */
 assign ir_out = ir;
 assign pc_out = pc;
 

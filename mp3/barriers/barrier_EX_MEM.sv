@@ -8,7 +8,7 @@ module barrier_EX_MEM (
     input lc3b_word ir_in,
     input lc3b_word pc_in,
     input lc3b_word pcn_in,
-    input lc3b_word sr1_in,
+    input lc3b_word sr2_in,
 
     /* OUTPUTS */
     output lc3b_control_word control_out,
@@ -16,7 +16,7 @@ module barrier_EX_MEM (
     output lc3b_word ir_out,
     output lc3b_word pc_out,
     output lc3b_word pcn_out,
-    output lc3b_word sr1_out
+    output lc3b_word sr2_out
 );
 
 lc3b_control_word control;
@@ -24,7 +24,7 @@ lc3b_word alu;
 lc3b_word ir;
 lc3b_word pc;
 lc3b_word pcn;
-lc3b_word sr1;
+lc3b_word sr2;
 
 /* INITIAL */
 initial begin
@@ -33,25 +33,25 @@ initial begin
     ir      = 0;
     pc      = 0;
     pcn     = 0;
-    sr1     = 0;
+    sr2     = 0;
 end
 
-/* CLOCK */
+/* FF */
 always_ff @(posedge clk) begin
     control = control_in;
     alu     = alu_in;
     ir      = ir_in;
     pc      = pc_in;
     pcn     = pcn_in;
-    sr1     = sr1_in;
+    sr2     = sr2_in;
 end
 
-/* ALWAYS */
+/* COMB */
 assign control_out = control;
 assign alu_out     = alu;
 assign ir_out      = ir;
 assign pc_out      = pc;
 assign pcn_out     = pcn;
-assign sr1_out     = sr1;
+assign sr2_out     = sr2;
 
 endmodule : barrier_EX_MEM

@@ -32,7 +32,7 @@ initial begin
     sr2     = 0;
 end
 
-/* CLOCK */
+/* FF */
 always_ff @(posedge clk) begin
     control = control_in;
     ir      = ir_in;
@@ -41,7 +41,7 @@ always_ff @(posedge clk) begin
     sr2     = sr2_in;
 end
 
-/* ALWAYS */
+/* COMB */
 assign control_out = control;
 assign ir_out      = ir;
 assign pc_out      = pc;

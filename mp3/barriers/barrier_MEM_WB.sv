@@ -40,7 +40,7 @@ initial begin
     pcn     = 0;
 end
 
-/* CLOCK */
+/* FF */
 always_ff @(posedge clk) begin
     cc      = cc_in;
     control = control_in;
@@ -51,7 +51,7 @@ always_ff @(posedge clk) begin
     pcn     = pcn_in;
 end
 
-/* ALWAYS */
+/* COMB */
 assign cc_out      = cc;
 assign control_out = control;
 assign alu_out     = alu;
