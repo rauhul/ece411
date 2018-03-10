@@ -1,30 +1,69 @@
 import lc3b_types::*;
 
-module cpu_datapath (
-    /* INPUTS */
-    input clk,
-
-    /* OUTPUTS */
+module cpu_datapath(
+	input clk,
+	
 );
 
-barrier_IF_ID _barrier_IF_ID (
+//Internal Signals
+
+//Control rom
+lc3b_control_word ctrl;
+
+logic [1:0] pcmux_sel;
+logic load_pc;
+lc3b_word pc_plus2_out;
+lc3b_word barrier_IF_ID_pc_out;
+lc3b_word barrier_IF_ID_ir_out;
+lc3b_word pcmux_out;
+lc3b_word pc_out;
+lc3b_word mdr_out;
+lc3b_word pcn_out;
+
+
+controlrom controlrom
+(
+	.opcode(ir_out[15:12]),
+	.imm5(ir_out_IF_ID[5]),
+	.pc(pc_out_IF_ID),
+	.ctrl(ctrl)
+)
+
+stage_IF
+(
+   /* INPUTS */
+   .clk,
+	.pcmux_sel(pc_mux_sel),
+	.load_pc(load_pc),
+	.sr1_out(sr1_out),
+	.pcn_out(pcn_out),
+	.mdr_out(mdr_out),
+   /* OUTPUTS */
+
+	output lc3b_word .pc_plus2_out(pc_plus2_out),
+	output lc3b_word .pcmux_out(pcmux_out),
+	output lc3b_word .pc_out(pc_out)
+	
+);
+
+barrier_IF_ID barrier_IF_ID
+(
     /* INPUTS */
     .clk,
-    .ir_in(ir_in),
-    .pc_in(pc_in),
-
+    .ir_in(pc_out),
+    .pc_in(pc_plus2_out),
+	 
     /* OUTPUTS */
     .ir_out(ir_out),
-    .pc_out(pc_out)
+    .pc_out(pc_out_IF_ID)
 );
-
-
 
 lc3b_control_word barrier_ID_EX_control;
 lc3b_word barrier_ID_EX_ir;
 lc3b_word barrier_ID_EX_pc;
 lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_ID_EX_sr2;
+
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
@@ -44,6 +83,7 @@ barrier_ID_EX _barrier_ID_EX (
 
 lc3b_word stage_EX_alu;
 lc3b_word stage_EX_pcn;
+
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
@@ -99,5 +139,6 @@ barrier_MEM_WB _barrier_MEM_WB (
     .pc_out(pc_out),
     .pcn_out(pcn_out)
 );
+
 
 endmodule : cpu_datapath
