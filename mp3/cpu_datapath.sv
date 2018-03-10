@@ -1,8 +1,8 @@
 import lc3b_types::*;
 
 module cpu_datapath(
-	input clk,
-	
+    input clk,
+
 );
 
 //Internal Signals
@@ -13,65 +13,71 @@ lc3b_control_word ctrl;
 logic [1:0] pcmux_sel;
 logic load_pc;
 lc3b_word pc_plus2_out;
-lc3b_word barrier_IF_ID_pc_out;
-lc3b_word barrier_IF_ID_ir_out;
 lc3b_word pcmux_out;
 lc3b_word pc_out;
 lc3b_word mdr_out;
 lc3b_word pcn_out;
+stage_IF _stage_IF (
+    /* INPUTS */
+    .clk,
+    .pcmux_sel(pc_mux_sel),
+    .load_pc(load_pc),
+    .sr1_out(sr1_out),
+    .pcn_out(pcn_out),
+    .mdr_out(mdr_out),
 
-
-controlrom controlrom
-(
-	.opcode(ir_out[15:12]),
-	.imm5(ir_out_IF_ID[5]),
-	.pc(pc_out_IF_ID),
-	.ctrl(ctrl)
-)
-
-stage_IF
-(
-   /* INPUTS */
-   .clk,
-	.pcmux_sel(pc_mux_sel),
-	.load_pc(load_pc),
-	.sr1_out(sr1_out),
-	.pcn_out(pcn_out),
-	.mdr_out(mdr_out),
-   /* OUTPUTS */
-
-	output lc3b_word .pc_plus2_out(pc_plus2_out),
-	output lc3b_word .pcmux_out(pcmux_out),
-	output lc3b_word .pc_out(pc_out)
-	
+    /* OUTPUTS */
+    .pc_plus2_out(pc_plus2_out),
+    .pcmux_out(pcmux_out),
+    .pc_out(pc_out)
 );
 
-barrier_IF_ID barrier_IF_ID
-(
+
+lc3b_word barrier_IF_ID_ir;
+lc3b_word barrier_IF_ID_pc;
+barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
     .ir_in(pc_out),
     .pc_in(pc_plus2_out),
-	 
+
     /* OUTPUTS */
-    .ir_out(ir_out),
-    .pc_out(pc_out_IF_ID)
+    .ir_out(barrier_IF_ID_ir),
+    .pc_out(barrier_IF_ID_pc)
 );
+
+
+lc3b_control_word stage_ID_control;
+lc3b_control_word stage_ID_sr1;
+lc3b_control_word stage_ID_sr2;
+stage_ID _stage_ID (
+    /* INPUTS */
+    .clk(clk),
+    .ir_in(barrier_IF_ID_ir),
+    .regfile_data_in( ERROR, THESE SHOULD COME FROM WB ),
+    .regfile_load_in( ERROR, THESE SHOULD COME FROM WB ),
+    .regfile_dest_in( ERROR, THESE SHOULD COME FROM WB ),
+
+    /* OUTPUTS */
+    .control_out(stage_ID_control)
+    .sr1_out(stage_ID_sr1),
+    .sr2_out(stage_ID_sr2)
+);
+
 
 lc3b_control_word barrier_ID_EX_control;
 lc3b_word barrier_ID_EX_ir;
 lc3b_word barrier_ID_EX_pc;
 lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_ID_EX_sr2;
-
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
-    .control_in(control_in),
-    .ir_in(ir_in),
-    .pc_in(pc_in),
-    .sr1_in(sr1_in),
-    .sr2_in(sr2_in),
+    .control_in(stage_ID_control),
+    .ir_in(barrier_IF_ID_ir),
+    .pc_in(barrier_IF_ID_pc),
+    .sr1_in(stage_ID_sr1),
+    .sr2_in(stage_ID_sr2),
 
     /* OUTPUTS */
     .control_out(barrier_ID_EX_control),
@@ -81,9 +87,9 @@ barrier_ID_EX _barrier_ID_EX (
     .sr2_out(barrier_ID_EX_sr2)
 );
 
+
 lc3b_word stage_EX_alu;
 lc3b_word stage_EX_pcn;
-
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
@@ -98,13 +104,13 @@ stage_EX _stage_EX (
     .pcn_out(stage_EX_pcn)
 );
 
+
 lc3b_control_word barrier_EX_MEM_control;
 lc3b_word barrier_EX_MEM_alu_out;
 lc3b_word barrier_EX_MEM_ir;
 lc3b_word barrier_EX_MEM_pc;
 lc3b_word barrier_EX_MEM_pcn;
 lc3b_word barrier_EX_MEM_sr2;
-
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
@@ -128,20 +134,19 @@ barrier_EX_MEM _barrier_EX_MEM (
 //Internal signals: outputs of MEM stage
 lc3b_word stage_MEM_dcache_out;
 lc3b_word stage_MEM_gencc_out;
-//To Do:MEM stage
 
 
+// STAGE_MEM
 
 
 //Internal signals: outputs of barrier_MEM_WB
-lc3b_cc barrier_MEM_WB_cc_out;
+lc3b_cc barrier_MEM_WB_cc;
 lc3b_control_word barrier_MEM_WB_control;
-lc3b_word barrier_MEM_WB_alu_out;
+lc3b_word barrier_MEM_WB_alu;
 lc3b_word barrier_MEM_WB_ir;
-lc3b_word barrier_MEM_WB_mdr_out;
+lc3b_word barrier_MEM_WB_mdr;
 lc3b_word barrier_MEM_WB_pc;
 lc3b_word barrier_MEM_WB_pcn;
-
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
@@ -154,11 +159,11 @@ barrier_MEM_WB _barrier_MEM_WB (
     .pcn_in(barrier_EX_MEM_pcn),
 
     /* OUTPUTS */
-    .cc_out(barrier_MEM_WB_cc_out),
+    .cc_out(barrier_MEM_WB_cc),
     .control_out(barrier_MEM_WB_control),
-    .alu_out(barrier_MEM_WB_alu_out),
+    .alu_out(barrier_MEM_WB_alu),
     .ir_out(barrier_MEM_WB_ir),
-    .mdr_out(barrier_MEM_WB_mdr_out),
+    .mdr_out(barrier_MEM_WB_mdr),
     .pc_out(barrier_MEM_WB_pc),
     .pcn_out(barrier_MEM_WB_pcn)
 );
@@ -167,8 +172,7 @@ barrier_MEM_WB _barrier_MEM_WB (
 lc3b_word regfiledatamux_out;
 lc3b_word stage_WB_mux2_out;
 lc3b_word stage_WB_control_out;
-
-module stage_WB (
+stage_WB _stage_WB (
     /* INPUTS */
     .clk,
     .pc_in(barrier_MEM_WB_pc),
@@ -177,11 +181,11 @@ module stage_WB (
     .ir_in(barrier_MEM_WB_ir),
     .mdr_in(barrier_MEM_WB_mdr_out),
     .alu_in(barrier_MEM_WB_alu_out),
+
     /* OUTPUTS */
     .regfiledatamux_out(regfiledatamux_out),
     .WB_mux2_out(stage_WB_mux2_out),
     .control_out(stage_WB_control_out)
 );
-
 
 endmodule : cpu_datapath

@@ -15,12 +15,6 @@ module stage_EX (
 lc3b_word pc_adder_mux2_out;
 lc3b_word general_alu_mux8_out;
 
-/* INITIAL */
-
-/* FF */
-
-/* COMB */
-
 // TODO: Update sel when the control_word is better defined
 mux2 pc_adder_mux2 (
     /* INPUTS */
