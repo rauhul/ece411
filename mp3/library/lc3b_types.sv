@@ -1,6 +1,17 @@
 package lc3b_types;
 
+/* MP3 */
 typedef logic [15:0] lc3b_word;
+
+typedef struct packed {
+             lc3b_opcode opcode;
+             lc3b_aluop aluop;
+             logic load_cc;
+             logic load_regfile;
+             /* ... other signals ... */
+} lc3b_control_word;
+
+/* OLD */
 typedef logic  [7:0] lc3b_byte;
 
 typedef logic [10:0] lc3b_offset11;
