@@ -52,13 +52,6 @@ typedef enum bit [3:0] {
     op_trap = 4'b1111
 } lc3b_opcode;
 
-
-/* OLD */
-typedef logic  [7:0] lc3b_byte;
-
-typedef logic  [1:0] lc3b_mem_wmask;
-
-
 typedef enum bit [3:0] {
     alu_add,
     alu_and,
@@ -68,6 +61,10 @@ typedef enum bit [3:0] {
     alu_srl,
     alu_sra
 } lc3b_aluop;
+
+/* OLD */
+typedef logic  [7:0] lc3b_byte;
+typedef logic  [1:0] lc3b_mem_wmask;
 
 typedef logic [127:0] lc3b_cache_word;
 // ADDR: {[15:7] tag, [6:4] index, [3:0] offset }
