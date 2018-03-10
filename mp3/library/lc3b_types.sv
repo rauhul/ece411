@@ -13,12 +13,24 @@ typedef logic  [4:0] lc3b_imm5;
 typedef logic  [3:0] lc3b_imm4;
 
 typedef struct packed {
-             lc3b_opcode opcode;
-             lc3b_aluop aluop;
-             logic load_cc;
-             logic load_regfile;
+    /* IF */
 
-             /* ... other signals ... */
+    /* ID */
+    logic regfile_sr1_mux_sel;
+    logic regfile_sr2_mux_sel;
+
+    /* EX */
+    logic pc_adder_mux_sel;
+    logic [2:0] general_alu_mux_sel;
+    lc3b_aluop general_alu_op;
+
+    /* MEM */
+
+    /* WB */
+    logic regfile_data_mux_sel;
+    logic regfile_dest_mux_sel;
+    logic regfile_load;
+
 } lc3b_control_word;
 
 /* OLD */

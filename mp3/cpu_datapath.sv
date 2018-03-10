@@ -5,11 +5,8 @@ module cpu_datapath(
 
 );
 
-//Internal Signals
 
-//Control rom
-lc3b_control_word ctrl;
-
+/* STAGE IF */
 logic [1:0] pcmux_sel;
 logic load_pc;
 lc3b_word pc_plus2_out;
@@ -33,6 +30,7 @@ stage_IF _stage_IF (
 );
 
 
+/* BARRIER IF <-> ID */
 lc3b_word barrier_IF_ID_ir;
 lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
@@ -47,6 +45,10 @@ barrier_IF_ID _barrier_IF_ID (
 );
 
 
+/* STAGE ID */
+lc3b_reg stage_WB_regfile_dest;
+lc3b_word stage_WB_regfile_data;
+lc3b_word stage_WB_regfile_load;
 lc3b_control_word stage_ID_control;
 lc3b_control_word stage_ID_sr1;
 lc3b_control_word stage_ID_sr2;
@@ -54,9 +56,9 @@ stage_ID _stage_ID (
     /* INPUTS */
     .clk(clk),
     .ir_in(barrier_IF_ID_ir),
-    .regfile_data_in( ERROR, THESE SHOULD COME FROM WB ),
-    .regfile_load_in( ERROR, THESE SHOULD COME FROM WB ),
-    .regfile_dest_in( ERROR, THESE SHOULD COME FROM WB ),
+    .regfile_dest_in(stage_WB_regfile_dest),
+    .regfile_data_in(stage_WB_regfile_data),
+    .regfile_load_in(stage_WB_regfile_load),
 
     /* OUTPUTS */
     .control_out(stage_ID_control)
@@ -65,6 +67,7 @@ stage_ID _stage_ID (
 );
 
 
+/* BARRIER ID <-> EX */
 lc3b_control_word barrier_ID_EX_control;
 lc3b_word barrier_ID_EX_ir;
 lc3b_word barrier_ID_EX_pc;
@@ -88,6 +91,7 @@ barrier_ID_EX _barrier_ID_EX (
 );
 
 
+/* STAGE EX */
 lc3b_word stage_EX_alu;
 lc3b_word stage_EX_pcn;
 stage_EX _stage_EX (
@@ -105,6 +109,7 @@ stage_EX _stage_EX (
 );
 
 
+/* BARRIER EX <-> MEM */
 lc3b_control_word barrier_EX_MEM_control;
 lc3b_word barrier_EX_MEM_alu_out;
 lc3b_word barrier_EX_MEM_ir;
@@ -131,15 +136,14 @@ barrier_EX_MEM _barrier_EX_MEM (
 );
 
 
+/* STAGE MEM */
 //Internal signals: outputs of MEM stage
 lc3b_word stage_MEM_dcache_out;
 lc3b_word stage_MEM_gencc_out;
 
 
-// STAGE_MEM
 
-
-//Internal signals: outputs of barrier_MEM_WB
+/* BARRIER MEM <-> WB */
 lc3b_cc barrier_MEM_WB_cc;
 lc3b_control_word barrier_MEM_WB_control;
 lc3b_word barrier_MEM_WB_alu;
@@ -169,23 +173,24 @@ barrier_MEM_WB _barrier_MEM_WB (
 );
 
 
-lc3b_word regfiledatamux_out;
-lc3b_word stage_WB_mux2_out;
-lc3b_word stage_WB_control_out;
+/* STAGE WB */
+/* stage_WB_regfile_* are defined above stage_ID
+ * they must be defined the before use, hence the placement
+ */
 stage_WB _stage_WB (
     /* INPUTS */
     .clk,
+    .control_in(barrier_MEM_WB_control),
+    .alu_in(barrier_MEM_WB_alu),
+    .ir_in(barrier_MEM_WB_ir),
+    .mdr_in(barrier_MEM_WB_mdr),
     .pc_in(barrier_MEM_WB_pc),
     .pcn_in(barrier_MEM_WB_pcn),
-    .control_in(barrier_MEM_WB_controrl),
-    .ir_in(barrier_MEM_WB_ir),
-    .mdr_in(barrier_MEM_WB_mdr_out),
-    .alu_in(barrier_MEM_WB_alu_out),
 
     /* OUTPUTS */
-    .regfiledatamux_out(regfiledatamux_out),
-    .WB_mux2_out(stage_WB_mux2_out),
-    .control_out(stage_WB_control_out)
+    .regfile_dest_out(stage_WB_regfile_dest),
+    .regfile_data_out(stage_WB_regfile_data),
+    .regfile_load_out(stage_WB_regfile_load)
 );
 
 endmodule : cpu_datapath
