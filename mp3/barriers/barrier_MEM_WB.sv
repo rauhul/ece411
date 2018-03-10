@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module barrier_MEM_WB (
     /* INPUTS */
     input clk,
