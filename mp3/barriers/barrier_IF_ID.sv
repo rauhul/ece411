@@ -30,4 +30,4 @@ end
 assign ir_out = ir;
 assign pc_out = pc;
 
-endmodule: barrier_IF_ID
+endmodule : barrier_IF_ID

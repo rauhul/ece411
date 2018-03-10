@@ -48,4 +48,4 @@ assign pc_out = pc;
 assign sr1_out = sr1;
 assign sr2_out = sr2;
 
-endmodule: barrier_ID_EX
+endmodule : barrier_ID_EX
