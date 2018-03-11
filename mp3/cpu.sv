@@ -1,6 +1,6 @@
 import lc3b_types::*;
 
-module cpu_datapath (
+module cpu (
     /* INPUTS */
     input clk,
 

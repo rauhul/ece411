@@ -12,7 +12,7 @@ always #5 clk = ~clk;
 wishbone instruction_memory_wishbone(clk);
 wishbone data_memory_wishbone(clk);
 
-cpu_datapath dut (
+mp3 dut (
     .clk,
     .instruction_memory_wishbone,
     .data_memory_wishbone
