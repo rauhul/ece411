@@ -121,7 +121,7 @@ always_comb begin
             control_out.cc_load = 1; // loac cc
             control_out.cc_gen_mux_sel = 2'b10; // mdr
             control_out.data_memory_write_enable = 0; // read
-            control_out.data_memory_addr_mux_sel = 2'b10; // alu
+            control_out.data_memory_addr_mux_sel = 2'b01; // alu
             control_out.data_memory_byte_sel = 2'b11; // word
 
             /* WB */
@@ -143,7 +143,7 @@ always_comb begin
 
             /* MEM */
             control_out.data_memory_write_enable = 1; // write
-            control_out.data_memory_addr_mux_sel = 2'b10; // alu
+            control_out.data_memory_addr_mux_sel = 2'b01; // alu
             control_out.data_memory_byte_sel = 2'b11; // word
 
             /* WB */
