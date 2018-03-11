@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module stage_EX (
     /* INPUTS */
     input clk,
@@ -9,17 +11,32 @@ module stage_EX (
 
     /* OUTPUTS */
     output lc3b_word alu_out,
+  0ns
     output lc3b_word pcn_out
 );
 
 lc3b_word pc_adder_mux_out;
 lc3b_word general_alu_mux_out;
 
+lc3b_word imm4;
+lc3b_word imm5;
+lc3b_word offset6_b; // byte aligned
+lc3b_word offset6_w; // word aligned
+lc3b_word offset9;
+lc3b_word offset11;
+
+assign imm4    = $unsigned( ir_in[ 3:0]);
+assign imm5      = $signed( ir_in[ 4:0]);
+assign offset6_b = $signed( ir_in[ 5:0]);  
+assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
+assign offset9   = $signed({ir_in[ 8:0], 1'b0});
+assign offset11  = $signed({ir_in[10:0], 1'b0});
+
 mux2 pc_adder_mux (
     /* INPUTS */
     .sel(control_in.pc_adder_mux_sel),
-    .a( $signed({ir_in[8:0],  1'b0}) ), // PCoffset9
-    .b( $signed({ir_in[10:0], 1'b0}) ), // PCoffset11
+    .a(offset9),
+    .b(offset11), 
 
     /* OUTPUTS */
     .f(pc_adder_mux_out)
@@ -35,15 +52,18 @@ adder pc_adder (
 );
 
 mux8 general_alu_mux (
+    /* INPUTS */
     .sel(control_in.general_alu_mux_sel),
     .in000(sr2_in),
-    .in001( $unsigned({ir_in[3:0]})       ), // imm4
-    .in010(   $signed({ir_in[4:0]})       ), // imm5
-    .in011(   $signed({ir_in[5:0]})       ), // offset6
-    .in100(   $signed({ir_in[5:0], 1'b0}) ), // offset6
-    .in101('x),
-    .in110('x),
-    .in111('x),
+    .in001(imm4),
+    .in010(imm5),
+    .in011(offset6_b),
+    .in100(offset6_w),
+    .in101(16'bx),
+    .in110(16'bx),
+    .in111(16'bx),
+
+    /* OUTPUTS */
     .out(general_alu_mux_out)
 );
 

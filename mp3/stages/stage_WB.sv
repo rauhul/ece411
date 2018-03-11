@@ -13,8 +13,13 @@ module stage_WB (
     /* OUTPUTS */
     output lc3b_reg regfile_dest_out,
     output lc3b_word regfile_data_out,
-    output lc3b_word regfile_load_out,
+    output lc3b_word regfile_load_out
 );
+
+lc3b_word mdr_low_in;
+lc3b_word mdr_high_in;
+assign mdr_low_in  = $unsigned({mdr_in[ 7:0]});
+assign mdr_high_in = $unsigned({mdr_in[15:8]});
 
 mux2 #(.width(3)) regfile_dest_mux (
     /* INPUTS */
@@ -32,11 +37,11 @@ mux8 regfile_data_mux (
     .in000(pc_in),
     .in001(pcn_in),
     .in010(mdr_in),
-    .in011($unsigned({mdr_in[ 7:0]})), // mdr_low
-    .in100($unsigned({mdr_in[15:8]})), // mdr_high
+    .in011(mdr_low_in),
+    .in100(mdr_high_in),
     .in101(alu_in),
-    .in110('x),
-    .in111('x),
+    .in110(16'bx),
+    .in111(16'bx),
 
     /* OUTPUTS */
     .out(regfile_data_out)

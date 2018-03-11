@@ -9,14 +9,15 @@ module stage_IF (
     input lc3b_word sr1_in,
 
     /* OUTPUTS */
-    output lc3b_word
     output lc3b_word ir_out,
-    output lc3b_word pc_out,
     output lc3b_word pc_plus2_out,
 
     /* MEMORY INTERFACE */
     wishbone.master instruction_memory_wishbone
 );
+
+lc3b_word pc_out;
+lc3b_word pc_mux_out;
 
 mux4 pc_mux (
     /* INPUTS */
@@ -27,14 +28,14 @@ mux4 pc_mux (
     .d(mdr_in),
 
     /* OUTPUTS */
-    .f(pcmux_out)
+    .f(pc_mux_out)
 );
 
 register pc (
     /* INPUTS */
     .clk,
     .load(1'b1),
-    .in(pcmux_out),
+    .in(pc_mux_out),
 
     /* OUTPUTS */
     .out(pc_out)
@@ -52,10 +53,14 @@ plus2 pc_plus2 (
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
 assign instruction_memory_wishbone.CYC   = 'x;
 assign instruction_memory_wishbone.DAT_M = 'x;
-assign instruction_memory_wishbone.SEL   = 'x;
 assign instruction_memory_wishbone.STB   = 'x;
 assign instruction_memory_wishbone.WE    = 1'b0;
 
-assign ir_out = instruction_memory_wishbone.DAT_S[pc[3:1]*16 +: 16];
+always_comb begin
+    instruction_memory_wishbone.SEL = 0;
+    instruction_memory_wishbone.SEL[pc_out[3:1]*2 +: 2] = 2'b11;
+end
+
+assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
 
 endmodule : stage_IF

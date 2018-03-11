@@ -16,19 +16,19 @@ module cpu (
 lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_EX_MEM_pcn;
 lc3b_word barrier_MEM_WB_mdr;
-lc3b_word stage_IF_pc;
+lc3b_word stage_IF_ir;
 lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .pc_mux_sel(<>),
+    .pc_mux_sel(),
     .mdr_in(barrier_MEM_WB_mdr),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr1_in(barrier_ID_EX_sr1),
 
     /* OUTPUTS */
-    .pc_out(stage_IF_pc),
-    .pc_plus2_out(stage_IF_pc_plus2)
+    .ir_out(stage_IF_ir),
+    .pc_plus2_out(stage_IF_pc_plus2),
 
     /* MEMORY INTERFACE */
     .instruction_memory_wishbone
@@ -41,7 +41,7 @@ lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
-    .ir_in( ERROR TODO CONNECT TO MEMORY ),
+    .ir_in(stage_IF_ir),
     .pc_in(stage_IF_pc_plus2),
 
     /* OUTPUTS */
@@ -66,7 +66,7 @@ stage_ID _stage_ID (
     .regfile_load_in(stage_WB_regfile_load),
 
     /* OUTPUTS */
-    .control_out(stage_ID_control)
+    .control_out(stage_ID_control),
     .sr1_out(stage_ID_sr1),
     .sr2_out(stage_ID_sr2)
 );
@@ -207,4 +207,4 @@ stage_WB _stage_WB (
     .regfile_load_out(stage_WB_regfile_load)
 );
 
-endmodule : cpu_datapath
+endmodule : cpu

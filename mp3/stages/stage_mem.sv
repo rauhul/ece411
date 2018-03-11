@@ -17,18 +17,21 @@ module stage_MEM (
 );
 
 lc3b_cc gencc_out;
-lc3b_cc gencc_mux_out;
+lc3b_word gencc_mux_out;
 lc3b_word internal_mdr_out;
-logic [11:0] data_memory_addr_mux_out;
+lc3b_word data_memory_addr_mux_out;
+
+lc3b_word trapvect8;
+assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
 /* CC */
 mux4 gencc_mux (
     /* INPUTS */
-    .sel(gencc_in_mux_sel),
+    .sel(control_in.gencc_in_mux_sel),
     .a(alu_in),
     .b(mdr_out),
     .c(sr2_in),
-    .d('x),
+    .d(16'bx),
 
     /* OUTPUTS */
     .f(gencc_mux_out)
@@ -55,11 +58,14 @@ register #(.width(3)) cc (
 
 /* MEMORY INTERFACE */
 mux4 data_memory_addr_mux (
+    /* INPUTS */
     .sel(control_in.data_memory_addr_mux_sel),
-    .a( $signed({ir_in[7:0], 1'b0}) ),
+    .a(trapvect8),
     .b(alu_in),
     .c(internal_mdr_out),
-    .d('x),
+    .d(16'bx),
+	 
+	 /* OUTPUTS */
     .f(data_memory_addr_mux_out)
 );
 
@@ -73,7 +79,7 @@ always_comb begin
     data_memory_wishbone.SEL = 16'b0;
     data_memory_wishbone.SEL[data_memory_addr_mux_out[3:1]*2 +: 2] = control_in.data_memory_byte_sel;
 
-    data_memory_wishbone.DAT_M = 128'x;
+    data_memory_wishbone.DAT_M = 'x;
     data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_in;
 end
 

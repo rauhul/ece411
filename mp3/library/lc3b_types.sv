@@ -12,6 +12,16 @@ typedef logic  [5:0] lc3b_offset6;
 typedef logic  [4:0] lc3b_imm5;
 typedef logic  [3:0] lc3b_imm4;
 
+typedef enum bit [3:0] {
+    alu_add,
+    alu_and,
+    alu_not,
+    alu_pass,
+    alu_sll,
+    alu_srl,
+    alu_sra
+} lc3b_aluop;
+
 typedef struct packed {
     /* IF */
 
@@ -25,9 +35,15 @@ typedef struct packed {
     lc3b_aluop general_alu_op;
 
     /* MEM */
-
+    logic cc_load;
+    logic [1:0] gencc_in_mux_sel;
+    logic internal_mdr_load;
+    logic data_memory_write_enable;
+    logic [1:0] data_memory_addr_mux_sel;
+    logic [1:0] data_memory_byte_sel;
+	 
     /* WB */
-    logic regfile_data_mux_sel;
+    logic [2:0] regfile_data_mux_sel;
     logic regfile_dest_mux_sel;
     logic regfile_load;
 
@@ -51,16 +67,6 @@ typedef enum bit [3:0] {
     op_str  = 4'b0111,
     op_trap = 4'b1111
 } lc3b_opcode;
-
-typedef enum bit [3:0] {
-    alu_add,
-    alu_and,
-    alu_not,
-    alu_pass,
-    alu_sll,
-    alu_srl,
-    alu_sra
-} lc3b_aluop;
 
 /* OLD */
 typedef logic  [7:0] lc3b_byte;

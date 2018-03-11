@@ -3,7 +3,7 @@ import lc3b_types::*;
 module gencc
 (
     input lc3b_word in,
-    output lc3b_nzp out
+    output lc3b_cc out
 );
 
 always_comb

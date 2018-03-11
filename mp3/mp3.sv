@@ -19,4 +19,4 @@ cpu _cpu (
 
 // caches will go here
 
-endmodule
+endmodule : mp3

@@ -2,7 +2,7 @@ import lc3b_types::*;
 
 module control_rom (
     /* INPUTS */
-    input lc3b_opcode ir_in,
+    input lc3b_word ir_in,
 
     /* OUTPUTS */
     output lc3b_control_word control_out

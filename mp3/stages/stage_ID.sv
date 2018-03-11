@@ -14,8 +14,8 @@ module stage_ID (
     output lc3b_word sr2_out
 );
 
-lc3b_word regfile_sr1_mux_out;
-lc3b_word regfile_sr2_mux_out;
+lc3b_reg regfile_sr1_mux_out;
+lc3b_reg regfile_sr2_mux_out;
 
 control_rom _control_rom (
     /* INPUTS */
