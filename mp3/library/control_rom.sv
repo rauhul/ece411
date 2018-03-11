@@ -57,7 +57,7 @@ always_comb begin
 
             /* MEM */
             control_out.cc_load = 1; // load cc
-            control_out.cc_gen_mux_sel = 2'b01; // alu
+            control_out.cc_gen_mux_sel = 2'b00; // alu
 
             /* WB */
             control_out.regfile_data_mux_sel = 3'b101; // alu
@@ -81,7 +81,7 @@ always_comb begin
 
             /* MEM */
             control_out.cc_load = 1; // load cc
-            control_out.cc_gen_mux_sel = 2'b01; // alu
+            control_out.cc_gen_mux_sel = 2'b00; // alu
 
             /* WB */
             control_out.regfile_data_mux_sel = 3'b101; // alu
@@ -100,7 +100,7 @@ always_comb begin
 
             /* MEM */
             control_out.cc_load = 1; // load cc
-            control_out.cc_gen_mux_sel = 2'b01; // alu
+            control_out.cc_gen_mux_sel = 2'b00; // alu
 
             /* WB */
             control_out.regfile_data_mux_sel = 3'b101; // alu
@@ -121,7 +121,7 @@ always_comb begin
 
             /* MEM */
             control_out.cc_load = 1; // loac cc
-            control_out.cc_gen_mux_sel = 2'b10; // mdr
+            control_out.cc_gen_mux_sel = 2'b01; // mdr
             control_out.data_memory_write_enable = 0; // read
             control_out.data_memory_addr_mux_sel = 2'b01; // alu
             control_out.data_memory_byte_sel = 2'b11; // word
