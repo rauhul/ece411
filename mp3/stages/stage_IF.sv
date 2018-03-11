@@ -54,7 +54,7 @@ assign instruction_memory_wishbone.CYC   = 'x;
 assign instruction_memory_wishbone.DAT_M = 'x;
 assign instruction_memory_wishbone.SEL   = 'x;
 assign instruction_memory_wishbone.STB   = 'x;
-assign instruction_memory_wishbone.WE    = 'x;
+assign instruction_memory_wishbone.WE    = 1'b0;
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc[3:1]*16 +: 16];
 

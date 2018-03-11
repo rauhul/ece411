@@ -1,7 +1,7 @@
 module magic_memory
 (
     wishbone.slave ifetch, // instruction fetch stage, assumed to never write
-	 wishbone.slave memory // memory stage
+    wishbone.slave memory  // memory stage
 );
 
 timeunit 1ns;
@@ -28,19 +28,19 @@ enum int unsigned {
     idle,
     busy,
     respond,
-	 strobe
+    strobe
 } state, next_state;
 
 always_comb
 begin
-	for (int i = 0; i < 16; i++)
-		wdata[i*8 +:8] = memory.SEL[i] ? memory.DAT_M[i*8 +:8] : mem[memory.ADR][i*8 +:8];
+    for (int i = 0; i < 16; i++)
+        wdata[i*8 +:8] = memory.SEL[i] ? memory.DAT_M[i*8 +:8] : mem[memory.ADR][i*8 +:8];
 end
 
 always @(posedge memory.CLK)
 begin
-	if (memory.WE)
-		mem[memory.ADR] <= wdata;
+    if (memory.WE)
+        mem[memory.ADR] <= wdata;
 end
 
 endmodule : magic_memory
