@@ -53,10 +53,10 @@ barrier_IF_ID _barrier_IF_ID (
 /* STAGE ID */
 lc3b_reg stage_WB_regfile_dest;
 lc3b_word stage_WB_regfile_data;
-lc3b_word stage_WB_regfile_load;
+logic stage_WB_regfile_load;
 lc3b_control_word stage_ID_control;
-lc3b_control_word stage_ID_sr1;
-lc3b_control_word stage_ID_sr2;
+lc3b_word stage_ID_sr1;
+lc3b_word stage_ID_sr2;
 stage_ID _stage_ID (
     /* INPUTS */
     .clk,
@@ -142,7 +142,7 @@ barrier_EX_MEM _barrier_EX_MEM (
 
 
 /* STAGE MEM */
-lc3b_word stage_MEM_cc;
+lc3b_cc stage_MEM_cc;
 lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */

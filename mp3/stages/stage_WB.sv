@@ -13,7 +13,7 @@ module stage_WB (
     /* OUTPUTS */
     output lc3b_reg regfile_dest_out,
     output lc3b_word regfile_data_out,
-    output lc3b_word regfile_load_out
+    output logic regfile_load_out
 );
 
 lc3b_word mdr_low_in;

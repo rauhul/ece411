@@ -64,22 +64,22 @@ mux4 data_memory_addr_mux (
     .b(alu_in),
     .c(internal_mdr_out),
     .d(16'bx),
-	 
+
 	 /* OUTPUTS */
     .f(data_memory_addr_mux_out)
 );
 
 // these signals can be x for now
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
-assign data_memory_wishbone.CYC = 'x;
-assign data_memory_wishbone.STB = 'x;
+assign data_memory_wishbone.CYC = 1'bx;
+assign data_memory_wishbone.STB = 1'bx;
 assign data_memory_wishbone.WE = control_in.data_memory_write_enable;
 
 always_comb begin
-    data_memory_wishbone.SEL = 16'b0;
+    data_memory_wishbone.SEL = 0;
     data_memory_wishbone.SEL[data_memory_addr_mux_out[3:1]*2 +: 2] = control_in.data_memory_byte_sel;
 
-    data_memory_wishbone.DAT_M = 'x;
+    data_memory_wishbone.DAT_M = 0;
     data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_in;
 end
 

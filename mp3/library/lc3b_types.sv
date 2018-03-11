@@ -41,7 +41,7 @@ typedef struct packed {
     logic data_memory_write_enable;
     logic [1:0] data_memory_addr_mux_sel;
     logic [1:0] data_memory_byte_sel;
-	 
+
     /* WB */
     logic [2:0] regfile_data_mux_sel;
     logic regfile_dest_mux_sel;

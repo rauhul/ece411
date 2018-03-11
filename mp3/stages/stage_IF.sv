@@ -51,9 +51,9 @@ plus2 pc_plus2 (
 
 // these signals can be x for now
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
-assign instruction_memory_wishbone.CYC   = 'x;
-assign instruction_memory_wishbone.DAT_M = 'x;
-assign instruction_memory_wishbone.STB   = 'x;
+assign instruction_memory_wishbone.CYC   = 1'bx;
+assign instruction_memory_wishbone.DAT_M = 128'bx;
+assign instruction_memory_wishbone.STB   = 1'bx;
 assign instruction_memory_wishbone.WE    = 1'b0;
 
 always_comb begin
