@@ -106,6 +106,62 @@ always_comb begin
             control_out.regfile_load = 1; // load regfile
         end
 
+        /* DATA MEMORY OPS */
+        op_ldr: begin
+            /* IF */
+
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+
+            /* EX */
+            control_out.general_alu_mux_sel = 3'b100; // offset6_w
+            control_out.general_alu_op = alu_add; // add
+
+            /* MEM */
+            control_out.cc_load = 1; // loac cc
+            control_out.cc_gen_mux_sel = 2'b10; // mdr
+            control_out.data_memory_write_enable = 0; // read
+            control_out.data_memory_addr_mux_sel = 2'b10; // alu
+            control_out.data_memory_byte_sel = 2'b11; // word
+
+            /* WB */
+            control_out.regfile_data_mux_sel = 3'b010; // mdr
+            control_out.regfile_dest_mux_sel = 0; // dest
+            control_out.regfile_load = 1; // load regfile
+        end
+
+        op_str: begin
+            /* IF */
+
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+            control_out.regfile_sr2_mux_sel = 1; // dest
+
+            /* EX */
+            control_out.general_alu_mux_sel = 3'b100; // offset6_w
+            control_out.general_alu_op = alu_add; // add
+
+            /* MEM */
+            control_out.data_memory_write_enable = 1; // write
+            control_out.data_memory_addr_mux_sel = 2'b10; // alu
+            control_out.data_memory_byte_sel = 2'b11; // word
+
+            /* WB */
+        end
+
+        /* PC CHANGING OPS */
+        op_br: begin
+            /* IF */
+
+            /* ID */
+
+            /* EX */
+
+            /* MEM */
+
+            /* WB */
+        end
+
         default: begin
             control_out = 0; /* Unknown opcode, set control word to zero */
         end
