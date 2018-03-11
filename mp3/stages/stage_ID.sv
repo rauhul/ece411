@@ -6,7 +6,7 @@ module stage_ID (
     input lc3b_word ir_in,
     input lc3b_reg regfile_dest_in,
     input lc3b_word regfile_data_in,
-    input lc3b_word regfile_load_in,
+    input logic regfile_load_in,
 
     /* OUTPUTS */
     output lc3b_control_word control_out,
