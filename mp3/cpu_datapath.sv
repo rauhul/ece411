@@ -116,7 +116,7 @@ stage_EX _stage_EX (
 
 /* BARRIER EX <-> MEM */
 lc3b_control_word barrier_EX_MEM_control;
-lc3b_word barrier_EX_MEM_alu_out;
+lc3b_word barrier_EX_MEM_alu;
 lc3b_word barrier_EX_MEM_ir;
 lc3b_word barrier_EX_MEM_pc;
 // barrier_EX_MEM_pcn is defined above stage_IF
@@ -133,7 +133,7 @@ barrier_EX_MEM _barrier_EX_MEM (
 
     /* OUTPUTS */
     .control_out(barrier_EX_MEM_control),
-    .alu_out(barrier_EX_MEM_alu_out),
+    .alu_out(barrier_EX_MEM_alu),
     .ir_out(barrier_EX_MEM_ir),
     .pc_out(barrier_EX_MEM_pc),
     .pcn_out(barrier_EX_MEM_pcn),
@@ -142,9 +142,23 @@ barrier_EX_MEM _barrier_EX_MEM (
 
 
 /* STAGE MEM */
-lc3b_word stage_MEM_dcache_out;
-lc3b_word stage_MEM_gencc_out;
+lc3b_word stage_MEM_cc;
+lc3b_word stage_MEM_mdr;
+stage_MEM _stage_MEM (
+    /* INPUTS */
+    .clk,
+    .control_in(barrier_EX_MEM_control),
+    .alu_in(barrier_EX_MEM_alu),
+    .ir_in(barrier_EX_MEM_ir),
+    .sr2_in(barrier_EX_MEM_sr2),
 
+    /* OUTPUTS */
+    .cc_out(stage_MEM_cc),
+    .mdr_out(stage_MEM_mdr),
+
+    /* MEMORY INTERFACE */
+    .data_memory_wishbone
+);
 
 
 /* BARRIER MEM <-> WB */
@@ -158,16 +172,14 @@ lc3b_word barrier_MEM_WB_pcn;
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
-    .cc_in(stage_MEM_gencc_out),
     .control_in(barrier_EX_MEM_control),
-    .alu_in(barrier_EX_MEM_alu_out),
+    .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
-    .mdr_in(stage_MEM_dcache_out),
+    .mdr_in(stage_MEM_mdr),
     .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
 
     /* OUTPUTS */
-    .cc_out(barrier_MEM_WB_cc),
     .control_out(barrier_MEM_WB_control),
     .alu_out(barrier_MEM_WB_alu),
     .ir_out(barrier_MEM_WB_ir),
