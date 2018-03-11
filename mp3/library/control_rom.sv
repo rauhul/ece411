@@ -47,7 +47,7 @@ always_comb begin
             control_out.regfile_sr2_mux_sel = 0; // sr2
 
             /* EX */
-            if (ir_in == 0)
+            if (ir_in[5] == 0)
                 control_out.general_alu_mux_sel = 3'b000; // sr2
             else
                 control_out.general_alu_mux_sel = 3'b010; // imm5
@@ -71,7 +71,7 @@ always_comb begin
             control_out.regfile_sr2_mux_sel = 0; // sr2
 
             /* EX */
-            if (ir_in == 0)
+            if (ir_in[5] == 0)
                 control_out.general_alu_mux_sel = 3'b000; // sr2
             else
                 control_out.general_alu_mux_sel = 3'b010; // imm5
