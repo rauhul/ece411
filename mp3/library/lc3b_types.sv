@@ -36,7 +36,7 @@ typedef struct packed {
 
     /* MEM */
     logic cc_load;
-    logic [1:0] gencc_in_mux_sel;
+    logic [1:0] cc_gen_mux_sel;
     logic internal_mdr_load;
     logic data_memory_write_enable;
     logic [1:0] data_memory_addr_mux_sel;

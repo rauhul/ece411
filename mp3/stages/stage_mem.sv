@@ -16,8 +16,8 @@ module stage_MEM (
     wishbone.master data_memory_wishbone
 );
 
-lc3b_cc gencc_out;
-lc3b_word gencc_mux_out;
+lc3b_cc cc_gen_out;
+lc3b_word cc_gen_mux_out;
 lc3b_word internal_mdr_out;
 lc3b_word data_memory_addr_mux_out;
 
@@ -25,31 +25,31 @@ lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
 /* CC */
-mux4 gencc_mux (
+mux4 cc_gen_mux (
     /* INPUTS */
-    .sel(control_in.gencc_in_mux_sel),
+    .sel(control_in.cc_gen_mux_sel),
     .a(alu_in),
     .b(mdr_out),
     .c(sr2_in),
     .d(16'bx),
 
     /* OUTPUTS */
-    .f(gencc_mux_out)
+    .f(cc_gen_mux_out)
 );
 
-gencc _gencc (
+gencc cc_gen (
     /* INPUTS */
-    .in(gencc_mux_out),
+    .in(cc_gen_mux_out),
 
     /* OUTPUTS */
-    .out(gencc_out)
+    .out(cc_gen_out)
 );
 
 register #(.width(3)) cc (
     /* INPUTS */
     .clk,
     .load(control_in.cc_load),
-    .in(gencc_out),
+    .in(cc_gen_out),
 
     /* OUTPUTS */
     .out(cc_out)

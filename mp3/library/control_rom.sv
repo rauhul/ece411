@@ -15,29 +15,95 @@ always_comb begin
     /* IF */
 
     /* ID */
-    control_out.regfile_sr1_mux_sel = 1'b0;
-    control_out.regfile_sr2_mux_sel = 1'b0;
+    control_out.regfile_sr1_mux_sel = 0;
+    control_out.regfile_sr2_mux_sel = 0;
 
     /* EX */
-    control_out.pc_adder_mux_sel = 1'b0;
+    control_out.pc_adder_mux_sel = 0;
     control_out.general_alu_mux_sel = 3'b0;
     control_out.general_alu_op = alu_pass;
 
     /* MEM */
+    control_out.cc_load = 0;
+    control_out.cc_gen_mux_sel = 2'b0;
+    control_out.internal_mdr_load = 0;
+    control_out.data_memory_write_enable = 0;
+    control_out.data_memory_addr_mux_sel = 2'b0;
+    control_out.data_memory_byte_sel = 2'b0;
 
     /* WB */
-    control_out.regfile_data_mux_sel = 1'b0;
-    control_out.regfile_dest_mux_sel = 1'b0;
-    control_out.regfile_load = 1'b0;
+    control_out.regfile_data_mux_sel = 3'b0;
+    control_out.regfile_dest_mux_sel = 0;
+    control_out.regfile_load = 0;
 
     /* Assign control signals based on opcode */
     case (opcode)
+        /* ALU OPS */
         op_add: begin
+            /* IF */
 
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+            control_out.regfile_sr2_mux_sel = 0; // sr2
+
+            /* EX */
+            if (ir_in == 0)
+                control_out.general_alu_mux_sel = 3'b000; // sr2
+            else
+                control_out.general_alu_mux_sel = 3'b010; // imm5
+            control_out.general_alu_op = alu_add; // add
+
+            /* MEM */
+            control_out.cc_load = 1; // load cc
+            control_out.cc_gen_mux_sel = 2'b01; // alu
+
+            /* WB */
+            control_out.regfile_data_mux_sel = 3'b101; // alu
+            control_out.regfile_dest_mux_sel = 0; // dest
+            control_out.regfile_load = 1; // load regfile
         end
 
         op_and: begin
+            /* IF */
 
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+            control_out.regfile_sr2_mux_sel = 0; // sr2
+
+            /* EX */
+            if (ir_in == 0)
+                control_out.general_alu_mux_sel = 3'b000; // sr2
+            else
+                control_out.general_alu_mux_sel = 3'b010; // imm5
+            control_out.general_alu_op = alu_and; // and
+
+            /* MEM */
+            control_out.cc_load = 1; // load cc
+            control_out.cc_gen_mux_sel = 2'b01; // alu
+
+            /* WB */
+            control_out.regfile_data_mux_sel = 3'b101; // alu
+            control_out.regfile_dest_mux_sel = 0; // dest
+            control_out.regfile_load = 1; // load regfile
+        end
+
+        op_not: begin
+            /* IF */
+
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+
+            /* EX */
+            control_out.general_alu_op = alu_not; // not
+
+            /* MEM */
+            control_out.cc_load = 1; // load cc
+            control_out.cc_gen_mux_sel = 2'b01; // alu
+
+            /* WB */
+            control_out.regfile_data_mux_sel = 3'b101; // alu
+            control_out.regfile_dest_mux_sel = 0; // dest
+            control_out.regfile_load = 1; // load regfile
         end
 
         default: begin

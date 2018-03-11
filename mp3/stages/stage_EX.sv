@@ -11,7 +11,6 @@ module stage_EX (
 
     /* OUTPUTS */
     output lc3b_word alu_out,
-  0ns
     output lc3b_word pcn_out
 );
 
@@ -27,7 +26,7 @@ lc3b_word offset11;
 
 assign imm4    = $unsigned( ir_in[ 3:0]);
 assign imm5      = $signed( ir_in[ 4:0]);
-assign offset6_b = $signed( ir_in[ 5:0]);  
+assign offset6_b = $signed( ir_in[ 5:0]);
 assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
 assign offset9   = $signed({ir_in[ 8:0], 1'b0});
 assign offset11  = $signed({ir_in[10:0], 1'b0});
@@ -36,7 +35,7 @@ mux2 pc_adder_mux (
     /* INPUTS */
     .sel(control_in.pc_adder_mux_sel),
     .a(offset9),
-    .b(offset11), 
+    .b(offset11),
 
     /* OUTPUTS */
     .f(pc_adder_mux_out)
