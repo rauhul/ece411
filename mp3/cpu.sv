@@ -21,7 +21,7 @@ lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .pc_mux_sel(),
+    .pc_mux_sel(2'b0),
     .mdr_in(barrier_MEM_WB_mdr),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr1_in(barrier_ID_EX_sr1),
