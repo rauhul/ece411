@@ -13,6 +13,7 @@ assign opcode = lc3b_opcode'(ir_in[15:12]);
 
 always_comb begin
     /* IF */
+    control_out.branch = 0;
 
     /* ID */
     control_out.regfile_sr1_mux_sel = 0;
@@ -26,6 +27,7 @@ always_comb begin
     /* MEM */
     control_out.cc_load = 0;
     control_out.cc_gen_mux_sel = 2'b0;
+    control_out.br_en_load = 0;
     control_out.internal_mdr_load = 0;
     control_out.data_memory_write_enable = 0;
     control_out.data_memory_addr_mux_sel = 2'b0;
@@ -152,12 +154,15 @@ always_comb begin
         /* PC CHANGING OPS */
         op_br: begin
             /* IF */
+            control_out.branch = 1;
 
             /* ID */
 
             /* EX */
+            control_out.pc_adder_mux_sel = 0;
 
             /* MEM */
+            control_out.br_en_load = 1;
 
             /* WB */
         end

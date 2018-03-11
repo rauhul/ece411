@@ -9,13 +9,14 @@ module stage_MEM (
     input lc3b_word sr2_in,
 
     /* OUTPUTS */
-    output lc3b_cc cc_out,
+    output logic br_en_out,
     output lc3b_word mdr_out,
 
     /* MEMORY INTERFACE */
     wishbone.master data_memory_wishbone
 );
 
+lc3b_cc cc_out;
 lc3b_cc cc_gen_out;
 lc3b_word cc_gen_mux_out;
 lc3b_word internal_mdr_out;
@@ -23,6 +24,9 @@ lc3b_word data_memory_addr_mux_out;
 
 lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
+
+logic br_en_in;
+assign br_en_in = |(cc_out & ir[11:9]);
 
 /* CC */
 mux4 cc_gen_mux (
@@ -55,6 +59,15 @@ register #(.width(3)) cc (
     .out(cc_out)
 );
 
+register #(.width(1)) br_en (
+    /* INPUTS */
+    .clk,
+    .load(control_in.br_en_load),
+    .in(br_en_in),
+
+    /* OUTPUTS */
+    .out(br_en_out)
+);
 
 /* MEMORY INTERFACE */
 mux4 data_memory_addr_mux (

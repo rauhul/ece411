@@ -11,19 +11,26 @@ module cpu (
     wishbone.master data_memory_wishbone
 );
 
+/* BRANCH LOGIC */
+logic stage_MEM_br_en;
+lc3b_control_word barrier_MEM_WB_control;
+logic [1:0] pc_mux_sel;
+assign pc_mux_sel[0] = 0;
+assign pc_mux_sel[1] = barrier_MEM_WB_control.branch & stage_MEM_br_en;
+
 
 /* STAGE IF */
 lc3b_word barrier_ID_EX_sr1;
-lc3b_word barrier_EX_MEM_pcn;
+lc3b_word barrier_MEM_WB_pcn;
 lc3b_word barrier_MEM_WB_mdr;
 lc3b_word stage_IF_ir;
 lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .pc_mux_sel(2'b0),
+    .pc_mux_sel,
     .mdr_in(barrier_MEM_WB_mdr),
-    .pcn_in(barrier_EX_MEM_pcn),
+    .pcn_in(barrier_MEM_WB_pcn),
     .sr1_in(barrier_ID_EX_sr1),
 
     /* OUTPUTS */
@@ -119,7 +126,7 @@ lc3b_control_word barrier_EX_MEM_control;
 lc3b_word barrier_EX_MEM_alu;
 lc3b_word barrier_EX_MEM_ir;
 lc3b_word barrier_EX_MEM_pc;
-// barrier_EX_MEM_pcn is defined above stage_IF
+lc3b_word barrier_EX_MEM_pcn;
 lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
@@ -142,7 +149,7 @@ barrier_EX_MEM _barrier_EX_MEM (
 
 
 /* STAGE MEM */
-lc3b_cc stage_MEM_cc;
+// stage_MEM_br_en is defined above branch_logic
 lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */
@@ -153,7 +160,7 @@ stage_MEM _stage_MEM (
     .sr2_in(barrier_EX_MEM_sr2),
 
     /* OUTPUTS */
-    .cc_out(stage_MEM_cc),
+    .br_en_out(stage_MEM_br_en),
     .mdr_out(stage_MEM_mdr),
 
     /* MEMORY INTERFACE */
@@ -162,13 +169,12 @@ stage_MEM _stage_MEM (
 
 
 /* BARRIER MEM <-> WB */
-lc3b_cc barrier_MEM_WB_cc;
-lc3b_control_word barrier_MEM_WB_control;
+// barrier_MEM_WB_control is defined above branch_logic
 lc3b_word barrier_MEM_WB_alu;
 lc3b_word barrier_MEM_WB_ir;
 // barrier_MEM_WB_mdr is defined above stage_IF
 lc3b_word barrier_MEM_WB_pc;
-lc3b_word barrier_MEM_WB_pcn;
+// barrier_MEM_WB_pcn is defined above stage_IF
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
