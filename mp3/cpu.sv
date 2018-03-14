@@ -157,6 +157,7 @@ stage_MEM _stage_MEM (
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
+    .pcn_in(barrier_EX_MEM_pcn),
     .sr2_in(barrier_EX_MEM_sr2),
 
     /* OUTPUTS */

@@ -6,6 +6,7 @@ module stage_MEM (
     input lc3b_control_word control_in,
     input lc3b_word alu_in,
     input lc3b_word ir_in,
+    input lc3b_word pcn_in,
     input lc3b_word sr2_in,
 
     /* OUTPUTS */
@@ -32,10 +33,10 @@ assign br_en_in = |(cc_out & ir_in[11:9]);
 mux4 cc_gen_mux (
     /* INPUTS */
     .sel(control_in.cc_gen_mux_sel),
-    .a(alu_in),
-    .b(mdr_out),
-    .c(sr2_in),
-    .d(16'bx),
+    .a(pcn_in),
+    .b(alu_in),
+    .c(mdr_out),
+    .d(sr2_in),
 
     /* OUTPUTS */
     .f(cc_gen_mux_out)
