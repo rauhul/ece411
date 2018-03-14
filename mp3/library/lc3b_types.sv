@@ -12,16 +12,6 @@ typedef logic  [5:0] lc3b_offset6;
 typedef logic  [4:0] lc3b_imm5;
 typedef logic  [3:0] lc3b_imm4;
 
-typedef enum bit [3:0] {
-    alu_add,
-    alu_and,
-    alu_not,
-    alu_pass,
-    alu_sll,
-    alu_srl,
-    alu_sra
-} lc3b_aluop;
-
 /* CONTROL WORD TYPES */
 /* IF TYPES */
 
@@ -37,6 +27,31 @@ typedef enum bit {
 } lc3b_regfile_sr2_mux_sel;
 
 /* EX TYPES */
+typedef enum bit {
+    lc3b_pc_adder_mux_sel_offset9,
+    lc3b_pc_adder_mux_sel_offset11
+} lc3b_pc_adder_mux_sel;
+
+typedef enum bit [2:0] {
+    lc3b_general_alu_mux_sel_sr2,
+    lc3b_general_alu_mux_sel_imm4,
+    lc3b_general_alu_mux_sel_imm5,
+    lc3b_general_alu_mux_sel_offset6_b,
+    lc3b_general_alu_mux_sel_offset6_w,
+    lc3b_general_alu_mux_sel_x1,
+    lc3b_general_alu_mux_sel_x2,
+    lc3b_general_alu_mux_sel_x3
+} lc3b_general_alu_mux_sel;
+
+typedef enum bit [3:0] {
+    lc3b_alu_op_add,
+    lc3b_alu_op_and,
+    lc3b_alu_op_not,
+    lc3b_alu_op_pass,
+    lc3b_alu_op_sll,
+    lc3b_alu_op_srl,
+    lc3b_alu_op_sra
+} lc3b_alu_op;
 
 /* MEM TYPES */
 typedef enum bit [1:0] {
@@ -60,7 +75,7 @@ typedef struct packed {
     /* EX */
     logic pc_adder_mux_sel;
     logic [2:0] general_alu_mux_sel;
-    lc3b_aluop general_alu_op;
+    lc3b_alu_op general_alu_op;
 
     /* MEM */
     logic cc_load;

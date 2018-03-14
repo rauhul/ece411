@@ -20,13 +20,13 @@ always_comb begin
     control_out.regfile_sr2_mux_sel = lc3b_regfile_sr2_mux_sel_sr2;
 
     /* EX */
-    control_out.pc_adder_mux_sel = 0;
-    control_out.general_alu_mux_sel = 3'b0;
-    control_out.general_alu_op = alu_pass;
+    control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
+    control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_sr2;
+    control_out.general_alu_op = lc3b_alu_op_pass;
 
     /* MEM */
     control_out.cc_load = 0;
-    control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_alu; // default alu, doesnt matter
+    control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_alu;
     control_out.br_en_load = 0;
     control_out.internal_mdr_load = 0;
     control_out.data_memory_write_enable = 0;
@@ -50,10 +50,10 @@ always_comb begin
 
             /* EX */
             if (ir_in[5] == 0)
-                control_out.general_alu_mux_sel = 3'b000; // sr2
+                control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_sr2;
             else
-                control_out.general_alu_mux_sel = 3'b010; // imm5
-            control_out.general_alu_op = alu_add; // add
+                control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_imm5;
+            control_out.general_alu_op = lc3b_alu_op_add;
 
             /* MEM */
             control_out.cc_load = 1; // load cc
@@ -74,10 +74,10 @@ always_comb begin
 
             /* EX */
             if (ir_in[5] == 0)
-                control_out.general_alu_mux_sel = 3'b000; // sr2
+                control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_sr2;
             else
-                control_out.general_alu_mux_sel = 3'b010; // imm5
-            control_out.general_alu_op = alu_and; // and
+                control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_imm5;
+            control_out.general_alu_op = lc3b_alu_op_and;
 
             /* MEM */
             control_out.cc_load = 1; // load cc
@@ -96,7 +96,7 @@ always_comb begin
             control_out.regfile_sr1_mux_sel = lc3b_regfile_sr1_mux_sel_sr1;
 
             /* EX */
-            control_out.general_alu_op = alu_not; // not
+            control_out.general_alu_op = lc3b_alu_op_not;
 
             /* MEM */
             control_out.cc_load = 1; // load cc
@@ -115,14 +115,14 @@ always_comb begin
             control_out.regfile_sr1_mux_sel = lc3b_regfile_sr1_mux_sel_sr1;
 
             /* EX */
-            control_out.general_alu_mux_sel = 3'b001; // imm4
+            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_imm4;
             if (ir_in[4] == 0)
-                control_out.general_alu_op = alu_sll; // shift left logical
+                control_out.general_alu_op = lc3b_alu_op_sll;
             else
                 if (ir_in[5] == 0)
-                    control_out.general_alu_op = alu_srl; // shift right logical
+                    control_out.general_alu_op = lc3b_alu_op_srl;
                 else
-                    control_out.general_alu_op = alu_sra; // shift right arthimetic
+                    control_out.general_alu_op = lc3b_alu_op_sra;
 
             /* MEM */
             control_out.cc_load = 1; // load cc
@@ -143,8 +143,8 @@ always_comb begin
             control_out.regfile_sr1_mux_sel = lc3b_regfile_sr1_mux_sel_sr1;
 
             /* EX */
-            control_out.general_alu_mux_sel = 3'b100; // offset6_w
-            control_out.general_alu_op = alu_add; // add
+            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_offset6_w;
+            control_out.general_alu_op = lc3b_alu_op_add;
 
             /* MEM */
             control_out.cc_load = 1; // loac cc
@@ -165,7 +165,7 @@ always_comb begin
         //     /* ID */
 
         //     /* EX */
-        //     control_out.pc_adder_mux_sel = 0; // offset9
+        //     control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
 
         //     /* MEM */
         //     control_out.cc_load = 1; // loac cc
@@ -189,8 +189,8 @@ always_comb begin
             control_out.regfile_sr2_mux_sel = lc3b_regfile_sr2_mux_sel_dest;
 
             /* EX */
-            control_out.general_alu_mux_sel = 3'b100; // offset6_w
-            control_out.general_alu_op = alu_add; // add
+            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_offset6_w;
+            control_out.general_alu_op = lc3b_alu_op_add;
 
             /* MEM */
             control_out.data_memory_write_enable = 1; // write
@@ -208,7 +208,7 @@ always_comb begin
             /* ID */
 
             /* EX */
-            control_out.pc_adder_mux_sel = 0; // offset9
+            control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
 
             /* MEM */
             control_out.br_en_load = 1; // load branch enable

@@ -2,7 +2,7 @@ import lc3b_types::*;
 
 module alu
 (
-    input lc3b_aluop aluop,
+    input lc3b_alu_op aluop,
     input lc3b_word a, b,
     output lc3b_word f
 );
