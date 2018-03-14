@@ -108,7 +108,34 @@ always_comb begin
             control_out.regfile_load = 1; // load regfile
         end
 
+        op_shf: begin
+            /* IF */
+
+            /* ID */
+            control_out.regfile_sr1_mux_sel = 0; // sr1
+
+            /* EX */
+            control_out.general_alu_mux_sel = 3'b001; // imm4
+            if (ir_in[4] == 0)
+                control_out.general_alu_op = alu_sll; // shift left logical
+            else
+                if (ir_in[5] == 0)
+                    control_out.general_alu_op = alu_srl; // shift right logical
+                else
+                    control_out.general_alu_op = alu_sra; // shift right arthimetic
+
+            /* MEM */
+            control_out.cc_load = 1; // load cc
+            control_out.cc_gen_mux_sel = 2'b00; // alu
+
+            /* WB */
+            control_out.regfile_data_mux_sel = 3'b101; // alu
+            control_out.regfile_dest_mux_sel = 0; // dest
+            control_out.regfile_load = 1; // load regfile
+        end
+
         /* DATA MEMORY OPS */
+        /* LOAD */
         op_ldr: begin
             /* IF */
 
@@ -132,6 +159,28 @@ always_comb begin
             control_out.regfile_load = 1; // load regfile
         end
 
+        // op_lea: begin
+        //     /* IF */
+
+        //     /* ID */
+
+        //     /* EX */
+        //     control_out.pc_adder_mux_sel = 0; // offset9
+
+        //     /* MEM */
+        //     control_out.cc_load = 1; // loac cc
+        //     control_out.cc_gen_mux_sel = 2'b01; // mdr
+        //     control_out.data_memory_write_enable = 0;
+        //     control_out.data_memory_addr_mux_sel = 2'b0;
+        //     control_out.data_memory_byte_sel = 2'b0;
+
+        //     /* WB */
+        //     control_out.regfile_data_mux_sel = 3'b0;
+        //     control_out.regfile_dest_mux_sel = 0;
+        //     control_out.regfile_load = 0;
+        // end
+
+        /* STORE */
         op_str: begin
             /* IF */
 
@@ -154,15 +203,15 @@ always_comb begin
         /* PC CHANGING OPS */
         op_br: begin
             /* IF */
-            control_out.branch = 1;
+            control_out.branch = 1; // branch
 
             /* ID */
 
             /* EX */
-            control_out.pc_adder_mux_sel = 0;
+            control_out.pc_adder_mux_sel = 0; // offset9
 
             /* MEM */
-            control_out.br_en_load = 1;
+            control_out.br_en_load = 1; // load branch enable
 
             /* WB */
         end
