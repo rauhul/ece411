@@ -61,7 +61,36 @@ typedef enum bit [1:0] {
     lc3b_cc_gen_mux_sel_sr2
 } lc3b_cc_gen_mux_sel;
 
+typedef enum bit [1:0] {
+    lc3b_data_memory_addr_mux_sel_trapvect8,
+    lc3b_data_memory_addr_mux_sel_alu,
+    lc3b_data_memory_addr_mux_sel_internal_mdr,
+    lc3b_data_memory_addr_mux_sel_x1
+} lc3b_data_memory_addr_mux_sel;
+
+typedef enum bit [1:0] {
+    lc3b_data_memory_byte_sel_none,
+    lc3b_data_memory_byte_sel_low,
+    lc3b_data_memory_byte_sel_high,
+    lc3b_data_memory_byte_sel_both
+} lc3b_data_memory_byte_sel;
+
 /* WB TYPES */
+typedef enum bit [2:0] {
+    lc3b_regfile_data_mux_sel_pc,
+    lc3b_regfile_data_mux_sel_pcn,
+    lc3b_regfile_data_mux_sel_mdr,
+    lc3b_regfile_data_mux_sel_mdr_low,
+    lc3b_regfile_data_mux_sel_mdr_high,
+    lc3b_regfile_data_mux_sel_alu,
+    lc3b_regfile_data_mux_sel_x1,
+    lc3b_regfile_data_mux_sel_x2
+} lc3b_regfile_data_mux_sel;
+
+typedef enum bit {
+    lc3b_regfile_dest_mux_sel_dest,
+    lc3b_regfile_dest_mux_sel_r7
+} lc3b_regfile_dest_mux_sel;
 
 /* CONTROL WORD */
 typedef struct packed {
@@ -83,12 +112,12 @@ typedef struct packed {
     logic br_en_load;
     logic internal_mdr_load;
     logic data_memory_write_enable;
-    logic [1:0] data_memory_addr_mux_sel;
-    logic [1:0] data_memory_byte_sel;
+    lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
+    lc3b_data_memory_byte_sel data_memory_byte_sel;
 
     /* WB */
-    logic [2:0] regfile_data_mux_sel;
-    logic regfile_dest_mux_sel;
+    lc3b_regfile_data_mux_sel regfile_data_mux_sel;
+    lc3b_regfile_dest_mux_sel regfile_dest_mux_sel;
     logic regfile_load;
 
 } lc3b_control_word;
