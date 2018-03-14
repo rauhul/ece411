@@ -22,13 +22,40 @@ typedef enum bit [3:0] {
     alu_sra
 } lc3b_aluop;
 
+/* CONTROL WORD TYPES */
+/* IF TYPES */
+
+/* ID TYPES */
+typedef enum bit {
+    lc3b_regfile_sr1_mux_sel_sr1,
+    lc3b_regfile_sr1_mux_sel_dest
+} lc3b_regfile_sr1_mux_sel;
+
+typedef enum bit {
+    lc3b_regfile_sr2_mux_sel_sr2,
+    lc3b_regfile_sr2_mux_sel_dest
+} lc3b_regfile_sr2_mux_sel;
+
+/* EX TYPES */
+
+/* MEM TYPES */
+typedef enum bit [1:0] {
+    lc3b_cc_gen_mux_sel_pcn,
+    lc3b_cc_gen_mux_sel_alu,
+    lc3b_cc_gen_mux_sel_mdr,
+    lc3b_cc_gen_mux_sel_sr2
+} lc3b_cc_gen_mux_sel;
+
+/* WB TYPES */
+
+/* CONTROL WORD */
 typedef struct packed {
     /* IF */
     logic branch;
 
     /* ID */
-    logic regfile_sr1_mux_sel;
-    logic regfile_sr2_mux_sel;
+    lc3b_regfile_sr1_mux_sel regfile_sr1_mux_sel;
+    lc3b_regfile_sr2_mux_sel regfile_sr2_mux_sel;
 
     /* EX */
     logic pc_adder_mux_sel;
@@ -37,7 +64,7 @@ typedef struct packed {
 
     /* MEM */
     logic cc_load;
-    logic [1:0] cc_gen_mux_sel;
+    lc3b_cc_gen_mux_sel cc_gen_mux_sel;
     logic br_en_load;
     logic internal_mdr_load;
     logic data_memory_write_enable;
@@ -50,6 +77,8 @@ typedef struct packed {
     logic regfile_load;
 
 } lc3b_control_word;
+
+/* INSTRUCTION TYPES */
 
 typedef enum bit [3:0] {
     op_add  = 4'b0001,
