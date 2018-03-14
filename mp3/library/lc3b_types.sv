@@ -73,8 +73,8 @@ typedef struct packed {
     lc3b_regfile_sr2_mux_sel regfile_sr2_mux_sel;
 
     /* EX */
-    logic pc_adder_mux_sel;
-    logic [2:0] general_alu_mux_sel;
+    lc3b_pc_adder_mux_sel pc_adder_mux_sel;
+    lc3b_general_alu_mux_sel general_alu_mux_sel;
     lc3b_alu_op general_alu_op;
 
     /* MEM */
