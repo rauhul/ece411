@@ -29,13 +29,13 @@ mux2 #(.width(3)) regfile_dest_mux (
 mux4 regfile_data_mux (
     /* INPUTS */
     .sel(control_in.regfile_data_mux_sel),
-    .in000(pc_in),
-    .in001(pcn_in),
-    .in010(mdr_in),
-    .in101(alu_in),
+    .a(pc_in),
+    .b(pcn_in),
+    .c(mdr_in),
+    .d(alu_in),
 
     /* OUTPUTS */
-    .out(regfile_data_out)
+    .f(regfile_data_out)
 );
 
 assign regfile_load_out = control_in.regfile_load;
