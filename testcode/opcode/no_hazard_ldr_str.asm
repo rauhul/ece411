@@ -21,7 +21,6 @@ SEGMENT  CodeSegment:
     STR  R6, R0, O_6
     STR  R7, R0, O_7
 
-
 I_1:  DATA2 4xDEAD
 I_2:  DATA2 4xBEEF
 I_3:  DATA2 4xFEA5
