@@ -26,11 +26,6 @@ lc3b_word data_memory_addr_mux_out;
 lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
-lc3b_word sr2_low_in;
-lc3b_word sr2_high_in;
-assign sr2_low_in  = $unsigned({sr2_in[ 7:0]});
-assign sr2_high_in = $unsigned({sr2_in[15:8]});
-
 logic br_en_in;
 assign br_en_in = |(cc_out & ir_in[11:9]);
 
@@ -113,9 +108,9 @@ always_comb begin
         data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_in;
     end else begin
         if (data_memory_addr_mux_out[0]) begin // high byte
-            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_high_in;
+            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = {sr2_in[7:0], 8'b0};
         end else begin // low byte
-            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_low_in;
+            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = {8'b0, sr2_in[7:0]};
         end
     end
 
