@@ -92,6 +92,25 @@ always_comb begin
             control_out.regfile_load = 1; // load regfile
         end
 
+        op_lea: begin
+            /* IF */
+            control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+
+            /* ID */
+
+            /* EX */
+            control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
+
+            /* MEM */
+            control_out.cc_load = 1;
+            control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_pcn;
+
+            /* WB */
+            control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pcn;
+            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_load = 1;
+        end
+
         op_not: begin
             /* IF */
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
@@ -263,7 +282,6 @@ always_comb begin
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
             control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
             control_out.regfile_load = 1;
-
         end
 
         op_jsr: begin
@@ -287,23 +305,6 @@ always_comb begin
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
             control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_r7;
             control_out.regfile_load = 1;
-        end
-
-        op_lea: begin
-            /* IF */
-            control_out.conditional_branch = 0;
-            control_out.pc_mux_sel = lc3b_pc_mux_sel_pcn;
-
-            /* ID */
-
-            /* EX */
-            control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
-
-            /* MEM */
-            control_out.cc_load = 1;
-            control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_pcn;
-
-            /* WB */
         end
 
         op_trap: begin
