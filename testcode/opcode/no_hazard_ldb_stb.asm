@@ -1,3 +1,5 @@
+ORIGIN 4x0000
+
 SEGMENT CodeSegment:
 
     LEA R0, L_DATA_1

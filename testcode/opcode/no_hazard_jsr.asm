@@ -2,14 +2,54 @@ ORIGIN 4x0000
 
 SEGMENT  CodeSegment:
 
-    LEA R0, DONE
+    ADD R0, R0, 2
+    LEA R1, MINUS_2
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JMP R0
+
+LOOP:
+    JSR MINUS_1
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    BRp LOOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    BRz LOOP2
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    BRnzp FAIL
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+LOOP2:
+    JSRR R1
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    BRn DONE
     NOP
     NOP
     NOP
@@ -63,6 +103,26 @@ DONE:
     NOP
     NOP
     BRnzp DONE
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+MINUS_1:
+    ADD R0, R0, -1
+    RET
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+MINUS_2:
+    ADD R0, R0, -2
+    RET
     NOP
     NOP
     NOP

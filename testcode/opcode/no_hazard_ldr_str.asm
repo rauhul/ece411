@@ -1,3 +1,5 @@
+ORIGIN 4x0000
+
 SEGMENT  CodeSegment:
 
     LDR  R1, R0, I_1

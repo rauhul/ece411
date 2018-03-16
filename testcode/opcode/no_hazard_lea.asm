@@ -1,3 +1,5 @@
+ORIGIN 4x0000
+
 SEGMENT  CodeSegment:
 
      LEA  R1, T_1 ; R1 = 0x0e
