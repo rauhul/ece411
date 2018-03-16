@@ -279,9 +279,6 @@ always_comb begin
             /* MEM */
 
             /* WB */
-            control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
-            control_out.regfile_load = 1;
         end
 
         op_jsr: begin
