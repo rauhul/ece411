@@ -1,6 +1,6 @@
 SEGMENT  CodeSegment:
 
-    ADD R0, R0 2
+    ADD R0, R0, 2
     NOP
     NOP
     NOP
@@ -83,6 +83,12 @@ LOOP2:
 FAIL:
     AND R0, R0, 0
     ADD R0, R0, 2
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     BRnzp FAIL
     NOP
     NOP
@@ -94,6 +100,12 @@ FAIL:
 DONE:
     AND R0, R0, 0
     ADD R0, R0, 1
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     BRnzp DONE
     NOP
     NOP
