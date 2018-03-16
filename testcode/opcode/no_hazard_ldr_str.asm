@@ -13,6 +13,13 @@ SEGMENT  CodeSegment:
     NOP
     NOP
     NOP
+    ADD  R0, R0,  16
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     STR  R1, R0, O_1
     STR  R2, R0, O_2
     STR  R3, R0, O_3
