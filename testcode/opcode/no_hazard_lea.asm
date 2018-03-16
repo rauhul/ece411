@@ -1,12 +1,12 @@
 SEGMENT  CodeSegment:
 
-    LEA  R1, R0, T_1 ; 0x0d
-    LEA  R2, R0, T_2 ; 0x10
-    LEA  R3, R0, T_3 ; 0x12
-    LEA  R4, R0, T_4 ; 0x14
-    LEA  R5, R0, T_5 ; 0x16
-    LEA  R6, R0, T_6 ; 0x18
-    LEA  R7, R0, T_7 ; 0x1a
+    LEA  R1, T_1 ; R1 = 0x0d
+    LEA  R2, T_2 ; R2 = 0x10
+    LEA  R3, T_3 ; R3 = 0x12
+    LEA  R4, T_4 ; R4 = 0x14
+    LEA  R5, T_5 ; R5 = 0x16
+    LEA  R6, T_6 ; R6 = 0x18
+    LEA  R7, T_7 ; R7 = 0x1a
 
 T_1: NOP
 T_2: NOP
