@@ -132,22 +132,23 @@ typedef struct packed {
 /* INSTRUCTION TYPES */
 
 typedef enum bit [3:0] {
+    op_rti  = 4'b1000,
+
     op_add  = 4'b0001,
     op_and  = 4'b0101,
     op_not  = 4'b1001,
     op_shf  = 4'b1101,
 
-    op_jsr  = 4'b0100,   /* also JSRR */
     op_ldb  = 4'b0010,
     op_ldi  = 4'b1010,
     op_ldr  = 4'b0110,
-    op_rti  = 4'b1000,
     op_stb  = 4'b0011,
     op_sti  = 4'b1011,
     op_str  = 4'b0111,
 
     op_br   = 4'b0000,
     op_jmp  = 4'b1100,   /* also RET */
+    op_jsr  = 4'b0100,   /* also JSRR */
     op_lea  = 4'b1110,
     op_trap = 4'b1111
 } lc3b_opcode;

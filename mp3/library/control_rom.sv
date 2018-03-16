@@ -263,6 +263,26 @@ always_comb begin
             /* WB */
         end
 
+        op_trap: begin
+            /* IF */
+            control_out.conditional_branch = 0;
+            control_out.pc_mux_sel = lc3b_pc_mux_sel_mdr;
+
+            /* ID */
+
+            /* EX */
+
+            /* MEM */
+            control_out.data_memory_write_enable = 0;
+            control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_trapvect8;
+            control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_both;
+
+            /* WB */
+            control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
+            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_r7;
+            control_out.regfile_load = 1;
+        end
+
         default: begin
             control_out = 0; /* Unknown opcode, set control word to zero */
         end
