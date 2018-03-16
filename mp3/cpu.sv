@@ -24,18 +24,18 @@ always_comb begin
 end
 
 /* STAGE IF */
-lc3b_word barrier_ID_EX_sr1;
-lc3b_word barrier_MEM_WB_pcn;
+lc3b_word barrier_MEM_WB_alu;
 lc3b_word barrier_MEM_WB_mdr;
+lc3b_word barrier_MEM_WB_pcn;
 lc3b_word stage_IF_ir;
 lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
     .pc_mux_sel(stage_IF_pc_mux_sel),
+    .alu_in(barrier_MEM_WB_alu),
     .mdr_in(barrier_MEM_WB_mdr),
     .pcn_in(barrier_MEM_WB_pcn),
-    .sr1_in(barrier_ID_EX_sr1),
 
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
@@ -87,7 +87,7 @@ stage_ID _stage_ID (
 lc3b_control_word barrier_ID_EX_control;
 lc3b_word barrier_ID_EX_ir;
 lc3b_word barrier_ID_EX_pc;
-// barrier_ID_EX_sr1 is defined above stage_IF
+lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
@@ -174,8 +174,8 @@ stage_MEM _stage_MEM (
 
 
 /* BARRIER MEM <-> WB */
-// barrier_MEM_WB_control is defined above branch_logic
-lc3b_word barrier_MEM_WB_alu;
+// barrier_MEM_WB_control is defined above stage_IF
+// barrier_MEM_WB_alu is defined above stage_IF
 lc3b_word barrier_MEM_WB_ir;
 // barrier_MEM_WB_mdr is defined above stage_IF
 lc3b_word barrier_MEM_WB_pc;

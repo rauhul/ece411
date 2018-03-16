@@ -16,7 +16,7 @@ typedef logic  [3:0] lc3b_imm4;
 /* IF TYPES */
 typedef enum bit [1:0] {
     lc3b_pc_mux_sel_pc_plus2,
-    lc3b_pc_mux_sel_sr1,
+    lc3b_pc_mux_sel_alu,
     lc3b_pc_mux_sel_pcn,
     lc3b_pc_mux_sel_mdr
 } lc3b_pc_mux_sel;
@@ -134,19 +134,21 @@ typedef struct packed {
 typedef enum bit [3:0] {
     op_add  = 4'b0001,
     op_and  = 4'b0101,
-    op_br   = 4'b0000,
-    op_jmp  = 4'b1100,   /* also RET */
+    op_not  = 4'b1001,
+    op_shf  = 4'b1101,
+
     op_jsr  = 4'b0100,   /* also JSRR */
     op_ldb  = 4'b0010,
     op_ldi  = 4'b1010,
     op_ldr  = 4'b0110,
-    op_lea  = 4'b1110,
-    op_not  = 4'b1001,
     op_rti  = 4'b1000,
-    op_shf  = 4'b1101,
     op_stb  = 4'b0011,
     op_sti  = 4'b1011,
     op_str  = 4'b0111,
+
+    op_br   = 4'b0000,
+    op_jmp  = 4'b1100,   /* also RET */
+    op_lea  = 4'b1110,
     op_trap = 4'b1111
 } lc3b_opcode;
 
