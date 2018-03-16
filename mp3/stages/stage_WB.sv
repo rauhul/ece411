@@ -26,7 +26,7 @@ mux2 #(.width(3)) regfile_dest_mux (
     .f(regfile_dest_out)
 );
 
-mux8 regfile_data_mux (
+mux4 regfile_data_mux (
     /* INPUTS */
     .sel(control_in.regfile_data_mux_sel),
     .in000(pc_in),

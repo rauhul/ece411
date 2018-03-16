@@ -32,7 +32,7 @@ always_comb begin
     control_out.internal_mdr_load = 0;
     control_out.data_memory_write_enable = 0;
     control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
-    control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_none;
+    // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_none;
     control_out.data_memory_word_align = 0;
 
     /* WB */
