@@ -14,10 +14,14 @@ module cpu (
 /* BRANCH LOGIC */
 logic stage_MEM_br_en;
 lc3b_control_word barrier_MEM_WB_control;
-logic [1:0] pc_mux_sel;
-assign pc_mux_sel[0] = 0;
-assign pc_mux_sel[1] = barrier_MEM_WB_control.branch & stage_MEM_br_en;
 
+lc3b_pc_mux_sel stage_IF_pc_mux_sel;
+always_comb begin
+    stage_IF_pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
+    if (barrier_MEM_WB_control.conditional_branch & ~stage_MEM_br_en) begin
+        stage_IF_pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+    end
+end
 
 /* STAGE IF */
 lc3b_word barrier_ID_EX_sr1;
@@ -28,7 +32,7 @@ lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .pc_mux_sel,
+    .pc_mux_sel(stage_IF_pc_mux_sel),
     .mdr_in(barrier_MEM_WB_mdr),
     .pcn_in(barrier_MEM_WB_pcn),
     .sr1_in(barrier_ID_EX_sr1),

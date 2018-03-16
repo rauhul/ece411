@@ -14,6 +14,12 @@ typedef logic  [3:0] lc3b_imm4;
 
 /* CONTROL WORD TYPES */
 /* IF TYPES */
+typedef enum bit [1:0] {
+    lc3b_pc_mux_sel_pc_plus2,
+    lc3b_pc_mux_sel_sr1,
+    lc3b_pc_mux_sel_pcn,
+    lc3b_pc_mux_sel_mdr
+} lc3b_pc_mux_sel;
 
 /* ID TYPES */
 typedef enum bit {
@@ -95,7 +101,8 @@ typedef enum bit {
 /* CONTROL WORD */
 typedef struct packed {
     /* IF */
-    logic branch;
+    logic conditional_branch;
+    lc3b_pc_mux_sel pc_mux_sel;
 
     /* ID */
     lc3b_regfile_sr1_mux_sel regfile_sr1_mux_sel;

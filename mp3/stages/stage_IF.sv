@@ -3,7 +3,7 @@ import lc3b_types::*;
 module stage_IF (
     /* INPUTS */
     input clk,
-    input logic [1:0] pc_mux_sel,
+    input lc3b_pc_mux_sel pc_mux_sel,
     input lc3b_word mdr_in,
     input lc3b_word pcn_in,
     input lc3b_word sr1_in,
