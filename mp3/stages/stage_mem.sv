@@ -113,9 +113,9 @@ always_comb begin
         data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_in;
     end else begin
         if (data_memory_addr_mux_out[0]) begin // high byte
-            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = $unsigned{sr2_in[15:8]};
+            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_high_in;
         end else begin // low byte
-            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = $unsigned{sr2_in[ 7:0]};
+            data_memory_wishbone.DAT_M[data_memory_addr_mux_out[3:1]*16 +: 16] = sr2_low_in;
         end
     end
 
