@@ -82,6 +82,12 @@ LOOP2:
 
 FAIL:
     AND R0, R0, 0
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     ADD R0, R0, 2
     NOP
     NOP
@@ -99,6 +105,12 @@ FAIL:
 
 DONE:
     AND R0, R0, 0
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     ADD R0, R0, 1
     NOP
     NOP
