@@ -32,7 +32,6 @@ always_comb begin
     control_out.internal_mdr_load = 0;
     control_out.data_memory_write_enable = 0;
     control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
-    // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_none;
     control_out.data_memory_word_align = 0;
 
     /* WB */
@@ -147,27 +146,22 @@ always_comb begin
 
             /* ID */
             control_out.regfile_sr1_mux_sel = lc3b_regfile_sr1_mux_sel_sr1;
-            control_out.regfile_sr2_mux_sel = lc3b_regfile_sr2_mux_sel_sr2;
 
             /* EX */
-            control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
-            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_sr2;
-            control_out.general_alu_op = lc3b_alu_op_pass;
+            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_offset6_b;
+            control_out.general_alu_op = lc3b_alu_op_add;
 
             /* MEM */
-            control_out.cc_load = 0;
-            control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_alu;
-            control_out.br_en_load = 0;
-            control_out.internal_mdr_load = 0;
+            control_out.cc_load = 1;
+            control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_mdr;
             control_out.data_memory_write_enable = 0;
             control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
-            // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_none;
-            control_out.data_memory_word_align = 1;
+            control_out.data_memory_word_align = 0;
 
             /* WB */
-            control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
+            control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_mdr;
             control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
-            control_out.regfile_load = 0;
+            control_out.regfile_load = 1;
         end
 
         op_ldr: begin
@@ -186,7 +180,6 @@ always_comb begin
             control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_mdr;
             control_out.data_memory_write_enable = 0; // read
             control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
-            // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_both;
             control_out.data_memory_word_align = 1;
 
             /* WB */
@@ -196,6 +189,26 @@ always_comb begin
         end
 
         /* STORE */
+        op_stb: begin
+            /* IF */
+            control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+
+            /* ID */
+            control_out.regfile_sr1_mux_sel = lc3b_regfile_sr1_mux_sel_sr1;
+            control_out.regfile_sr2_mux_sel = lc3b_regfile_sr2_mux_sel_dest;
+
+            /* EX */
+            control_out.general_alu_mux_sel = lc3b_general_alu_mux_sel_offset6_b;
+            control_out.general_alu_op = lc3b_alu_op_add;
+
+            /* MEM */
+            control_out.data_memory_write_enable = 1;
+            control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
+            control_out.data_memory_word_align = 0;
+
+            /* WB */
+        end
+
         op_str: begin
             /* IF */
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
@@ -211,7 +224,6 @@ always_comb begin
             /* MEM */
             control_out.data_memory_write_enable = 1; // write
             control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
-            // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_both;
             control_out.data_memory_word_align = 1;
 
             /* WB */
@@ -306,7 +318,6 @@ always_comb begin
             /* MEM */
             control_out.data_memory_write_enable = 0;
             control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_trapvect8;
-            // control_out.data_memory_byte_sel = lc3b_data_memory_byte_sel_both;
             control_out.data_memory_word_align = 1;
 
             /* WB */
