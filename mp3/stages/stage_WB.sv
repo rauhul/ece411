@@ -3,6 +3,7 @@ import lc3b_types::*;
 module stage_WB (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word alu_in,
     input lc3b_word ir_in,
@@ -16,11 +17,6 @@ module stage_WB (
     output logic regfile_load_out
 );
 
-lc3b_word mdr_low_in;
-lc3b_word mdr_high_in;
-assign mdr_low_in  = $unsigned({mdr_in[ 7:0]});
-assign mdr_high_in = $unsigned({mdr_in[15:8]});
-
 mux2 #(.width(3)) regfile_dest_mux (
     /* INPUTS */
     .sel(control_in.regfile_dest_mux_sel),
@@ -31,20 +27,16 @@ mux2 #(.width(3)) regfile_dest_mux (
     .f(regfile_dest_out)
 );
 
-mux8 regfile_data_mux (
+mux4 regfile_data_mux (
     /* INPUTS */
     .sel(control_in.regfile_data_mux_sel),
-    .in000(pc_in),
-    .in001(pcn_in),
-    .in010(mdr_in),
-    .in011(mdr_low_in),
-    .in100(mdr_high_in),
-    .in101(alu_in),
-    .in110(16'bx),
-    .in111(16'bx),
+    .a(pc_in),
+    .b(pcn_in),
+    .c(mdr_in),
+    .d(alu_in),
 
     /* OUTPUTS */
-    .out(regfile_data_out)
+    .f(regfile_data_out)
 );
 
 assign regfile_load_out = control_in.regfile_load;

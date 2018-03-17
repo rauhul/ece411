@@ -2,7 +2,7 @@ import lc3b_types::*;
 
 module alu
 (
-    input lc3b_aluop aluop,
+    input lc3b_alu_op aluop,
     input lc3b_word a, b,
     output lc3b_word f
 );
@@ -10,13 +10,13 @@ module alu
 always_comb
 begin
     case (aluop)
-        alu_add: f = a + b;
-        alu_and: f = a & b;
-        alu_not: f = ~a;
-        alu_pass: f = a;
-        alu_sll: f = a << b;
-        alu_srl: f = a >> b;
-        alu_sra: f = $signed(a) >>> b;
+        lc3b_alu_op_add: f = a + b;
+        lc3b_alu_op_and: f = a & b;
+        lc3b_alu_op_not: f = ~a;
+        lc3b_alu_op_pass: f = a;
+        lc3b_alu_op_sll: f = a << b;
+        lc3b_alu_op_srl: f = a >> b;
+        lc3b_alu_op_sra: f = $signed(a) >>> b;
         default: $display("Unknown aluop");
     endcase
 end

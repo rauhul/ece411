@@ -3,10 +3,11 @@ import lc3b_types::*;
 module stage_IF (
     /* INPUTS */
     input clk,
-    input logic [1:0] pc_mux_sel,
+    input stall,
+    input lc3b_pc_mux_sel pc_mux_sel,
+    input lc3b_word alu_in,
     input lc3b_word mdr_in,
     input lc3b_word pcn_in,
-    input lc3b_word sr1_in,
 
     /* OUTPUTS */
     output lc3b_word ir_out,
@@ -23,7 +24,7 @@ mux4 pc_mux (
     /* INPUTS */
     .sel(pc_mux_sel),
     .a(pc_plus2_out),
-    .b(sr1_in),
+    .b(alu_in),
     .c(pcn_in),
     .d(mdr_in),
 
@@ -35,6 +36,7 @@ register pc (
     /* INPUTS */
     .clk,
     .load(1'b1),
+    .stall,
     .in(pc_mux_out),
 
     /* OUTPUTS */

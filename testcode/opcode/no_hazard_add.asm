@@ -1,3 +1,5 @@
+ORIGIN 4x0000
+
 SEGMENT  CodeSegment:
 
    ADD  R1, R0, -16 ; R1 = -16
