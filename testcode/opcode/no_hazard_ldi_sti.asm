@@ -1,0 +1,52 @@
+ORIGIN 4x0000
+
+SEGMENT CodeSegment:
+
+    LDI R1, R0, L_DATA_1_PTR
+    LDI R2, R0, L_DATA_2_PTR
+    LDI R3, R0, L_DATA_3_PTR
+    LDI R4, R0, L_DATA_4_PTR
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOT R1, R1
+    NOT R2, R2
+    NOT R3, R3
+    NOT R4, R4
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    STI R1, R0, L_DATA_1_PTR
+    STI R2, R0, L_DATA_2_PTR
+    STI R3, R0, L_DATA_3_PTR
+    STI R4, R0, L_DATA_4_PTR
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+L_DATA_1_PTR:
+    DATA2 L_DATA_1
+L_DATA_2_PTR:
+    DATA2 L_DATA_2
+L_DATA_3_PTR:
+    DATA2 L_DATA_3
+L_DATA_4_PTR:
+    DATA2 L_DATA_4
+
+L_DATA_1:
+    DATA2 4x11EE
+L_DATA_2:
+    DATA2 4x33DD
+L_DATA_3:
+    DATA2 4x55BB
+L_DATA_4:
+    DATA2 4x7799

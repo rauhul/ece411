@@ -113,7 +113,6 @@ typedef struct packed {
     logic cc_load;
     lc3b_cc_gen_mux_sel cc_gen_mux_sel;
     logic br_en_load;
-    logic internal_mdr_load;
     logic data_memory_write_enable;
     lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
     // lc3b_data_memory_byte_sel data_memory_byte_sel;
