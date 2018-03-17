@@ -3,6 +3,7 @@ import lc3b_types::*;
 module stage_MEM (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word alu_in,
     input lc3b_word ir_in,
@@ -12,6 +13,7 @@ module stage_MEM (
     /* OUTPUTS */
     output logic br_en_out,
     output lc3b_word mdr_out,
+    output logic request_stall,
 
     /* MEMORY INTERFACE */
     wishbone.master data_memory_wishbone
@@ -20,6 +22,8 @@ module stage_MEM (
 lc3b_cc cc_out;
 lc3b_cc cc_gen_out;
 lc3b_word cc_gen_mux_out;
+lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
+logic internal_MDR_load;
 lc3b_word internal_mdr_out;
 lc3b_word data_memory_addr_mux_out;
 
@@ -54,6 +58,7 @@ register #(.width(3)) cc (
     /* INPUTS */
     .clk,
     .load(control_in.cc_load),
+    .stall,
     .in(cc_gen_out),
 
     /* OUTPUTS */
@@ -64,6 +69,7 @@ register #(.width(1)) br_en (
     /* INPUTS */
     .clk,
     .load(control_in.br_en_load),
+    .stall,
     .in(br_en_in),
 
     /* OUTPUTS */
@@ -71,9 +77,22 @@ register #(.width(1)) br_en (
 );
 
 /* MEMORY INTERFACE */
+// TODO: Detemine if this should also be stalled
+mem_access_controller _mem_access_controller (
+    /* INPUTS */
+    .clk,
+    .control_in,
+    .ir_in,
+
+    /* OUTPUTS */
+    .data_memory_addr_mux_sel,
+    .internal_MDR_load,
+    .request_stall
+);
+
 mux4 data_memory_addr_mux (
     /* INPUTS */
-    .sel(control_in.data_memory_addr_mux_sel),
+    .sel(data_memory_addr_mux_sel),
     .a(trapvect8),
     .b(alu_in),
     .c(internal_mdr_out),
@@ -126,7 +145,8 @@ end
 register internal_mdr (
     /* INPUTS */
     .clk,
-    .load(control_in.internal_mdr_load),
+    .load(internal_MDR_load),
+    .stall,
     .in(mdr_out),
 
     /* OUTPUTS */

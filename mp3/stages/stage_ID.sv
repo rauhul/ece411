@@ -3,6 +3,7 @@ import lc3b_types::*;
 module stage_ID (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_word ir_in,
     input lc3b_reg regfile_dest_in,
     input lc3b_word regfile_data_in,
@@ -49,6 +50,7 @@ regfile _regfile (
     /* INPUTS */
     .clk,
     .load(regfile_load_in),
+    .stall,
     .in(regfile_data_in),
     .src_a(regfile_sr1_mux_out),
     .src_b(regfile_sr2_mux_out),

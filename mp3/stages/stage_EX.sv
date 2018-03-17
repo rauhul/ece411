@@ -3,6 +3,7 @@ import lc3b_types::*;
 module stage_EX (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word ir_in,
     input lc3b_word pc_in,

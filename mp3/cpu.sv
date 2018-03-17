@@ -11,6 +11,36 @@ module cpu (
     wishbone.master data_memory_wishbone
 );
 
+
+/* STALL LOGIC */
+logic stage_MEM_request_stall;
+logic barrier_EX_MEM_stall;
+logic barrier_ID_EX_stall;
+logic barrier_IF_ID_stall;
+logic barrier_MEM_WB_stall;
+logic stage_EX_stall;
+logic stage_ID_stall;
+logic stage_IF_stall;
+logic stage_MEM_stall;
+logic stage_WB_stall;
+stall_controller _stall_controller (
+    /* INPUTS */
+    .clk,
+    .stage_MEM_request_stall,
+
+    /* OUTPUTS */
+    .barrier_EX_MEM_stall,
+    .barrier_ID_EX_stall,
+    .barrier_IF_ID_stall,
+    .barrier_MEM_WB_stall,
+    .stage_EX_stall,
+    .stage_ID_stall,
+    .stage_IF_stall,
+    .stage_MEM_stall,
+    .stage_WB_stall
+);
+
+
 /* BRANCH LOGIC */
 logic stage_MEM_br_en;
 lc3b_control_word barrier_MEM_WB_control;
@@ -23,6 +53,7 @@ always_comb begin
     end
 end
 
+
 /* STAGE IF */
 lc3b_word barrier_MEM_WB_alu;
 lc3b_word barrier_MEM_WB_mdr;
@@ -32,6 +63,7 @@ lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
+    .stall(stage_IF_stall),
     .pc_mux_sel(stage_IF_pc_mux_sel),
     .alu_in(barrier_MEM_WB_alu),
     .mdr_in(barrier_MEM_WB_mdr),
@@ -52,6 +84,7 @@ lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
+    .stall(barrier_IF_ID_stall),
     .ir_in(stage_IF_ir),
     .pc_in(stage_IF_pc_plus2),
 
@@ -71,6 +104,7 @@ lc3b_word stage_ID_sr2;
 stage_ID _stage_ID (
     /* INPUTS */
     .clk,
+    .stall(stage_ID_stall),
     .ir_in(barrier_IF_ID_ir),
     .regfile_dest_in(stage_WB_regfile_dest),
     .regfile_data_in(stage_WB_regfile_data),
@@ -92,6 +126,7 @@ lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
+    .stall(barrier_ID_EX_stall),
     .control_in(stage_ID_control),
     .ir_in(barrier_IF_ID_ir),
     .pc_in(barrier_IF_ID_pc),
@@ -113,6 +148,7 @@ lc3b_word stage_EX_pcn;
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
+    .stall(stage_EX_stall),
     .control_in(barrier_ID_EX_control),
     .ir_in(barrier_ID_EX_ir),
     .pc_in(barrier_ID_EX_pc),
@@ -135,6 +171,7 @@ lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
+    .stall(barrier_EX_MEM_stall),
     .control_in(barrier_ID_EX_control),
     .alu_in(stage_EX_alu),
     .ir_in(barrier_ID_EX_ir),
@@ -158,6 +195,7 @@ lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
+    .stall(stage_MEM_stall),
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
@@ -167,6 +205,7 @@ stage_MEM _stage_MEM (
     /* OUTPUTS */
     .br_en_out(stage_MEM_br_en),
     .mdr_out(stage_MEM_mdr),
+    .request_stall(stage_MEM_request_stall),
 
     /* MEMORY INTERFACE */
     .data_memory_wishbone
@@ -183,6 +222,7 @@ lc3b_word barrier_MEM_WB_pc;
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
+    .stall(barrier_MEM_WB_stall),
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
@@ -205,6 +245,7 @@ barrier_MEM_WB _barrier_MEM_WB (
 stage_WB _stage_WB (
     /* INPUTS */
     .clk,
+    .stall(stage_WB_stall),
     .control_in(barrier_MEM_WB_control),
     .alu_in(barrier_MEM_WB_alu),
     .ir_in(barrier_MEM_WB_ir),
