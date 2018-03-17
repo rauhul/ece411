@@ -1,6 +1,7 @@
 import lc3b_types::*;
 
-module cache_datapath (
+// TODO: add paramater associativity
+module cache_set (
     /* INPUTS */
     /* global->cpu_control */
     input clk,
@@ -138,7 +139,6 @@ cache_way cache_way_0 (
     .tag_in,
     .index,
     .data_in,
-
 
     /* OUTPUTS */
     .tag_out(tag_0),

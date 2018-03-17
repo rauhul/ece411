@@ -126,7 +126,6 @@ typedef struct packed {
 } lc3b_control_word;
 
 /* INSTRUCTION TYPES */
-
 typedef enum bit [3:0] {
     op_rti  = 4'b1000,
 

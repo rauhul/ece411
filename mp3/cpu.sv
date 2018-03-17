@@ -1,12 +1,9 @@
 import lc3b_types::*;
 
 module cpu (
-    /* INPUTS */
     input clk,
 
-    /* OUTPUTS */
-
-    /* MEMORY INTERFACE */
+    /* MASTERS */
     wishbone.master instruction_memory_wishbone,
     wishbone.master data_memory_wishbone
 );
