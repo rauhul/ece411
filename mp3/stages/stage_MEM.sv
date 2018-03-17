@@ -23,6 +23,7 @@ lc3b_cc cc_out;
 lc3b_cc cc_gen_out;
 lc3b_word cc_gen_mux_out;
 lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
+logic data_memory_write_enable;
 logic internal_MDR_load;
 lc3b_word internal_mdr_out;
 lc3b_word data_memory_addr_mux_out;
@@ -86,6 +87,7 @@ mem_access_controller _mem_access_controller (
 
     /* OUTPUTS */
     .data_memory_addr_mux_sel,
+    .data_memory_write_enable,
     .internal_MDR_load,
     .request_stall
 );
@@ -106,7 +108,7 @@ mux4 data_memory_addr_mux (
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
 assign data_memory_wishbone.CYC = 1'bx;
 assign data_memory_wishbone.STB = 1'bx;
-assign data_memory_wishbone.WE = control_in.data_memory_write_enable;
+assign data_memory_wishbone.WE = data_memory_write_enable;
 
 always_comb begin
     /* select */

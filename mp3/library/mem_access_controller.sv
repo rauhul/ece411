@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module mem_access_controller (
     /* INPUTS */
     input clk,
@@ -6,6 +8,7 @@ module mem_access_controller (
 
     /* OUTPUTS */
     output lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel,
+    output logic data_memory_write_enable,
     output logic internal_MDR_load,
     output logic request_stall
 );
@@ -24,6 +27,7 @@ always_comb
 begin : state_actions
     /* Default output assignments */
     data_memory_addr_mux_sel = control_in.data_memory_addr_mux_sel;
+    data_memory_write_enable = control_in.data_memory_write_enable;
     internal_MDR_load = 0;
     request_stall = 0;
 
@@ -32,6 +36,7 @@ begin : state_actions
 
         s_mem_access_1: begin
             if (opcode == op_ldi || opcode == op_sti) begin
+                data_memory_write_enable = 0;
                 internal_MDR_load = 1;
                 request_stall = 1;
             end
