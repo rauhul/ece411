@@ -29,22 +29,22 @@ PAT3:       DATA2 4xAE85
 GOOD:       DATA2 4x5460
 five:       DATA2 5
 TT:         DATA2 4x0646
-RES1:       DATA2 0     ;0x01e0 @101
-RES2:       DATA2 0     ;0x000a @136
-RES3:       DATA2 0     ;0x4537 @157
-RES4:       DATA2 0     ;0xa342 @234
-RES5:       DATA2 0     ;0x01a1 @241
-RES6:       DATA2 0     ;0xfe62 @248
-RES7:       DATA2 0     ;0xfe6f @276
-RES8:       DATA2 0     ;0x0046 @262, 0x001a @377
-RES9:       DATA2 0     ;0xfcff @398
-RES10:      DATA2 0     ;0x000d @434
-RES11:      DATA2 0     ;0x517a @455
-RES12:      DATA2 0     ;0x013F @504
-RES13:      DATA2 0     ;0x90b8 @613
-RES14:      DATA2 0     ;0x0646 @641
-RES15:      DATA2 0     ;0x0424 @627
-RES16:      DATA2 0
+RES1:       DATA2 0     ; 0x01e0 @101
+RES2:       DATA2 0     ; 0x000a @136
+RES3:       DATA2 0     ; 0x4537 @157
+RES4:       DATA2 0     ; 0xa342 @234
+RES5:       DATA2 0     ; 0x01a1 @241
+RES6:       DATA2 0     ; 0xfe62 @248
+RES7:       DATA2 0     ; 0xfe6f @276
+RES8:       DATA2 0     ; 0x0046 @262, 0x001a @377
+RES9:       DATA2 0     ; 0xfcff @398
+RES10:      DATA2 0     ; 0x000d @434
+RES11:      DATA2 0     ; 0x517a @455
+RES12:      DATA2 0     ; 0x013F @504
+RES13:      DATA2 0     ; 0x90b8 @613
+RES14:      DATA2 0     ; 0x0646 @641
+RES15:      DATA2 0     ; 0x0424 @627
+RES16:      DATA2 0     ; 0x000c @697
 Bear:       DATA2 CatchMe
 Owl:        DATA2 paris
 
@@ -445,7 +445,8 @@ portland:
     NOP
     NOP
     NOP
-    TRAP Bear ; pc = 0x042c, r7 = 0x0370, r5 = 0x517a
+    TRAP Bear ; pc = 0x042c, r7 = 0x0370
+              ; r5 = 0x517a
     NOP
     NOP
     NOP
@@ -540,9 +541,9 @@ portland:
 
 SEGMENT DataSegment2:
 TS:     DATA2 4x0646
-RES17:  DATA2 0
-RES18:  DATA2 0
-RES19:  DATA2 0
+RES17:  DATA2 0     ; 0xae85 @725
+RES18:  DATA2 0     ; 0x600d @776
+RES19:  DATA2 0     ; 0x001e @819
 CatchMe: ; r7 = 0x0370
     LDR R5, R0, PAT3 ; 0xae85
     NOP
@@ -566,21 +567,21 @@ CatchMe: ; r7 = 0x0370
     NOP
     NOP
 OverHere:
-    LDR R3, R0, GOOD
+    LDR R3, R0, GOOD ; 0x5460
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    ADD R1, R1, R3
+    ADD R1, R1, R3 ; 0x600d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    RET
+    RET ; pc = 0x05c4
     NOP
     NOP
     NOP
@@ -646,28 +647,28 @@ skip2:
     NOP
     NOP
 SEGMENT CodeSegment2:
-    LEA R4, DataSegment4
+    LEA R4, DataSegment4 ; 0x0528
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R2, R4, Indy
+    LDR R2, R4, Indy ; ADD R1, R1, 12, 0x126c
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    ADD R2, R2, 3
+    ADD R2, R2, 3 ; 0x126f
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    AND R1, R1, 0
+    AND R1, R1, 0 ; 0x0000
     NOP
     NOP
     NOP
@@ -687,49 +688,49 @@ SEGMENT DataSegment4:
 ; Indy:
 ;     ADD R1, R1, 9
 Indy:
-    ADD R1, R1, 12
+    ADD R1, R1, 12 ; 0x000c
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R1, R0, RES16
+    STR R1, R0, RES16 ; store 0x000c
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    ADD R1, R0, 1
+    ADD R1, R0, 1 ; 0x001d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R3, R1, PAT3
+    LDR R3, R1, PAT3 ; 0xae85
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LEA R6, DataSegment2
+    LEA R6, DataSegment2 ; 0x0424
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R3, R6, RES17
+    STR R3, R6, RES17 ; store 0xae85
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R1, R0, PAT3
+    LDR R1, R0, PAT3 ; 0xae85
     NOP
     NOP
     NOP
@@ -743,7 +744,7 @@ Indy:
     NOP
     NOP
     NOP
-    TRAP Owl
+    TRAP Owl ; skipped
     NOP
     NOP
     NOP
@@ -751,42 +752,43 @@ Indy:
     NOP
     NOP
 Nati:
-    LDR R1, R0, BADBAD
+    LDR R1, R0, BADBAD ; 0x0bad
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LEA R2, OverHere
+    LEA R2, OverHere ; 0x0456
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSRR R2
+    JSRR R2 ; pc = 0x0456, r7 = 0x05c4
+            ; r3 = 0x5460, r1 = 0x600d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R1, R6, RES18
+    STR R1, R6, RES18 ; store 0x600d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    ADD R1, R0, 2
+    ADD R1, R0, 2 ; 0x001e
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    AND R6, R6, 0
+    AND R6, R6, 0 ; 0x0000
     NOP
     NOP
     NOP
@@ -800,7 +802,7 @@ Nati:
     NOP
     NOP
     NOP
-    ADD R1, R1, R1
+    ADD R1, R1, R1 ; skipped
     NOP
     NOP
     NOP
@@ -808,14 +810,14 @@ Nati:
     NOP
     NOP
 dulles:
-    LEA R6, DataSegment2
+    LEA R6, DataSegment2 ; 0x0424
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R1, R6, RES19
+    STR R1, R6, RES19 ; store 0x001e
     NOP
     NOP
     NOP
@@ -824,212 +826,223 @@ dulles:
     NOP
 
 bloomington:
-    LEA R5, DataSegment3
+    LEA R5, DataSegment3 ; 0x0738
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R6, R5, DSP
+    LDR R6, R5, DSP ; 0x001c
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R0, R6, RES1
-    LDR R1, R6, RES2
+    LDR R0, R6, RES1 ; 0x01e0
+    LDR R1, R6, RES2 ; 0x000a
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x0660
+                ; r0 = 0x1ea, r1 = 0xfff5, r2 = 0xffff
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R1, R6, RES3
+    LDR R1, R6, RES3 ; 0x4537
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x067c
+                ; r0 = 0x44dd, r1 = 0xbac8, r2 = 0xfedd
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS1
-    LDR R0, R6, RES4
-    LDR R1, R6, RES5
+    STR R0, R5, CS1 ; store 0x44dd
+    LDR R0, R6, RES4 ; 0xa342
+    LDR R1, R6, RES5 ; 0x01a1
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x069c
+                ; r0 = 0xa2e3, r1 = 0xfe5e, r2 = 0xfeff
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R1, R6, RES6
+    LDR R1, R6, RES6 ; 0xfe62
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x06b8
+                ; r0 = 0x5c81, r1 = 0x019d, r2 = 0x5d9d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS2
-    LDR R0, R6, RES7
-    LDR R1, R6, RES8
+    STR R0, R5, CS2 ; store 0x5c81
+    LDR R0, R6, RES7 ; 0xfe6f
+    LDR R1, R6, RES8 ; 0x001a
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x06d8
+                ; r0 = 0xfe75, r1 = 0xffe5, r2 = 0xfff5
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS3
-    LDR R0, R6, RES9
-    LDR R1, R6, RES10
+    STR R0, R5, CS3 ; store 0xfe75
+    LDR R0, R6, RES9 ; 0xfcff
+    LDR R1, R6, RES10 ; 0x000d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x06f8
+                ; r0 = 0xfcf2, r1 = 0xfff2, r2 = 0xfff2
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS4
-    LDR R0, R6, RES11
-    LDR R1, R6, RES12
+    STR R0, R5, CS4 ; store 0xfcf2
+    LDR R0, R6, RES11 ; 0x517a
+    LDR R1, R6, RES12 ; 0x013F
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x0718
+                ; r0 = 0x5045, r1 = 0xfec0, r2 = 0xfec5
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS5
-    LDR R0, R6, RES13
-    LDR R1, R6, RES14
+    STR R0, R5, CS5 ; store 0x5045
+    LDR R0, R6, RES13 ; 0x90b8
+    LDR R1, R6, RES14 ; 0x0646
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x0738
+                ; r0 = 0x96fe, r1 = 0xf9b9, r2 = 0xffff
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS6
-    LDR R0, R6, RES15
-    LDR R1, R6, RES16
+    STR R0, R5, CS6 ; store 0x96fe
+    LDR R0, R6, RES15 ; 0x0424
+    LDR R1, R6, RES16 ; 0x000c
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x0758
+                ; r0 = 0x0428, r1 = 0xfff3, r2 = 0xfffb
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS7
-    LDR R6, R5, DS2P
+    STR R0, R5, CS7 ; store 0x0428
+    LDR R6, R5, DS2P ; 0x0424
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R0, R6, RES17
-    LDR R1, R6, RES18
+    LDR R0, R6, RES17 ; 0xae85
+    LDR R1, R6, RES18 ; 0x600d
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x785
+                ; r0 = 0xce88, r1 = 0x9ff2, r2 = 0xdffa
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R1, R6, RES19
+    LDR R1, R6, RES19 ; 0x001e
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    JSR atlanta
+    JSR atlanta ; pc = 0x0820, r7 = 0x07a2
+                ; r0 = 0xce96, r1 = 0xffe1, r2 = 0xfff7
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    STR R0, R5, CS8
-    LEA R7, DataSegment3
+    STR R0, R5, CS8 ; store 0xce96
+    LEA R7, DataSegment3 ; 0x07e8
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    LDR R0, R7, CS1
-    LDR R1, R7, CS2
-    LDR R2, R7, CS3
-    LDR R3, R7, CS4
-    LDR R4, R7, CS5
-    LDR R5, R7, CS6
-    LDR R6, R7, CS7
-    LDR R7, R7, CS8
+    LDR R0, R7, CS1 ; 0x44dd
+    LDR R1, R7, CS2 ; 0x5c81
+    LDR R2, R7, CS3 ; 0xfe75
+    LDR R3, R7, CS4 ; 0xfcf2
+    LDR R4, R7, CS5 ; 0x5045
+    LDR R5, R7, CS6 ; 0x96fe
+    LDR R6, R7, CS7 ; 0x0428
+    LDR R7, R7, CS8 ; 0xce96
     NOP
     NOP
     NOP
@@ -1037,7 +1050,7 @@ bloomington:
     NOP
     NOP
 Nowhere:
-    BRnzp nowhere
+    BRnzp nowhere ; pc = 0x07da
     NOP
     NOP
     NOP
@@ -1050,14 +1063,14 @@ NINE:       DATA2 4x0009
 BIGNUMBER:  DATA2 4x70CF
 BYP1:       DATA2 4x0000
 BYP2:       DATA2 4x0000
-CS1:        DATA2 4x0000
-CS2:        DATA2 4x0000
-CS3:        DATA2 4x0000
-CS4:        DATA2 4x0000
-CS5:        DATA2 4x0000
-CS6:        DATA2 4x0000
-CS7:        DATA2 4x0000
-CS8:        DATA2 4x0000
+CS1:        DATA2 4x0000 ; 0x44dd @874
+CS2:        DATA2 4x0000 ; 0x5c81 @906
+CS3:        DATA2 4x0000 ; 0xfe75 @923
+CS4:        DATA2 4x0000 ; 0xfcf2 @940
+CS5:        DATA2 4x0000 ; 0x5045 @957
+CS6:        DATA2 4x0000 ; 0x96fe @974
+CS7:        DATA2 4x0000 ; 0x0428 @991
+CS8:        DATA2 4x0000 ; 0xce96 @1030
 DSP:        DATA2 DataSegment
 DS2P:       DATA2 DataSegment2
 
@@ -1076,38 +1089,38 @@ dallas: ; r7 = 0x0300
     NOP
     NOP
     NOP
-atlanta:
-    AND R2, R0, R1
+atlanta: ; r7 = 0x0660
+    AND R2, R0, R1 ; 0x0000
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    NOT R2, R2
-    NOT R0, R0
-    NOT R1, R1
+    NOT R2, R2 ; 0xffff
+    NOT R0, R0 ; 0xfe1f
+    NOT R1, R1 ; 0xfff5
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    AND R0, R0, R1
+    AND R0, R0, R1 ; 0xfe1f
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    NOT R0, R0
+    NOT R0, R0 ; 0x01ea
     NOP
     NOP
     NOP
     NOP
     NOP
     NOP
-    AND R0, R0, R2
+    AND R0, R0, R2 ; 0x01ea
     NOP
     NOP
     NOP
