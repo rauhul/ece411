@@ -17,4 +17,4 @@ modport slave (
     output DAT_S, ACK, RTY
 );
 
-endinterface
+endinterface : wishbone

@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module cache_arbiter (
     input clk,
 
@@ -9,29 +11,74 @@ module cache_arbiter (
     wishbone.master output_wishbone
 );
 
-register #(.width(12)) address (
+logic [127:0] input_wishbone0_DAT_M;
+logic input_wishbone0_CYC;
+logic input_wishbone0_STB;
+logic input_wishbone0_WE;
+logic [15:0] input_wishbone0_SEL;
+logic [11:0] input_wishbone0_ADR;
+
+barrier_wishbone_master _input_wishbone0 (
     /* INPUTS */
     .clk,
-    .load(load_address),
-    .stall(0),
-    .in(address_in),
+    .DAT_M_in(input_wishbone0.DAT_M),
+    .CYC_in(input_wishbone0.CYC),
+    .STB_in(input_wishbone0.STB),
+    .WE_in(input_wishbone0.WE),
+    .SEL_in(input_wishbone0.SEL),
+    .ADR_in(input_wishbone0.ADR),
 
     /* OUTPUTS */
-    .out(address_out)
+    .DAT_M_out(input_wishbone0_DAT_M),
+    .CYC_out(input_wishbone0_CYC),
+    .STB_out(input_wishbone0_STB),
+    .WE_out(input_wishbone0_WE),
+    .SEL_out(input_wishbone0_SEL),
+    .ADR_out(input_wishbone0_ADR)
 );
 
-register #(.width(128)) data (
+logic [127:0] input_wishbone1_DAT_M;
+logic input_wishbone1_CYC;
+logic input_wishbone1_STB;
+logic input_wishbone1_WE;
+logic [15:0] input_wishbone1_SEL;
+logic [11:0] input_wishbone1_ADR;
+
+barrier_wishbone_master _input_wishbone1 (
     /* INPUTS */
     .clk,
-    .load(load_data),
-    .stall(0),
-    .in(data_in),
+    .DAT_M_in(input_wishbone1.DAT_M),
+    .CYC_in(input_wishbone1.CYC),
+    .STB_in(input_wishbone1.STB),
+    .WE_in(input_wishbone1.WE),
+    .SEL_in(input_wishbone1.SEL),
+    .ADR_in(input_wishbone1.ADR),
 
     /* OUTPUTS */
-    .out(data_out)
+    .DAT_M_out(input_wishbone1_DAT_M),
+    .CYC_out(input_wishbone1_CYC),
+    .STB_out(input_wishbone1_STB),
+    .WE_out(input_wishbone1_WE),
+    .SEL_out(input_wishbone1_SEL),
+    .ADR_out(input_wishbone1_ADR)
 );
 
-wishbone owner_wishbone(clk);
+logic [127:0] output_wishbone_DAT_S;
+logic output_wishbone_ACK;
+logic output_wishbone_RTY;
+
+barrier_wishbone_slave _output_wishbone (
+    /* INPUTS */
+    .clk,
+    .DAT_S_in(output_wishbone.DAT_S),
+    .ACK_in(output_wishbone.ACK),
+    .RTY_in(output_wishbone.RTY),
+
+    /* OUTPUTS */
+    .DAT_S_out(output_wishbone_DAT_S),
+    .ACK_out(output_wishbone_ACK),
+    .RTY_out(output_wishbone_RTY)
+);
 
 /* input_wishbone0 has priority */
 enum int unsigned {
@@ -43,56 +90,70 @@ enum int unsigned {
 
 always_comb begin : owner_actions
     /* Default output assignments */
-    owner_wishbone.DAT_M = 128'bx;
-    owner_wishbone.CYC   = 0;
-    owner_wishbone.STB   = 0;
-    owner_wishbone.WE    = 0;
-    owner_wishbone.SEL   = 0;
-    owner_wishbone.ADR   = 0;
+    output_wishbone.DAT_M = 128'bx;
+    output_wishbone.CYC   = 0;
+    output_wishbone.STB   = 0;
+    output_wishbone.WE    = 0;
+    output_wishbone.SEL   = 0;
+    output_wishbone.ADR   = 0;
 
-    /* owner_wishbone outputs */
     input_wishbone0.DAT_S = 128'x;
-    input_wishbone0.ACK = 0;
-    input_wishbone0.RTY = 0;
+    input_wishbone0.ACK   = 0;
+    input_wishbone0.RTY   = 1;
 
     input_wishbone1.DAT_S = 128'x;
-    input_wishbone1.ACK = 0;
-    input_wishbone1.RTY = 0;
+    input_wishbone1.ACK   = 0;
+    input_wishbone1.RTY   = 1;
 
     /* Actions for each owner */
     case(state)
 
         o_none: begin
-            // nothing
+            if (input_wishbone0.CYC) // input0 requests ownership
+                input_wishbone0.RTY = 0;
+            else if (input_wishbone1.CYC) // input1 requests ownership
+                input_wishbone1.RTY = 0;
         end
 
         o_input0: begin
-            owner_wishbone.DAT_M = input_wishbone0.DAT_M;
-            owner_wishbone.CYC   = input_wishbone0.CYC;
-            owner_wishbone.STB   = input_wishbone0.STB;
-            owner_wishbone.WE    = input_wishbone0.WE;
-            owner_wishbone.SEL   = input_wishbone0.SEL;
-            owner_wishbone.ADR   = input_wishbone0.ADR;
+            output_wishbone.DAT_M = input_wishbone0_DAT_M;
+            output_wishbone.CYC   = input_wishbone0_CYC;
+            output_wishbone.STB   = input_wishbone0_STB;
+            output_wishbone.WE    = input_wishbone0_WE;
+            output_wishbone.SEL   = input_wishbone0_SEL;
+            output_wishbone.ADR   = input_wishbone0_ADR;
 
-            input_wishbone1.RTY = 1;
+            input_wishbone0.DAT_S = output_wishbone_DAT_S;
+            input_wishbone0.ACK   = output_wishbone_ACK;
+            input_wishbone0.RTY   = 0;
+
+            input_wishbone1.DAT_S = 128'x;
+            input_wishbone1.ACK   = 0;
+            input_wishbone1.RTY   = 1;
         end
 
         o_input1: begin
-            owner_wishbone.DAT_M = input_wishbone0.DAT_M;
-            owner_wishbone.CYC   = input_wishbone0.CYC;
-            owner_wishbone.STB   = input_wishbone0.STB;
-            owner_wishbone.WE    = input_wishbone0.WE;
-            owner_wishbone.SEL   = input_wishbone0.SEL;
-            owner_wishbone.ADR   = input_wishbone0.ADR;
+            output_wishbone.DAT_M = input_wishbone1_DAT_M;
+            output_wishbone.CYC   = input_wishbone1_CYC;
+            output_wishbone.STB   = input_wishbone1_STB;
+            output_wishbone.WE    = input_wishbone1_WE;
+            output_wishbone.SEL   = input_wishbone1_SEL;
+            output_wishbone.ADR   = input_wishbone1_ADR;
 
-            input_wishbone0.RTY = 1;
+            input_wishbone0.DAT_S = 128'x;
+            input_wishbone0.ACK   = 0;
+            input_wishbone0.RTY   = 1;
+
+            input_wishbone1.DAT_S = output_wishbone_DAT_S;
+            input_wishbone1.ACK   = output_wishbone_ACK;
+            input_wishbone1.RTY   = 0;
         end
 
     endcase
 end
 
 always_comb begin : next_owner_logic
-    /* Default next state assignment */
+    /* Default next owner assignment */
     next_owner = owner;
 
     /* Next owner information and conditions (if any)
@@ -131,115 +192,4 @@ always_ff @(posedge clk) begin: next_owner_assignment
     owner <= next_owner;
 end
 
-enum int unsigned {
-    /* List of states */
-    s_idle,
-    s_flush,
-    s_fetch
-} state, next_state;
-
-always_comb begin : state_actions
-    /* Default output assignments */
-    output_wishbone.DAT_M = 128'x;
-    output_wishbone.STB = 0;
-    output_wishbone.WE = 0;
-    output_wishbone.SEL = 0;
-    output_wishbone.ADR = 0;
-
-    /* Actions for each state */
-    case(state)
-
-        s_idle: begin
-            // nothing
-        end
-
-        s_flush: begin
-            output_wishbone.DAT_M = 128'x;
-            output_wishbone.STB = 0;
-            output_wishbone.WE = 0;
-            output_wishbone.SEL = 0;
-            output_wishbone.ADR = 0;
-
-            input_wishbone0.DAT_S = 128'x;
-            input_wishbone0.ACK = 0;
-            input_wishbone0.RTY = 1;
-        end
-
-        s_fetch: begin
-
-        end
-
-    endcase
-end
-
-always_comb begin : next_state_logic
-    /* Default next state assignment */
-    next_state = state;
-
-    /* Next state information and conditions (if any)
-     * for transitioning between states */
-    case(state)
-
-        s_idle: begin
-            if (input_wishbone0.CYC & input_wishbone0.STB) begin
-                if (input_wishbone0.WE)
-                    next_state = s_flush_0;
-                else
-                    next_state = s_fetch_0;
-            end else if (input_wishbone1.CYC & input_wishbone1.STB) begin
-                if (input_wishbone1.WE)
-                    next_state = s_flush_1;
-                else
-                    next_state = s_fetch_1;
-            end
-        end
-
-        s_flush_0: begin
-            if (input_wishbone0.CYC) begin // continue working with input_wishbone0
-
-            end else begin // transition to new or no owner
-                if (input_wishbone1.CYC & input_wishbone1.STB) begin
-
-
-
-            end
-        end
-
-        s_fetch_0: begin
-
-        end
-
-        s_flush_1: begin
-
-        end
-
-        s_fetch_1: begin
-
-        end
-
-    endcase // state
-end
-
-always_ff @(posedge clk) begin: next_state_assignment
-    /* Assignment of next state on clock edge */
-    state <= next_state;
-end
-
 endmodule : cache_arbiter
-
-/*
-    logic [127:0] DAT_M, DAT_S;
-    logic ACK, CYC, STB, RTY, WE;
-    logic [11:0] ADR;
-    logic [15:0] SEL;
-
-    modport master (
-        input DAT_S, CLK, ACK, RTY,
-        output DAT_M, CYC, STB, WE, SEL, ADR
-    );
-
-    modport slave (
-        input DAT_M, CLK, CYC, STB, WE, SEL, ADR,
-        output DAT_S, ACK, RTY
-    );
-*/

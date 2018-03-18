@@ -1,41 +1,39 @@
 import lc3b_types::*;
 
-// TODO: add paramater associativity
-module cache_set (
+// TODO: add parameter associativity
+module cache_l1_datapath (
     /* INPUTS */
-    /* global->cpu_control */
     input clk,
 
-    /* cache_control->cache_datapath */
+    /* controller->datapath */
     input cache_way_sel,
     input data_source_sel,
     input tag_bypass_sel,
     input load,
     input load_lru,
 
-    /* CPU->cache_datapath */
-    input [11:0] cpu_address,
-    input [15:0] cpu_byte_sel,
-    input lc3b_cache_word cpu_data_in,
+    /* input_wishbone->cache */
+    input [11:0] input_wishbone_ADR,
+    input [15:0] input_wishbone_SEL,
+    input lc3b_cache_word input_wishbone_DAT_M,
 
-    /* memory->cache_datapath */
-    input lc3b_cache_word memory_data_in,
+    /* output_wishbone->cache */
+    input lc3b_cache_word output_wishbone_DAT_S,
 
     /* OUTPUTS */
-    /* cache_datapath->cache_control */
+    /* datapath->controller */
     output logic hit_0,
     output logic hit_1,
     output logic dirty,
     output logic lru,
 
     /* cache_datapath->CPU */
-    output lc3b_cache_word cpu_data_out,
+    output lc3b_cache_word input_wishbone_DAT_S,
 
     /* cache_datapath->memory */
-    output [11:0] memory_address,
-    output [15:0] memory_byte_sel,
-    output lc3b_cache_word memory_data_out
-
+    output [11:0] output_wishbone_ADR,
+    output [15:0] output_wishbone_SEL,
+    output lc3b_cache_word output_wishbone_DAT_M
 );
 
 /*
@@ -46,34 +44,34 @@ lc3b_cache_word data_in;
 mux2 #(.width(128)) data_in_mux
 (
     .sel(data_source_sel),
-    .a(cpu_data_in),
-    .b(memory_data_in),
+    .a(input_wishbone_DAT_M),
+    .b(output_wishbone_DAT_S),
     .f(data_in)
 );
 
-assign memory_byte_sel = 16'hFFFF;
+assign output_wishbone_SEL = 16'hFFFF;
 
 logic [15:0] byte_sel;
 mux2 #(.width(16)) byte_sel_mux
 (
     .sel(data_source_sel),
-    .a(cpu_byte_sel),
-    .b(memory_byte_sel),
+    .a(input_wishbone_SEL),
+    .b(output_wishbone_SEL),
     .f(byte_sel)
 );
 
 lc3b_cache_tag tag_in;
-assign tag_in = cpu_address[11:3];
+assign tag_in = input_wishbone_ADR[11:3];
 
 lc3b_cache_index index;
-assign index = cpu_address[2:0];
+assign index = input_wishbone_ADR[2:0];
 
 /* output muxes */
 lc3b_cache_word data_0;
 lc3b_cache_word data_1;
 lc3b_cache_word data_out;
-assign cpu_data_out = data_out;
-assign memory_data_out = data_out;
+assign input_wishbone_DAT_S = data_out;
+assign output_wishbone_DAT_M = data_out;
 mux2 #(.width(128)) data_mux
 (
     .sel(cache_way_sel),
@@ -94,7 +92,7 @@ mux2 #(.width(9)) tag_mux
 );
 
 lc3b_cache_tag tag_bypass_mux_out;
-assign memory_address = {tag_bypass_mux_out, index};
+assign output_wishbone_ADR = {tag_bypass_mux_out, index};
 mux2 #(.width(9)) tag_bypass_mux
 (
     .sel(tag_bypass_sel),
@@ -180,5 +178,4 @@ always_ff @(posedge clk) begin
     end
 end
 
-
-endmodule : cache_datapath
+endmodule : cache_l1_datapath

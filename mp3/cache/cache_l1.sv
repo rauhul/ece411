@@ -7,16 +7,6 @@ module cache_l1 (
     wishbone.master output_wishbone
 );
 
-/* input_wishbone */
-logic cpu_request;
-assign cpu_request = input_wishbone.CYC & input_wishbone.STB;
-assign input_wishbone.RTY = 1'b0;
-
-/* output_wishbone */
-logic memory_request;
-assign output_wishbone.CYC = memory_request;
-assign output_wishbone.STB = memory_request;
-
 /* set <-> set_controller */
 logic cache_way_sel;
 logic data_source_sel;
@@ -30,74 +20,77 @@ logic dirty;
 logic lru;
 
 /* modules */
-cache_set _cache_set (
+cache_l1_datapath _cache_l1_datapath (
     /* INPUTS */
-    /* global->cpu_control */
-    .clk(input_wishbone.CLK),
+    .clk,
 
-    /* cache_control->cache_datapath */
+    /* controller->datapath */
     .cache_way_sel,
     .data_source_sel,
     .tag_bypass_sel,
     .load,
     .load_lru,
 
-    /* CPU->cache_datapath */
-    .cpu_address(input_wishbone.ADR),
-    .cpu_byte_sel(input_wishbone.SEL),
-    .cpu_data_in(input_wishbone.DAT_M),
+    /* input_wishbone->cache */
+    .input_wishbone_ADR(input_wishbone.ADR),
+    .input_wishbone_SEL(input_wishbone.SEL),
+    .input_wishbone_DAT_M(input_wishbone.DAT_M),
 
-    /* memory->cache_datapath */
-    .memory_data_in(output_wishbone.DAT_S),
+    /* output_wishbone->cache */
+    .output_wishbone_DAT_S(output_wishbone.DAT_S),
 
     /* OUTPUTS */
-    /* cache_datapath->cache_control */
+    /* datapath->controller */
     .hit_0,
     .hit_1,
     .dirty,
     .lru,
 
     /* cache_datapath->CPU */
-    .cpu_data_out(input_wishbone.DAT_S),
+    .input_wishbone_DAT_S(input_wishbone.DAT_S),
 
     /* cache_datapath->memory */
-    .memory_address(output_wishbone.ADR),
-    .memory_byte_sel(output_wishbone.SEL),
-    .memory_data_out(output_wishbone.DAT_M)
+    .output_wishbone_ADR(output_wishbone.ADR),
+    .output_wishbone_SEL(output_wishbone.SEL),
+    .output_wishbone_DAT_M(output_wishbone.DAT_M)
 );
 
-cache_set_controller _cache_set_controller (
+cache_l1_controller _cache_l1_controller (
     /* INPUTS */
-    /* global->cpu_control */
-    .clk(input_wishbone.CLK),
+    .clk,
 
-    /* cache_datapath->cache_control */
+    /* datapath->controller */
     .hit_0,
     .hit_1,
     .dirty,
     .lru,
 
-    /* CPU->cache_control */
-    .cpu_request,
-    .cpu_read_write(input_wishbone.WE),
+    /* input_wishbone->cache */
+    .input_wishbone_CYC(input_wishbone.CYC),
+    .input_wishbone_STB(input_wishbone.STB),
+    .input_wishbone_WE(input_wishbone.WE),
 
-    /* memory->cache_control */
-    .memory_response(output_wishbone.ACK),
+    /* output_wishbone->cache */
+    .output_wishbone_ACK(output_wishbone.ACK),
+    .output_wishbone_RTY(output_wishbone.RTY),
 
     /* OUTPUTS */
-    /* cache_control->cache_datapath */
+    /* controller->datapath */
     .cache_way_sel,
     .data_source_sel,
     .tag_bypass_sel,
     .load,
     .load_lru,
 
-    /* cache_control->CPU */
-    .cpu_response(input_wishbone.ACK),
+    /* cache->input_wishbone */
+    .input_wishbone_ACK(input_wishbone.ACK),
+    .input_wishbone_RTY(input_wishbone.RTY),
 
-    /* cache_control->memory */
-    .memory_request,
-    .memory_read_write(output_wishbone.WE)
+    /* cache->output_wishbone */
+    .output_wishbone_CYC(output_wishbone.CYC),
+    .output_wishbone_STB(output_wishbone.STB),
+    .output_wishbone_WE(output_wishbone.WE)
 );
+
 
 endmodule : cache
