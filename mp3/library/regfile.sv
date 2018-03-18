@@ -15,15 +15,14 @@ module regfile (
     output lc3b_word reg_b
 );
 
-lc3b_word data [7:0]; /* synthesis ramstyle = "logic" */
+lc3b_word data [7:0];
 
 /* Altera device registers are 0 at power on. Specify this
  * so that Modelsim works as expected.
  */
 initial begin
-    for (int i = 0; i < $size(data); i++) begin
+    for (int i = 0; i < $size(data); i++)
         data[i] = 16'b0;
-    end
 end
 
 always_ff @(posedge clk) begin
