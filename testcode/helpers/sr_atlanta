@@ -1,0 +1,30 @@
+#! /usr/local/bin/python3
+
+import sys
+
+if (len(sys.argv) != 3):
+    print("usage sr_atlanta r0 r1")
+    exit()
+
+def hex(n):
+    return "0x%s"%("00000000%x"%(n&0xffffffff))[-4:]
+
+r0 = int(sys.argv[1], 0)
+r1 = int(sys.argv[2], 0)
+
+print("INPUT")
+print("r0: " + hex(r0))
+print("r1: " + hex(r1))
+print("\n")
+
+r2 = r0 & r1 # AND R2, R0, R1
+r2 = ~r2     # NOT R2, R2
+r0 = ~r0     # NOT R0, R0
+r1 = ~r1     # NOT R1, R1
+r0 = r0 & r1 # AND R0, R0, R1
+r0 = ~r0     # NOT R0, R0
+r0 = r0 & r2 # AND R0, R0, R2
+
+print("OUTPUT")
+print("r0 = " + hex(r0) + ", r1 = " + hex(r1) + ", r2 = " + hex(r2))
+print("\n")

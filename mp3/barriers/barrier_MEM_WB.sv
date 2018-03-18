@@ -3,6 +3,7 @@ import lc3b_types::*;
 module barrier_MEM_WB (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word alu_in,
     input lc3b_word ir_in,
@@ -38,12 +39,14 @@ end
 
 /* FF */
 always_ff @(posedge clk) begin
-    control = control_in;
-    alu     = alu_in;
-    ir      = ir_in;
-    mdr     = mdr_in;
-    pc      = pc_in;
-    pcn     = pcn_in;
+    if (~stall) begin
+        control = control_in;
+        alu     = alu_in;
+        ir      = ir_in;
+        mdr     = mdr_in;
+        pc      = pc_in;
+        pcn     = pcn_in;
+    end
 end
 
 /* COMB */
