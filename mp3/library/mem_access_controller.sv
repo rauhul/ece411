@@ -67,12 +67,13 @@ always_comb begin : next_state_logic
     case(state)
 
         s_mem_access_1: begin
-            if (opcode == op_ldi || opcode == op_sti)
+            if ((opcode == op_ldi || opcode == op_sti) & data_memory_wishbone_ACK)
                 next_state = s_mem_access_2;
         end
 
         s_mem_access_2: begin
-            next_state = s_mem_access_1;
+            if (data_memory_wishbone_ACK)
+                next_state = s_mem_access_1;
         end
 
     endcase // state
