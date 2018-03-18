@@ -29,7 +29,7 @@ enum int unsigned {
 
 logic request_state_based_stall;
 logic request_memory_based_stall;
-assign request_memory_based_stall = (control_in.data_memory_access & (~data_memory_wishbone_ACK | data_memory_wishbone_RTY));
+assign request_memory_based_stall = (control_in.data_memory_access) & (~data_memory_wishbone_ACK | data_memory_wishbone_RTY);
 
 assign request_stall = request_state_based_stall | request_memory_based_stall;
 

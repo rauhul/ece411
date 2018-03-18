@@ -28,16 +28,7 @@ always_comb begin
     stage_MEM_stall      = 0;
     stage_WB_stall       = 0;
 
-    if (stage_MEM_request_stall) begin
-        barrier_IF_ID_stall  = 1;
-        barrier_ID_EX_stall  = 1;
-        barrier_EX_MEM_stall = 1;
-        barrier_MEM_WB_stall = 1;
-        stage_IF_stall       = 1;
-        stage_ID_stall       = 1;
-        stage_EX_stall       = 1;
-        stage_WB_stall       = 1;
-    end else if (stage_IF_request_stall) begin
+    if (stage_IF_request_stall) begin
         barrier_IF_ID_stall  = 1;
         barrier_ID_EX_stall  = 1;
         barrier_EX_MEM_stall = 1;
@@ -45,6 +36,15 @@ always_comb begin
         stage_ID_stall       = 1;
         stage_EX_stall       = 1;
         stage_MEM_stall      = 1;
+        stage_WB_stall       = 1;
+    end else if (stage_MEM_request_stall) begin
+        barrier_IF_ID_stall  = 1;
+        barrier_ID_EX_stall  = 1;
+        barrier_EX_MEM_stall = 1;
+        barrier_MEM_WB_stall = 1;
+        stage_IF_stall       = 1;
+        stage_ID_stall       = 1;
+        stage_EX_stall       = 1;
         stage_WB_stall       = 1;
     end
 end

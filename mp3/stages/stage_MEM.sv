@@ -88,7 +88,7 @@ mem_access_controller _mem_access_controller (
     .control_in,
     .ir_in,
     .data_memory_wishbone_ACK(data_memory_wishbone.ACK),
-    .data_memory_wishbone_RTY(data_memory_wishbone.ACK),
+    .data_memory_wishbone_RTY(data_memory_wishbone.RTY),
 
     /* OUTPUTS */
     .data_memory_addr_mux_sel,
@@ -108,6 +108,9 @@ mux4 data_memory_addr_mux (
 	 /* OUTPUTS */
     .f(data_memory_addr_mux_out)
 );
+
+assign data_memory_wishbone.ACK = 0;
+assign data_memory_wishbone.RTY = 1;
 
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
 assign data_memory_wishbone.CYC = control_in.data_memory_access;
