@@ -13,7 +13,7 @@ module mem_access_controller (
 
     /* OUTPUTS */
     output lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel,
-    output logic data_memory_write_enable,
+    output logic data_memory_wishbone_WE,
     output logic internal_MDR_load,
     output logic request_stall
 );
