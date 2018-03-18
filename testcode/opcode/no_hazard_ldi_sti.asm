@@ -9,7 +9,16 @@ SEGMENT CodeSegment:
     NOP
     NOP
     NOP
+    NOP
+    NOP
+    NOP
     LDI R1, R0, 0
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
     LDI R2, R0, 1
     LDI R3, R0, 2
     LDI R4, R0, 3
