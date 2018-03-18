@@ -37,3 +37,13 @@ This allowed us to very quickly identify errors and fix them.
 - Kyung Jae assisted with the pipeline and helped test it
 - WonJae worked on how the caches will fit into the pipeline for the next checkpoint
 
+## Checkpoint 2
+Mar 12, 2018 – Mar 18, 2018
+
+We updated our pipeline to handle all of the LC3b instructions. We also implemented a split L1 caches to cache instructions and data; additionally we implemented an arbiter to connect these caches to physical memory, the arbiter also introduces a cycle delay to prevent a critical path from extending from our L1 caches to the physical memory.
+
+We tested every LC3b instruction individually against test code specifically designed to exercise that instruction. We then walked through all 1000+ lines of the mp3cp2b test code, and annotated 15000+ ns of simulation while comparing against expected results. We ensured that every instruction works exactly as spec'd before integrating the caches.
+
+After adding the caches we tested each instruction again and then ran through the mp3cp2a test code and annotated it as well. After passing all of those tests, we re-ran through all of the mp3cp2b test code ensuring every instruction worked exactly as expected.
+
+- Rauhul wrote the test cases, updated the pipeline for new instructions, implemented the caches, and tested everything
