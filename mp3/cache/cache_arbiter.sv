@@ -9,9 +9,8 @@ module cache_arbiter (
     wishbone.master output_wishbone
 );
 
-logic clk
+logic clk;
 assign clk = output_wishbone.CLK;
-
 
 logic [127:0] input_wishbone0_DAT_M;
 logic input_wishbone0_CYC;

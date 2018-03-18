@@ -85,10 +85,12 @@ mem_access_controller _mem_access_controller (
     .stall,
     .control_in,
     .ir_in,
+    .data_memory_wishbone_ACK,
+    .data_memory_wishbone_RTY,
 
     /* OUTPUTS */
     .data_memory_addr_mux_sel,
-    .data_memory_write_enable,
+    .data_memory_wishbone_WE,
     .internal_MDR_load,
     .request_stall
 );
@@ -108,7 +110,7 @@ mux4 data_memory_addr_mux (
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
 assign data_memory_wishbone.CYC = control_in.data_memory_access;
 assign data_memory_wishbone.STB = control_in.data_memory_access;
-assign data_memory_wishbone.WE = data_memory_write_enable;
+assign data_memory_wishbone.WE = data_memory_wishbone_WE;
 
 always_comb begin
     /* select */

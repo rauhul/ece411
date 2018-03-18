@@ -12,6 +12,7 @@ module stage_IF (
     /* OUTPUTS */
     output lc3b_word ir_out,
     output lc3b_word pc_plus2_out,
+    output logic request_stall,
 
     /* MEMORY INTERFACE */
     wishbone.master instruction_memory_wishbone
@@ -63,5 +64,7 @@ always_comb begin
 end
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
+
+assign request_stall = ~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY;
 
 endmodule : stage_IF

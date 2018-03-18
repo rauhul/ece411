@@ -7,6 +7,10 @@ module mem_access_controller (
     input lc3b_control_word control_in,
     input lc3b_word ir_in,
 
+    input data_memory_wishbone_ACK,
+    input data_memory_wishbone_RTY,
+
+
     /* OUTPUTS */
     output lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel,
     output logic data_memory_write_enable,
@@ -23,13 +27,18 @@ enum int unsigned {
     s_mem_access_2
 } state, next_state;
 
+logic request_state_based_stall;
+logic request_memory_based_stall;
+assign request_memory_based_stall = (control_in.data_memory_access & (~data_memory_wishbone_ACK | data_memory_wishbone_RTY));
+
+assign request_stall = request_state_based_stall | request_memory_based_stall;
 
 always_comb begin : state_actions
     /* Default output assignments */
     data_memory_addr_mux_sel = control_in.data_memory_addr_mux_sel;
     data_memory_write_enable = control_in.data_memory_write_enable;
     internal_MDR_load = 0;
-    request_stall = 0;
+    request_state_based_stall = 0;
 
     /* Actions for each state */
     case(state)
@@ -38,7 +47,7 @@ always_comb begin : state_actions
             if (opcode == op_ldi || opcode == op_sti) begin
                 data_memory_write_enable = 0;
                 internal_MDR_load = 1;
-                request_stall = 1;
+                request_state_based_stall = 1;
             end
         end
 
