@@ -3,6 +3,7 @@ import lc3b_types::*;
 module mem_access_controller (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word ir_in,
 
@@ -70,7 +71,8 @@ end
 
 always_ff @(posedge clk) begin: next_state_assignment
     /* Assignment of next state on clock edge */
-    state <= next_state;
+    if (~stall)
+        state <= next_state;
 end
 
 endmodule : mem_access_controller

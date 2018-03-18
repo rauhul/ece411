@@ -82,6 +82,7 @@ register #(.width(1)) br_en (
 mem_access_controller _mem_access_controller (
     /* INPUTS */
     .clk,
+    .stall,
     .control_in,
     .ir_in,
 
@@ -104,10 +105,9 @@ mux4 data_memory_addr_mux (
     .f(data_memory_addr_mux_out)
 );
 
-// these signals can be x for now
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
-assign data_memory_wishbone.CYC = 1'bx;
-assign data_memory_wishbone.STB = 1'bx;
+assign data_memory_wishbone.CYC = control_in.data_memory_access;
+assign data_memory_wishbone.STB = control_in.data_memory_access;
 assign data_memory_wishbone.WE = data_memory_write_enable;
 
 always_comb begin

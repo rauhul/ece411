@@ -51,12 +51,11 @@ plus2 pc_plus2 (
     .out(pc_plus2_out)
 );
 
-// these signals can be x for now
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
-assign instruction_memory_wishbone.CYC   = 1'bx;
-assign instruction_memory_wishbone.DAT_M = 128'bx;
-assign instruction_memory_wishbone.STB   = 1'bx;
-assign instruction_memory_wishbone.WE    = 1'b0;
+assign instruction_memory_wishbone.CYC   = 1;
+assign instruction_memory_wishbone.DAT_M = 0;
+assign instruction_memory_wishbone.STB   = 1;
+assign instruction_memory_wishbone.WE    = 0;
 
 always_comb begin
     instruction_memory_wishbone.SEL = 0;
