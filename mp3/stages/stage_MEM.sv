@@ -22,11 +22,13 @@ module stage_MEM (
 lc3b_cc cc_out;
 lc3b_cc cc_gen_out;
 lc3b_word cc_gen_mux_out;
-lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
-logic data_memory_write_enable;
+
 logic internal_MDR_load;
 lc3b_word internal_mdr_out;
+
+lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
 lc3b_word data_memory_addr_mux_out;
+logic data_memory_wishbone_WE;
 
 lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
@@ -85,8 +87,8 @@ mem_access_controller _mem_access_controller (
     .stall,
     .control_in,
     .ir_in,
-    .data_memory_wishbone_ACK,
-    .data_memory_wishbone_RTY,
+    .data_memory_wishbone_ACK(data_memory_wishbone.ACK),
+    .data_memory_wishbone_RTY(data_memory_wishbone.ACK),
 
     /* OUTPUTS */
     .data_memory_addr_mux_sel,
