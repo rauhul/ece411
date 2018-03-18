@@ -1,4 +1,4 @@
-// TODO: add paramater associativity
+// TODO: add parameter associativity
 module cache_l1 (
     /* SLAVES */
     wishbone.slave input_wishbone,

@@ -23,8 +23,7 @@ enum int unsigned {
 } state, next_state;
 
 
-always_comb
-begin : state_actions
+always_comb begin : state_actions
     /* Default output assignments */
     data_memory_addr_mux_sel = control_in.data_memory_addr_mux_sel;
     data_memory_write_enable = control_in.data_memory_write_enable;
@@ -49,8 +48,7 @@ begin : state_actions
     endcase
 end
 
-always_comb
-begin : next_state_logic
+always_comb begin : next_state_logic
     /* Default next state assignment */
     next_state = state;
 
@@ -70,8 +68,7 @@ begin : next_state_logic
     endcase // state
 end
 
-always_ff @(posedge clk)
-begin: next_state_assignment
+always_ff @(posedge clk) begin: next_state_assignment
     /* Assignment of next state on clock edge */
     state <= next_state;
 end

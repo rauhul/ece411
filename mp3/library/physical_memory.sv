@@ -13,10 +13,9 @@ logic [127:0] data, wdata;
 logic         ready, resp;
 
 /* Initialize memory contents from memory.lst file */
-initial
-    begin
-        $readmemh("memory.lst", mem);
-    end
+initial begin
+    $readmemh("memory.lst", mem);
+end
 
 assign physical_memory_wishbone.ACK   = resp;
 assign physical_memory_wishbone.RTY   = physical_memory_wishbone.STB & physical_memory_wishbone.CYC & (!resp);

@@ -29,6 +29,8 @@ cache_l1 d_cache (
 );
 
 cache_arbiter _cache_arbiter (
+    .clk,
+
     /* SLAVES */
     .input_wishbone0(i_cache_memory_wishbone),
     .input_wishbone1(d_cache_memory_wishbone),
