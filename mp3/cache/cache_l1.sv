@@ -1,13 +1,14 @@
 // TODO: add parameter associativity
 module cache_l1 (
-    input clk,
-
     /* SLAVES */
     wishbone.slave input_wishbone,
 
     /* MASTERS */
     wishbone.master output_wishbone
 );
+
+logic clk;
+assign clk = input_wishbone.CLK;
 
 /* set <-> set_controller */
 logic cache_way_sel;
