@@ -82,7 +82,7 @@ barrier_wishbone_slave _output_wishbone (
 
 /* input_wishbone0 has priority */
 enum int unsigned {
-    /* List of states */
+    /* List of owners */
     o_none,
     o_input0,
     o_input1
@@ -106,7 +106,7 @@ always_comb begin : owner_actions
     input_wishbone1.RTY   = 1;
 
     /* Actions for each owner */
-    case(state)
+    case(owner)
 
         o_none: begin
             if (input_wishbone0.CYC) // input0 requests ownership
