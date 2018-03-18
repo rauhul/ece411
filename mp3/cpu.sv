@@ -10,6 +10,7 @@ logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
+logic stage_IF_request_stall
 logic stage_MEM_request_stall;
 logic barrier_EX_MEM_stall;
 logic barrier_ID_EX_stall;
@@ -23,6 +24,7 @@ logic stage_WB_stall;
 stall_controller _stall_controller (
     /* INPUTS */
     .clk,
+    .stage_IF_request_stall,
     .stage_MEM_request_stall,
 
     /* OUTPUTS */
