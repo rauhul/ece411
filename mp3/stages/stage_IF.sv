@@ -37,7 +37,7 @@ register pc (
     /* INPUTS */
     .clk,
     .load(1'b1),
-    .stall,
+    .stall(stall | request_stall),
     .in(pc_mux_out),
 
     /* OUTPUTS */
