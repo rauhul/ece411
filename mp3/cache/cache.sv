@@ -7,18 +7,8 @@ module cache (
     wishbone.master physical_memory_wishbone
 );
 
-// wishbone i_cache_memory_wishbone(clk);
 // wishbone d_cache_memory_wishbone(clk);
-
-// cache_l1 i_cache (
-//     .clk,
-
-//     /* SLAVES */
-//     .input_wishbone(instruction_memory_wishbone),
-
-//     /* MASTERS */
-//     .output_wishbone(i_cache_memory_wishbone)
-// );
+// wishbone i_cache_memory_wishbone(clk);
 
 // cache_l1 d_cache (
 //     .clk,
@@ -30,10 +20,20 @@ module cache (
 //     .output_wishbone(d_cache_memory_wishbone)
 // );
 
+cache_l1 i_cache (
+    .clk,
+
+    /* SLAVES */
+    .input_wishbone(instruction_memory_wishbone),
+
+    /* MASTERS */
+    .output_wishbone(i_cache_memory_wishbone)
+);
+
 cache_arbiter _cache_arbiter (
     /* SLAVES */
     .input_wishbone0(data_memory_wishbone),
-    .input_wishbone1(instruction_memory_wishbone),
+    .input_wishbone1(i_cache_memory_wishbone),
 
     /* MASTERS */
     .output_wishbone(physical_memory_wishbone)
