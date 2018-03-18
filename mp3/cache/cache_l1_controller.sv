@@ -81,6 +81,7 @@ always_comb begin : state_actions
                     output_wishbone_CYC = 0;
                     output_wishbone_STB = 0;
                     output_wishbone_WE  = 0;
+
                 end else begin : miss
                     input_wishbone_ACK = 0;
                     input_wishbone_RTY = 1;
