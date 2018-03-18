@@ -7,6 +7,9 @@ module cache (
     wishbone.master physical_memory_wishbone
 );
 
+assign data_memory_wishbone.ACK = 0;
+assign data_memory_wishbone.RTY = 1;
+
 // logic clk;
 // assign clk = physical_memory_wishbone.CLK;
 
