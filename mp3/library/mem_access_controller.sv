@@ -36,7 +36,7 @@ assign request_stall = request_state_based_stall | request_memory_based_stall;
 always_comb begin : state_actions
     /* Default output assignments */
     data_memory_addr_mux_sel = control_in.data_memory_addr_mux_sel;
-    data_memory_write_enable = control_in.data_memory_write_enable;
+    data_memory_wishbone_WE = control_in.data_memory_write_enable;
     internal_MDR_load = 0;
     request_state_based_stall = 0;
 
@@ -45,7 +45,7 @@ always_comb begin : state_actions
 
         s_mem_access_1: begin
             if (opcode == op_ldi || opcode == op_sti) begin
-                data_memory_write_enable = 0;
+                data_memory_wishbone_WE = 0;
                 internal_MDR_load = 1;
                 request_state_based_stall = 1;
             end
