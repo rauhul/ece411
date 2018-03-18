@@ -141,8 +141,8 @@ cache_way cache_way_0 (
     /* OUTPUTS */
     .tag_out(tag_0),
     .data_out(data_0),
-    .dirty(dirty_0),
-    .hit(hit_0)
+    .dirty_out(dirty_0),
+    .hit_out(hit_0)
 );
 
 cache_way cache_way_1 (
@@ -158,8 +158,8 @@ cache_way cache_way_1 (
     /* OUTPUTS */
     .tag_out(tag_1),
     .data_out(data_1),
-    .dirty(dirty_1),
-    .hit(hit_1)
+    .dirty_out(dirty_1),
+    .hit_out(hit_1)
 );
 
 /* lru */

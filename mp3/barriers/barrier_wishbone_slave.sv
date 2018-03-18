@@ -1,6 +1,7 @@
 module barrier_wishbone_slave (
     /* INPUTS */
     input clk,
+
     input logic [127:0] DAT_S_in,
     input logic ACK_in,
     input logic RTY_in,
