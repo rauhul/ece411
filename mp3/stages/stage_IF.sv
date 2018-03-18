@@ -53,9 +53,9 @@ plus2 pc_plus2 (
 );
 
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
-assign instruction_memory_wishbone.CYC   = 1;
-assign instruction_memory_wishbone.DAT_M = 0;
+assign instruction_memory_wishbone.CYC   = 1 & ~stall;
 assign instruction_memory_wishbone.STB   = 1;
+assign instruction_memory_wishbone.DAT_M = 0;
 assign instruction_memory_wishbone.WE    = 0;
 
 always_comb begin

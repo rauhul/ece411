@@ -32,8 +32,8 @@ module cache (
 
 cache_arbiter _cache_arbiter (
     /* SLAVES */
-    .input_wishbone0(instruction_memory_wishbone),
-    .input_wishbone1(data_memory_wishbone),
+    .input_wishbone0(data_memory_wishbone),
+    .input_wishbone1(instruction_memory_wishbone),
 
     /* MASTERS */
     .output_wishbone(physical_memory_wishbone)
