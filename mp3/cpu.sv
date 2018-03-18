@@ -1,13 +1,13 @@
 import lc3b_types::*;
 
 module cpu (
-    input clk,
-
     /* MASTERS */
     wishbone.master instruction_memory_wishbone,
     wishbone.master data_memory_wishbone
 );
 
+logic clk;
+assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
 logic stage_MEM_request_stall;

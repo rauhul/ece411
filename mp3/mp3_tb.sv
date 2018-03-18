@@ -11,7 +11,6 @@ always #5 clk = ~clk;
 wishbone physical_memory_wishbone(clk);
 
 mp3 dut (
-    .clk,
     .physical_memory_wishbone
 );
 

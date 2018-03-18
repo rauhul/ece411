@@ -1,6 +1,4 @@
 module cache (
-    input clk,
-
     /* SLAVES */
     wishbone.slave instruction_memory_wishbone,
     wishbone.slave data_memory_wishbone,
@@ -33,8 +31,6 @@ module cache (
 // );
 
 cache_arbiter _cache_arbiter (
-    .clk,
-
     /* SLAVES */
     .input_wishbone0(instruction_memory_wishbone),
     .input_wishbone1(data_memory_wishbone),

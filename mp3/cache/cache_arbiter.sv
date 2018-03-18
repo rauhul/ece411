@@ -1,8 +1,6 @@
 import lc3b_types::*;
 
 module cache_arbiter (
-    input clk,
-
     /* SLAVES */
     wishbone.slave input_wishbone0,
     wishbone.slave input_wishbone1,
@@ -10,6 +8,10 @@ module cache_arbiter (
     /* MASTERS */
     wishbone.master output_wishbone
 );
+
+logic clk
+assign clk = output_wishbone.CLK;
+
 
 logic [127:0] input_wishbone0_DAT_M;
 logic input_wishbone0_CYC;
