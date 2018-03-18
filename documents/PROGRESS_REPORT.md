@@ -47,3 +47,4 @@ We tested every LC3b instruction individually against test code specifically des
 After adding the caches we tested each instruction again and then ran through the mp3cp2a test code and annotated it as well. After passing all of those tests, we re-ran through all of the mp3cp2b test code ensuring every instruction worked exactly as expected.
 
 - Rauhul wrote the test cases, updated the pipeline for new instructions, implemented the caches, and tested everything
+- Kyung Jae worked on the data forwarding diagram and the it will into the pipeline for the next checkpoint
