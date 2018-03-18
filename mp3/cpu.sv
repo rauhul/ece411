@@ -71,6 +71,7 @@ stage_IF _stage_IF (
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
     .pc_plus2_out(stage_IF_pc_plus2),
+    .request_stall(stage_IF_request_stall),
 
     /* MEMORY INTERFACE */
     .instruction_memory_wishbone
