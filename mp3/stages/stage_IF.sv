@@ -54,7 +54,7 @@ plus2 pc_plus2 (
 
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
 assign instruction_memory_wishbone.CYC   = ~stall;
-assign instruction_memory_wishbone.STB   = 1;
+assign instruction_memory_wishbone.STB   = ~instruction_memory_wishbone.ACK;
 assign instruction_memory_wishbone.DAT_M = 0;
 assign instruction_memory_wishbone.WE    = 0;
 
@@ -65,6 +65,6 @@ end
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
 
-assign request_stall = ~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY;
+assign request_stall = (instruction_memory_wishbone.CYC) & (~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY);
 
 endmodule : stage_IF
