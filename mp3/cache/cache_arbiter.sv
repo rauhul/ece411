@@ -97,11 +97,11 @@ always_comb begin : owner_actions
     output_wishbone.SEL   = 0;
     output_wishbone.ADR   = 0;
 
-    input_wishbone0.DAT_S = 128'x;
+    input_wishbone0.DAT_S = 128'bx;
     input_wishbone0.ACK   = 0;
     input_wishbone0.RTY   = 1;
 
-    input_wishbone1.DAT_S = 128'x;
+    input_wishbone1.DAT_S = 128'bx;
     input_wishbone1.ACK   = 0;
     input_wishbone1.RTY   = 1;
 
@@ -127,7 +127,7 @@ always_comb begin : owner_actions
             input_wishbone0.ACK   = output_wishbone_ACK;
             input_wishbone0.RTY   = 0;
 
-            input_wishbone1.DAT_S = 128'x;
+            input_wishbone1.DAT_S = 128'bx;
             input_wishbone1.ACK   = 0;
             input_wishbone1.RTY   = 1;
         end
@@ -140,7 +140,7 @@ always_comb begin : owner_actions
             output_wishbone.SEL   = input_wishbone1_SEL;
             output_wishbone.ADR   = input_wishbone1_ADR;
 
-            input_wishbone0.DAT_S = 128'x;
+            input_wishbone0.DAT_S = 128'bx;
             input_wishbone0.ACK   = 0;
             input_wishbone0.RTY   = 1;
 

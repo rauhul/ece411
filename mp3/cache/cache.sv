@@ -13,6 +13,8 @@ wishbone i_cache_memory_wishbone(clk);
 wishbone d_cache_memory_wishbone(clk);
 
 cache_l1 i_cache (
+    .clk,
+
     /* SLAVES */
     .input_wishbone(instruction_memory_wishbone),
 
@@ -21,6 +23,8 @@ cache_l1 i_cache (
 );
 
 cache_l1 d_cache (
+    .clk,
+
     /* SLAVES */
     .input_wishbone(data_memory_wishbone),
 

@@ -34,7 +34,7 @@ initial begin
     ADR = 0;
 end
 
-always_ff @(posedge CLK) begin
+always_ff @(posedge clk) begin
     DAT_M = DAT_M_in;
     CYC = CYC_in;
     STB = STB_in;

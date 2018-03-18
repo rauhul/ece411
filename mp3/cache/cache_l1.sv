@@ -1,5 +1,7 @@
 // TODO: add parameter associativity
 module cache_l1 (
+    input clk,
+
     /* SLAVES */
     wishbone.slave input_wishbone,
 
@@ -93,4 +95,4 @@ cache_l1_controller _cache_l1_controller (
 );
 
 
-endmodule : cache
+endmodule : cache_l1

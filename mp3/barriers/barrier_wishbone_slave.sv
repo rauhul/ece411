@@ -21,7 +21,7 @@ initial begin
     RTY = 0;
 end
 
-always_ff @(posedge CLK) begin
+always_ff @(posedge clk) begin
     DAT_S = DAT_S_in;
     ACK = ACK_in;
     RTY = RTY_in;
