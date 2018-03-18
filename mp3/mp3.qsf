@@ -52,6 +52,14 @@ set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_EX_MEM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_ID_EX.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_IF_ID.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_MEM_WB.sv
+set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_master.sv
+set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_slave.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_arbiter.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1_datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
@@ -61,11 +69,11 @@ set_global_assignment -name SYSTEMVERILOG_FILE library/demux2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/gencc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/lc3b_types.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/magic_memory_dual_port.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mem_access_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux4.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux8.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/physical_memory.sv.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/plus2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/regfile.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/register.sv
