@@ -74,13 +74,6 @@ typedef enum bit [1:0] {
     lc3b_data_memory_addr_mux_sel_x1
 } lc3b_data_memory_addr_mux_sel;
 
-// typedef enum bit [1:0] {
-//     lc3b_data_memory_byte_sel_none,
-//     lc3b_data_memory_byte_sel_low,
-//     lc3b_data_memory_byte_sel_high,
-//     lc3b_data_memory_byte_sel_both
-// } lc3b_data_memory_byte_sel;
-
 /* WB TYPES */
 typedef enum bit [1:0] {
     lc3b_regfile_data_mux_sel_pc,
@@ -113,9 +106,9 @@ typedef struct packed {
     logic cc_load;
     lc3b_cc_gen_mux_sel cc_gen_mux_sel;
     logic br_en_load;
+    logic data_memory_access;
     logic data_memory_write_enable;
     lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
-    // lc3b_data_memory_byte_sel data_memory_byte_sel;
     logic data_memory_word_align;
 
     /* WB */
@@ -126,7 +119,6 @@ typedef struct packed {
 } lc3b_control_word;
 
 /* INSTRUCTION TYPES */
-
 typedef enum bit [3:0] {
     op_rti  = 4'b1000,
 

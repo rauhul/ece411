@@ -1,18 +1,16 @@
 import lc3b_types::*;
 
 module cpu (
-    /* INPUTS */
-    input clk,
-
-    /* OUTPUTS */
-
-    /* MEMORY INTERFACE */
+    /* MASTERS */
     wishbone.master instruction_memory_wishbone,
     wishbone.master data_memory_wishbone
 );
 
+logic clk;
+assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
+logic stage_IF_request_stall;
 logic stage_MEM_request_stall;
 logic barrier_EX_MEM_stall;
 logic barrier_ID_EX_stall;
@@ -26,6 +24,7 @@ logic stage_WB_stall;
 stall_controller _stall_controller (
     /* INPUTS */
     .clk,
+    .stage_IF_request_stall,
     .stage_MEM_request_stall,
 
     /* OUTPUTS */
@@ -72,6 +71,7 @@ stage_IF _stage_IF (
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
     .pc_plus2_out(stage_IF_pc_plus2),
+    .request_stall(stage_IF_request_stall),
 
     /* MEMORY INTERFACE */
     .instruction_memory_wishbone

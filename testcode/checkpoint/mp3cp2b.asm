@@ -359,7 +359,7 @@ loop2:
     NOP
     NOP
     NOP
-    LDR R2, R0, five
+    LDR R2, R0, five ; skipped
     NOP
     NOP
     NOP
@@ -871,7 +871,7 @@ bloomington:
     NOP
     NOP
     NOP
-    STR R0, R5, CS1 ; store 0x44dd
+    STR R0, R5, CS1 ;e store 0x44dd
     LDR R0, R6, RES4 ; 0xa342
     LDR R1, R6, RES5 ; 0x01a1
     NOP
@@ -939,7 +939,7 @@ bloomington:
     NOP
     STR R0, R5, CS4 ; store 0xfcf2
     LDR R0, R6, RES11 ; 0x517a
-    LDR R1, R6, RES12 ; 0x013F
+    LDR R1, R6, RES12 ; 0x013f
     NOP
     NOP
     NOP
@@ -1004,7 +1004,7 @@ bloomington:
     NOP
     NOP
     NOP
-    JSR atlanta ; pc = 0x0820, r7 = 0x785
+    JSR atlanta ; pc = 0x0820, r7 = 0x786
                 ; r0 = 0xce88, r1 = 0x9ff2, r2 = 0xdffa
     NOP
     NOP

@@ -3,12 +3,17 @@ import lc3b_types::*;
 module mem_access_controller (
     /* INPUTS */
     input clk,
+    input stall,
     input lc3b_control_word control_in,
     input lc3b_word ir_in,
 
+    input data_memory_wishbone_ACK,
+    input data_memory_wishbone_RTY,
+
+
     /* OUTPUTS */
     output lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel,
-    output logic data_memory_write_enable,
+    output logic data_memory_wishbone_WE,
     output logic internal_MDR_load,
     output logic request_stall
 );
@@ -22,23 +27,27 @@ enum int unsigned {
     s_mem_access_2
 } state, next_state;
 
+logic request_state_based_stall;
+logic request_memory_based_stall;
+assign request_memory_based_stall = (control_in.data_memory_access) & (~data_memory_wishbone_ACK | data_memory_wishbone_RTY);
 
-always_comb
-begin : state_actions
+assign request_stall = request_state_based_stall | request_memory_based_stall;
+
+always_comb begin : state_actions
     /* Default output assignments */
     data_memory_addr_mux_sel = control_in.data_memory_addr_mux_sel;
-    data_memory_write_enable = control_in.data_memory_write_enable;
+    data_memory_wishbone_WE = control_in.data_memory_write_enable;
     internal_MDR_load = 0;
-    request_stall = 0;
+    request_state_based_stall = 0;
 
     /* Actions for each state */
     case(state)
 
         s_mem_access_1: begin
             if (opcode == op_ldi || opcode == op_sti) begin
-                data_memory_write_enable = 0;
+                data_memory_wishbone_WE = 0;
                 internal_MDR_load = 1;
-                request_stall = 1;
+                request_state_based_stall = 1;
             end
         end
 
@@ -49,8 +58,7 @@ begin : state_actions
     endcase
 end
 
-always_comb
-begin : next_state_logic
+always_comb begin : next_state_logic
     /* Default next state assignment */
     next_state = state;
 
@@ -59,21 +67,22 @@ begin : next_state_logic
     case(state)
 
         s_mem_access_1: begin
-            if (opcode == op_ldi || opcode == op_sti)
+            if ((opcode == op_ldi || opcode == op_sti) & data_memory_wishbone_ACK)
                 next_state = s_mem_access_2;
         end
 
         s_mem_access_2: begin
-            next_state = s_mem_access_1;
+            if (data_memory_wishbone_ACK)
+                next_state = s_mem_access_1;
         end
 
     endcase // state
 end
 
-always_ff @(posedge clk)
-begin: next_state_assignment
+always_ff @(posedge clk) begin: next_state_assignment
     /* Assignment of next state on clock edge */
-    state <= next_state;
+    if (~stall)
+        state <= next_state;
 end
 
 endmodule : mem_access_controller

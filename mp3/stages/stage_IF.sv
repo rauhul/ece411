@@ -12,6 +12,7 @@ module stage_IF (
     /* OUTPUTS */
     output lc3b_word ir_out,
     output lc3b_word pc_plus2_out,
+    output logic request_stall,
 
     /* MEMORY INTERFACE */
     wishbone.master instruction_memory_wishbone
@@ -36,7 +37,7 @@ register pc (
     /* INPUTS */
     .clk,
     .load(1'b1),
-    .stall,
+    .stall(stall | request_stall),
     .in(pc_mux_out),
 
     /* OUTPUTS */
@@ -51,12 +52,11 @@ plus2 pc_plus2 (
     .out(pc_plus2_out)
 );
 
-// these signals can be x for now
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];
-assign instruction_memory_wishbone.CYC   = 1'bx;
-assign instruction_memory_wishbone.DAT_M = 128'bx;
-assign instruction_memory_wishbone.STB   = 1'bx;
-assign instruction_memory_wishbone.WE    = 1'b0;
+assign instruction_memory_wishbone.CYC   = 1;
+assign instruction_memory_wishbone.STB   = 1;
+assign instruction_memory_wishbone.DAT_M = 0;
+assign instruction_memory_wishbone.WE    = 0;
 
 always_comb begin
     instruction_memory_wishbone.SEL = 0;
@@ -64,5 +64,7 @@ always_comb begin
 end
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
+
+assign request_stall = (instruction_memory_wishbone.CYC) & (~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY);
 
 endmodule : stage_IF

@@ -22,11 +22,13 @@ module stage_MEM (
 lc3b_cc cc_out;
 lc3b_cc cc_gen_out;
 lc3b_word cc_gen_mux_out;
-lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
-logic data_memory_write_enable;
+
 logic internal_MDR_load;
 lc3b_word internal_mdr_out;
+
+lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
 lc3b_word data_memory_addr_mux_out;
+logic data_memory_wishbone_WE;
 
 lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
@@ -82,12 +84,15 @@ register #(.width(1)) br_en (
 mem_access_controller _mem_access_controller (
     /* INPUTS */
     .clk,
+    .stall,
     .control_in,
     .ir_in,
+    .data_memory_wishbone_ACK(data_memory_wishbone.ACK),
+    .data_memory_wishbone_RTY(data_memory_wishbone.RTY),
 
     /* OUTPUTS */
     .data_memory_addr_mux_sel,
-    .data_memory_write_enable,
+    .data_memory_wishbone_WE,
     .internal_MDR_load,
     .request_stall
 );
@@ -104,11 +109,10 @@ mux4 data_memory_addr_mux (
     .f(data_memory_addr_mux_out)
 );
 
-// these signals can be x for now
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
-assign data_memory_wishbone.CYC = 1'bx;
-assign data_memory_wishbone.STB = 1'bx;
-assign data_memory_wishbone.WE = data_memory_write_enable;
+assign data_memory_wishbone.CYC = control_in.data_memory_access;
+assign data_memory_wishbone.STB = control_in.data_memory_access;
+assign data_memory_wishbone.WE = data_memory_wishbone_WE;
 
 always_comb begin
     /* select */
