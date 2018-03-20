@@ -26,24 +26,28 @@ control_rom _control_rom (
     .control_out
 );
 
-mux2 #(.width(3)) regfile_sr1_mux (
+logic [1:0] [2:0] regfile_sr1_mux_in;
+assign regfile_sr1_mux_in[0] = ir_in[ 8:6]; // sr1
+assign regfile_sr1_mux_in[1] = ir_in[11:9]; // dest
+mux #(2, 3) regfile_sr1_mux (
     /* INPUTS */
     .sel(control_out.regfile_sr1_mux_sel),
-    .a(ir_in[8:6]),  // sr1
-    .b(ir_in[11:9]), // dest
+    .in(regfile_sr1_mux_in),  // sr1
 
     /* OUTPUTS */
-    .f(regfile_sr1_mux_out)
+    .out(regfile_sr1_mux_out)
 );
 
-mux2 #(.width(3)) regfile_sr2_mux (
+logic [1:0] [2:0] regfile_sr2_mux_in;
+assign regfile_sr2_mux_in[0] = ir_in[ 2:0]; // sr2
+assign regfile_sr2_mux_in[1] = ir_in[11:9]; // dest
+mux #(2, 3) regfile_sr2_mux (
     /* INPUTS */
     .sel(control_out.regfile_sr2_mux_sel),
-    .a(ir_in[2:0]),  // sr2
-    .b(ir_in[11:9]), // dest
+    .in(regfile_sr2_mux_in),
 
     /* OUTPUTS */
-    .f(regfile_sr2_mux_out)
+    .out(regfile_sr2_mux_out)
 );
 
 regfile _regfile (

@@ -32,18 +32,16 @@ assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
 assign offset9   = $signed({ir_in[ 8:0], 1'b0});
 assign offset11  = $signed({ir_in[10:0], 1'b0});
 
-
 logic [1:0] [15:0] pc_adder_mux_in;
 assign pc_adder_mux_in[0] = offset9;
 assign pc_adder_mux_in[1] = offset11;
-mux #(16, 2) pc_adder_mux (
+mux #(2, 16) pc_adder_mux (
     /* INPUTS */
     .sel(control_in.pc_adder_mux_sel),
-    .a(pc_adder_mux_in),
-    // .b(offset11),
+    .in(pc_adder_mux_in),
 
     /* OUTPUTS */
-    .y(pc_adder_mux_out)
+    .out(pc_adder_mux_out)
 );
 
 adder pc_adder (
@@ -55,17 +53,16 @@ adder pc_adder (
     .f(pcn_out)
 );
 
-mux8 general_alu_mux (
+logic [4:0] [15:0] general_alu_mux_in;
+assign general_alu_mux_in[0] = sr2_in;
+assign general_alu_mux_in[1] = imm4;
+assign general_alu_mux_in[2] = imm5;
+assign general_alu_mux_in[3] = offset6_b;
+assign general_alu_mux_in[4] = offset6_w;
+mux #(5, 16) general_alu_mux (
     /* INPUTS */
     .sel(control_in.general_alu_mux_sel),
-    .in000(sr2_in),
-    .in001(imm4),
-    .in010(imm5),
-    .in011(offset6_b),
-    .in100(offset6_w),
-    .in101(16'bx),
-    .in110(16'bx),
-    .in111(16'bx),
+    .in(general_alu_mux_in),
 
     /* OUTPUTS */
     .out(general_alu_mux_out)
