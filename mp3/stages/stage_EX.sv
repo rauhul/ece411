@@ -32,14 +32,14 @@ assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
 assign offset9   = $signed({ir_in[ 8:0], 1'b0});
 assign offset11  = $signed({ir_in[10:0], 1'b0});
 
-mux2 pc_adder_mux (
+mux #(16, 2) pc_adder_mux (
     /* INPUTS */
     .sel(control_in.pc_adder_mux_sel),
-    .a(offset9),
-    .b(offset11),
+    .a({offset9, offset11}),
+    // .b(offset11),
 
     /* OUTPUTS */
-    .f(pc_adder_mux_out)
+    .y(pc_adder_mux_out)
 );
 
 adder pc_adder (

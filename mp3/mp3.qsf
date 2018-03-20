@@ -70,6 +70,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE library/gencc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/lc3b_types.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mem_access_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/mux.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux4.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux8.sv
