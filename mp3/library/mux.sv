@@ -4,7 +4,7 @@ module mux #(
 ) (
     /* INPUTS */
     input logic [NUM_INPUTS-1:0] [WIDTH-1:0] a,
-    input logic [clogb2(NUM_INPUTS)-1:0] sel,
+    input logic [$clog2(NUM_INPUTS)-1:0] sel,
 
     /* OUTPUTS */
     output logic [WIDTH-1:0] y
