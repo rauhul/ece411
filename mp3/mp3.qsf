@@ -65,7 +65,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/control_rom.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/demux2.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/demux.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/gencc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/lc3b_types.sv

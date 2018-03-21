@@ -154,14 +154,14 @@ assign dirty = dirty_mux_out;
  * DEMUXES
  */
  /* load */
-logic load_0;
-logic load_1;
-demux2 #(.width(1)) load_demux
-(
+logic [1:0] load_demux_out;
+demux #(2, 1) load_demux (
+    /* INPUTS */
     .sel(cache_way_sel),
-    .f(load),
-    .a(load_0),
-    .b(load_1)
+    .in(load),
+
+    /* OUTPUTS */
+    .out(load_demux_out),
 );
 
 /*
@@ -170,7 +170,7 @@ demux2 #(.width(1)) load_demux
 cache_way cache_way_0 (
     /* INPUTS */
     .clk,
-    .load(load_0),
+    .load(load_demux_out[0]),
     .load_type(data_source_sel),
     .byte_sel(byte_sel_mux_out),
     .tag_in,
@@ -187,7 +187,7 @@ cache_way cache_way_0 (
 cache_way cache_way_1 (
     /* INPUTS */
     .clk,
-    .load(load_1),
+    .load(load_demux_out[1]),
     .load_type(data_source_sel),
     .byte_sel(byte_sel_mux_out),
     .tag_in,
