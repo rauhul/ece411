@@ -161,7 +161,7 @@ demux #(2, 1) load_demux (
     .in(load),
 
     /* OUTPUTS */
-    .out(load_demux_out),
+    .out(load_demux_out)
 );
 
 /*
@@ -201,20 +201,18 @@ cache_way cache_way_1 (
     .hit_out(hit_1)
 );
 
-/* lru */
-logic lru_arr [7:0];
-assign lru = lru_arr[index];
+/*
+ * LRU
+ */
+cache_lru #(2, 8) _cache_lru (
+    /* INPUTS */
+    .clk,
+    .mru_in(cache_way_sel),
+    .index_in(index),
+    .load_in(load_lru),
 
-initial begin
-    for (int i = 0; i < 8; i++) begin
-        lru_arr[i] = 0;
-    end
-end
-
-always_ff @(posedge clk) begin
-    if (load_lru) begin
-        lru_arr[index] = ~cache_way_sel;
-    end
-end
+    /* OUTPUTS */
+    .lru_out(lru)
+);
 
 endmodule : cache_l1_datapath
