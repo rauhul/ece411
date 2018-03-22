@@ -59,6 +59,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_arbiter.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_l1_datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_lru.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
