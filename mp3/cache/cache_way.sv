@@ -7,26 +7,29 @@ module cache_way #(
     input logic load,
     input logic load_type,
     input logic [15:0] byte_sel,
-    input logic [11-$clog2(NUM_LINES):0] tag_in,
+    input logic [12-$clog2(NUM_LINES)-1:0] tag_in,
     input logic [$clog2(NUM_LINES)-1:0] index_in,
     input logic [WIDTH-1:0] data_in,
 
     /* OUTPUTS */
-    output logic [11-$clog2(NUM_LINES):0] tag_out,
+    output logic [12-$clog2(NUM_LINES)-1:0] tag_out,
     output logic [WIDTH-1:0] data_out,
     output logic dirty_out,
     output logic hit_out
 );
+
+localparam integer INDEX_WIDTH = $clog2(NUM_LINES);
+localparam integer TAG_WIDTH = 12-INDEX_WIDTH;
 
 /* load_type
  *  0: from cpu
  *  1: from memory
  */
 
-logic [NUM_LINES-1:0] [WIDTH-1:0]              data;
-logic [NUM_LINES-1:0] [11-$clog2(NUM_LINES):0] tag;
-logic [NUM_LINES-1:0]                          dirty;
-logic [NUM_LINES-1:0]                          valid;
+logic [NUM_LINES-1:0] [WIDTH-1:0]     data;
+logic [NUM_LINES-1:0] [TAG_WIDTH-1:0] tag;
+logic [NUM_LINES-1:0]                 dirty;
+logic [NUM_LINES-1:0]                 valid;
 
 assign data_out  =  data[index_in];
 assign tag_out   =   tag[index_in];

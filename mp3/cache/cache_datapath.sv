@@ -1,5 +1,4 @@
 // TODO: WIDTH not supported yet
-// TODO: NUM_LINES not supported yet
 module cache_datapath #(
     parameter NUM_LINES = 8,     // Min 2, must be power of 2
     parameter ASSOCIATIVITY = 2, // Min 2, must be power of 2
@@ -37,6 +36,9 @@ module cache_datapath #(
     output logic [15:0] output_wishbone_SEL,
     output logic [WIDTH-1:0] output_wishbone_DAT_M
 );
+
+localparam integer INDEX_WIDTH = $clog2(NUM_LINES);
+localparam integer TAG_WIDTH = 12-INDEX_WIDTH;
 
 /* INPUTS */
 /** data **/
@@ -76,12 +78,12 @@ mux #(
 );
 
 /** tag **/
-logic [8:0] tag_in;
-assign tag_in = input_wishbone_ADR[11:3];
+logic [TAG_WIDTH-1:0] tag_in;
+assign tag_in = input_wishbone_ADR[TAG_WIDTH+INDEX_WIDTH-1:INDEX_WIDTH];
 
 /** index **/
-logic [2:0] index;
-assign index = input_wishbone_ADR[2:0];
+logic [INDEX_WIDTH-1:0] index;
+assign index = input_wishbone_ADR[INDEX_WIDTH-1:0];
 
 /** load **/
 logic [ASSOCIATIVITY-1:0] load_demux_out;
@@ -117,11 +119,11 @@ assign input_wishbone_DAT_S = output_data_mux_out;
 assign output_wishbone_DAT_M = output_data_mux_out;
 
 /** tag **/
-logic                     [8:0] tag_mux_out;
-logic [ASSOCIATIVITY-1:0] [8:0] tag_mux_in;
+logic                     [TAG_WIDTH-1:0] tag_mux_out;
+logic [ASSOCIATIVITY-1:0] [TAG_WIDTH-1:0] tag_mux_in;
 mux #(
     ASSOCIATIVITY,
-    9
+    TAG_WIDTH
 ) tag_mux (
     /* INPUTS */
     .sel(cache_way_sel),
@@ -131,13 +133,13 @@ mux #(
     .out(tag_mux_out)
 );
 
-logic       [8:0] tag_bypass_mux_out;
-logic [1:0] [8:0] tag_bypass_mux_in;
+logic       [TAG_WIDTH-1:0] tag_bypass_mux_out;
+logic [1:0] [TAG_WIDTH-1:0] tag_bypass_mux_in;
 assign tag_bypass_mux_in[0] = tag_mux_out;
 assign tag_bypass_mux_in[1] = tag_in;
 mux #(
     2,
-    9
+    TAG_WIDTH
 ) tag_bypass_mux (
     /* INPUTS */
     .sel(tag_bypass_sel),
