@@ -64,9 +64,20 @@ always_comb begin : state_actions
     case(state)
         s_idle_hit: begin
             if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
-                if (hit_0 | hit_1) begin : hit
+                if (|hit) begin : hit
                     // select correct way
-                    cache_way_sel = hit_1;
+                    cache_way_sel = 0;
+
+                    case (hit)
+                    genvar i;
+                    generate
+                        for (i = 0; i < ASSOCIATIVITY; i++) begin: gen_encoder_cases
+                            1 << i: cache_way_sel = i;
+                        end
+                    endgenerate
+                        default : $error("hit is not onehot");;
+                    endcase
+
                     // update lru bit
                     load_lru = 1;
                     // set input data source to input_wishbone_DAT_M

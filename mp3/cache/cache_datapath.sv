@@ -207,4 +207,4 @@ cache_lru #(
     .lru_out(lru)
 );
 
-endmodule : cache_l1_datapath
+endmodule : cache_datapath
