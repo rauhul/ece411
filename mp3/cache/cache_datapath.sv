@@ -136,7 +136,7 @@ logic [1:0] [8:0] tag_bypass_mux_in;
 assign tag_bypass_mux_in[0] = tag_mux_out;
 assign tag_bypass_mux_in[1] = tag_in;
 mux #(
-    ASSOCIATIVITY,
+    2,
     9
 ) tag_bypass_mux (
     /* INPUTS */

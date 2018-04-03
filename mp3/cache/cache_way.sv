@@ -3,7 +3,7 @@ module cache_way #(
     parameter WIDTH = 128    // Min 2, must be power of 2
 ) (
     /* INPUTS */
-    input clk,c
+    input clk,
     input logic load,
     input logic load_type,
     input logic [15:0] byte_sel,

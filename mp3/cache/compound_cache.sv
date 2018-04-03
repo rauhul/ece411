@@ -12,6 +12,7 @@ assign clk = physical_memory_wishbone.CLK;
 
 wishbone i_cache_memory_wishbone(clk);
 wishbone d_cache_memory_wishbone(clk);
+wishbone cache_arbiter_memory_wishbone(clk);
 
 cache #(
     .NUM_LINES(8),
@@ -26,7 +27,7 @@ cache #(
 
 cache #(
     .NUM_LINES(8),
-    .ASSOCIATIVITY(2)
+    .ASSOCIATIVITY(8)
 ) d_cache (
     /* SLAVES */
     .input_wishbone(data_memory_wishbone),
@@ -41,7 +42,19 @@ cache_arbiter _cache_arbiter (
     .input_wishbone1(d_cache_memory_wishbone),
 
     /* MASTERS */
+    .output_wishbone(cache_arbiter_memory_wishbone)
+);
+
+cache #(
+    .NUM_LINES(8),
+    .ASSOCIATIVITY(4)
+) l2_cache (
+    /* SLAVES */
+    .input_wishbone(cache_arbiter_memory_wishbone),
+
+    /* MASTERS */
     .output_wishbone(physical_memory_wishbone)
 );
 
 endmodule : compound_cache
+
