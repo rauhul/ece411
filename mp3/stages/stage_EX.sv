@@ -9,14 +9,15 @@ module stage_EX (
     input lc3b_word pc_in,
     input lc3b_word sr1_in,
     input lc3b_word sr2_in,
+    input logic [1:0] forward_A_mux_sel,
+    input logic [1:0] forward_B_mux_sel,
+    input lc3b_word data_EX_MEM,
+    input lc3b_word data_WB,
 
     /* OUTPUTS */
     output lc3b_word alu_out,
     output lc3b_word pcn_out
 );
-
-lc3b_word pc_adder_mux_out;
-lc3b_word general_alu_mux_out;
 
 lc3b_word imm4;
 lc3b_word imm5;
@@ -32,6 +33,7 @@ assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
 assign offset9   = $signed({ir_in[ 8:0], 1'b0});
 assign offset11  = $signed({ir_in[10:0], 1'b0});
 
+logic       [15:0] pc_adder_mux_out;
 logic [1:0] [15:0] pc_adder_mux_in;
 assign pc_adder_mux_in[0] = offset9;
 assign pc_adder_mux_in[1] = offset11;
@@ -53,6 +55,7 @@ adder pc_adder (
     .f(pcn_out)
 );
 
+logic       [15:0] general_alu_mux_out;
 logic [4:0] [15:0] general_alu_mux_in;
 assign general_alu_mux_in[0] = sr2_in;
 assign general_alu_mux_in[1] = imm4;
@@ -68,11 +71,39 @@ mux #(5, 16) general_alu_mux (
     .out(general_alu_mux_out)
 );
 
+logic       [15:0] forward_A_mux_out;
+logic [2:0] [15:0] forward_A_mux_in;
+assign forward_A_mux_in[0] = sr1_in;
+assign forward_A_mux_in[1] = data_EX_MEM;
+assign forward_A_mux_in[2] = data_WB;
+mux #(3, 16) forward_A_mux (
+    /* INPUTS */
+    .sel(forward_A),
+    .in(forward_A_mux_in),
+
+    /* OUTPUTS */
+    .out(forward_A_mux_out)
+);
+
+logic       [15:0] forward_B_mux_out;
+logic [2:0] [15:0] forward_B_mux_in;
+assign forward_B_mux_in[0] = general_alu_mux_out;
+assign forward_B_mux_in[1] = data_EX_MEM;
+assign forward_B_mux_in[2] = data_WB;
+mux #(3, 16) forward_B_mux (
+    /* INPUTS */
+    .sel(forward_B),
+    .in(forward_B_mux_in),
+
+    /* OUTPUTS */
+    .out(forward_B_mux_out)
+);
+
 alu general_alu (
     /* INPUTS */
     .aluop(control_in.general_alu_op),
-    .a(sr1_in),
-    .b(general_alu_mux_out),
+    .a(forward_A_mux_out),
+    .b(forward_B_mux_out),
 
     /* OUTPUTS */
     .f(alu_out)

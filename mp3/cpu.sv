@@ -54,6 +54,10 @@ logic stage_ID_stall;
 logic stage_IF_stall;
 logic stage_MEM_stall;
 logic stage_WB_stall;
+
+
+
+
 stall_controller _stall_controller (
     /* INPUTS */
     .clk,
@@ -179,6 +183,19 @@ barrier_ID_EX _barrier_ID_EX (
     .valid_out(barrier_ID_EX_valid)
 );
 
+/* FORWARDING LOGIC */
+logic [1:0] forward_A;
+logic [1:0] forward_A;
+
+forwarding_controller _forwarding_controller(
+	 .ir_curr(barrier_ID_EX_ir),
+    .ir_EX_MEM(barrier_EX_MEM_ir),
+	 .ir_MEM_WB(barrier_MEM_WB_ir),
+	 .sr1(barrier_ID_EX_sr1),
+	 .sr2(barrier_ID_EX_sr2),
+	 .forward_A,
+	 .forward_B
+);
 
 /* STAGE EX */
 lc3b_word stage_EX_alu;
@@ -192,6 +209,10 @@ stage_EX _stage_EX (
     .pc_in(barrier_ID_EX_pc),
     .sr1_in(barrier_ID_EX_sr1),
     .sr2_in(barrier_ID_EX_sr2),
+	 .forward_A,
+	 .forward_B
+	 .data_EX_MEM(barrier_EX_MEM_alu),
+	 .data_WB(stage_WB_regfile_data),
 
     /* OUTPUTS */
     .alu_out(stage_EX_alu),
@@ -302,5 +323,8 @@ stage_WB _stage_WB (
     .regfile_data_out(stage_WB_regfile_data),
     .regfile_load_out(stage_WB_regfile_load)
 );
+
+
+
 
 endmodule : cpu
