@@ -4,12 +4,12 @@ module cache_lru #(
 ) (
     /* INPUTS */
     input clk,
-    input logic [CFR_H_BIT:0] mru_in, // cfr
+    input logic [$clog2(ASSOCIATIVITY)-1:0] mru_in, // cfr
     input logic [$clog2(NUM_LINES)-1:0] index_in,
     input logic load_in,
 
     /* OUTPUTS */
-    output logic [CFR_H_BIT:0] lru_out // cfr
+    output logic [$clog2(ASSOCIATIVITY)-1:0] lru_out // cfr
 );
 
 localparam integer CFR_H_BIT = $clog2(ASSOCIATIVITY)-1;

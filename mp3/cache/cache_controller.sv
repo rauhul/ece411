@@ -70,7 +70,7 @@ always_comb begin : state_actions
 
                     for (int i = 0; i < ASSOCIATIVITY; i++) begin
                         if (hit[i]) begin
-                            cache_way_sel = i;
+                            cache_way_sel = i[$clog2(ASSOCIATIVITY)-1:0];
                         end
                     end
 
