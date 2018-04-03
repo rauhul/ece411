@@ -1,8 +1,9 @@
-// TODO: add parameter width
+// TODO: WIDTH not supported yet
 // TODO: NUM_LINES not supported yet
 module cache_datapath #(
-    parameter NUM_LINES = 8,    // Min 2, must be power of 2
-    parameter ASSOCIATIVITY = 2 // Min 2, must be power of 2
+    parameter NUM_LINES = 8,     // Min 2, must be power of 2
+    parameter ASSOCIATIVITY = 2, // Min 2, must be power of 2
+    parameter WIDTH = 128        // Min 2, must be power of 2
 ) (
     /* INPUTS */
     input clk,
@@ -36,9 +37,6 @@ module cache_datapath #(
     output logic [15:0] output_wishbone_SEL,
     output logic [WIDTH-1:0] output_wishbone_DAT_M
 );
-
-localparam integer WIDTH = 128;
-
 
 /* INPUTS */
 /** data **/

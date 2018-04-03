@@ -1,9 +1,9 @@
-// TODO: add width parameter
 module cache_way #(
-    parameter NUM_LINES = 2 // Min 2, must be power of 2
+    parameter NUM_LINES = 2, // Min 2, must be power of 2
+    parameter WIDTH = 128    // Min 2, must be power of 2
 ) (
     /* INPUTS */
-    input clk,
+    input clk,c
     input logic load,
     input logic load_type,
     input logic [15:0] byte_sel,
@@ -22,8 +22,6 @@ module cache_way #(
  *  0: from cpu
  *  1: from memory
  */
-
-localparam integer WIDTH = 128;
 
 logic [NUM_LINES-1:0] [WIDTH-1:0]              data;
 logic [NUM_LINES-1:0] [11-$clog2(NUM_LINES):0] tag;
