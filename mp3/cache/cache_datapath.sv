@@ -1,5 +1,3 @@
-import lc3b_types::*;
-
 // TODO: add parameter width
 // TODO: NUM_LINES not supported yet
 module cache_datapath #(
@@ -28,7 +26,7 @@ module cache_datapath #(
     /* datapath->controller */
     output logic [ASSOCIATIVITY-1:0] hit,
     output logic dirty,
-    output logic lru,
+    output logic [$clog2(ASSOCIATIVITY)-1:0] lru,
 
     /* cache_datapath->CPU */
     output logic [WIDTH-1:0] input_wishbone_DAT_S,
@@ -48,7 +46,10 @@ logic [WIDTH-1:0] input_data_mux_out;
 logic [1:0] [WIDTH-1:0] input_data_mux_in;
 assign input_data_mux_in[0] = input_wishbone_DAT_M;
 assign input_data_mux_in[1] = output_wishbone_DAT_S;
-mux #(2, WIDTH) input_data_mux (
+mux #(
+    2, // num input sources
+    WIDTH
+) input_data_mux (
     /* INPUTS */
     .sel(input_data_source_sel),
     .in(input_data_mux_in),
@@ -64,9 +65,8 @@ logic [15:0] byte_sel_mux_out;
 logic [1:0] [15:0] input_byte_sel_mux_in;
 assign input_byte_sel_mux_in[0] = input_wishbone_SEL;
 assign input_byte_sel_mux_in[1] = output_wishbone_SEL;
-
 mux #(
-    ASSOCIATIVITY,
+    2, // num input sources
     16
 ) input_byte_sel_mux (
     /* INPUTS */
@@ -82,7 +82,7 @@ logic [8:0] tag_in;
 assign tag_in = input_wishbone_ADR[11:3];
 
 /** index **/
-lc3b_cache_index index;
+logic [2:0] index;
 assign index = input_wishbone_ADR[2:0];
 
 /** load **/
@@ -101,7 +101,7 @@ demux #(
 
 /* OUTPUTS */
 /** data **/
-logic [WIDTH-1:0] output_data_mux_out;
+logic                     [WIDTH-1:0] output_data_mux_out;
 logic [ASSOCIATIVITY-1:0] [WIDTH-1:0] output_data_mux_in;
 mux #(
     ASSOCIATIVITY,
@@ -119,7 +119,7 @@ assign input_wishbone_DAT_S = output_data_mux_out;
 assign output_wishbone_DAT_M = output_data_mux_out;
 
 /** tag **/
-logic [8:0] tag_mux_out;
+logic                     [8:0] tag_mux_out;
 logic [ASSOCIATIVITY-1:0] [8:0] tag_mux_in;
 mux #(
     ASSOCIATIVITY,
@@ -133,7 +133,7 @@ mux #(
     .out(tag_mux_out)
 );
 
-logic [8:0] tag_bypass_mux_out;
+logic       [8:0] tag_bypass_mux_out;
 logic [1:0] [8:0] tag_bypass_mux_in;
 assign tag_bypass_mux_in[0] = tag_mux_out;
 assign tag_bypass_mux_in[1] = tag_in;
@@ -152,7 +152,7 @@ mux #(
 assign output_wishbone_ADR = {tag_bypass_mux_out, index};
 
 /** dirty **/
-logic dirty_mux_out;
+logic                     dirty_mux_out;
 logic [ASSOCIATIVITY-1:0] dirty_mux_in;
 mux #(
     ASSOCIATIVITY,

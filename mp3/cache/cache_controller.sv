@@ -1,27 +1,27 @@
-// TODO: add parameter associativity
-module cache_l1_controller (
+module cache_controller #(
+    parameter ASSOCIATIVITY = 2 // Min 2, must be power of 2
+) (
     /* INPUTS */
     input clk,
 
     /* datapath->controller */
-    input hit_0,
-    input hit_1,
-    input dirty,
-    input lru,
+    input logic [ASSOCIATIVITY-1:0] hit,
+    input logic dirty,
+    input logic [$clog2(ASSOCIATIVITY)-1:0] lru,
 
     /* input_wishbone->cache */
-    input input_wishbone_CYC,
-    input input_wishbone_STB,
-    input input_wishbone_WE,
+    input logic input_wishbone_CYC,
+    input logic input_wishbone_STB,
+    input logic input_wishbone_WE,
 
     /* output_wishbone->cache */
-    input output_wishbone_ACK,
-    input output_wishbone_RTY,
+    input logic output_wishbone_ACK,
+    input logic output_wishbone_RTY,
 
     /* OUTPUTS */
     /* controller->datapath */
-    output logic cache_way_sel,
-    output logic data_source_sel,
+    output logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel,
+    output logic input_data_source_sel,
     output logic tag_bypass_sel,
     output logic load,
     output logic load_lru,
@@ -47,18 +47,18 @@ enum int unsigned {
 
 always_comb begin : state_actions
     /* Default output assignments */
-    cache_way_sel       = 0;
-    data_source_sel     = 0;
-    tag_bypass_sel      = 0;
-    load                = 0;
-    load_lru            = 0;
+    cache_way_sel         = 0;
+    input_data_source_sel = 0;
+    tag_bypass_sel        = 0;
+    load                  = 0;
+    load_lru              = 0;
 
-    input_wishbone_ACK  = 0;
-    input_wishbone_RTY  = 1;
+    input_wishbone_ACK    = 0;
+    input_wishbone_RTY    = 1;
 
-    output_wishbone_CYC = 0;
-    output_wishbone_STB = 0;
-    output_wishbone_WE  = 0;
+    output_wishbone_CYC   = 0;
+    output_wishbone_STB   = 0;
+    output_wishbone_WE    = 0;
 
     /* Actions for each state */
     case(state)
@@ -70,7 +70,7 @@ always_comb begin : state_actions
                     // update lru bit
                     load_lru = 1;
                     // set input data source to input_wishbone_DAT_M
-                    data_source_sel = 0;
+                    input_data_source_sel = 0;
                     // load if cpu_write
                     load = input_wishbone_WE;
 
@@ -123,7 +123,7 @@ always_comb begin : state_actions
             // pass the cpu_address tag to the output_wishbone_ADR
             tag_bypass_sel = 1;
             // set input data source to output_wishbone_DAT_S
-            data_source_sel = 1;
+            input_data_source_sel = 1;
             // load if cpu_write
             load = 1;
 
@@ -196,4 +196,4 @@ always_ff @(posedge clk) begin: next_state_assignment
     state <= next_state;
 end
 
-endmodule : cache_l1_controller
+endmodule : cache_controller

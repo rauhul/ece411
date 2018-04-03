@@ -1,5 +1,3 @@
-import lc3b_types::*;
-
 // TODO: add width parameter
 module cache_way #(
     parameter NUM_LINES = 2 // Min 2, must be power of 2
