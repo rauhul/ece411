@@ -180,7 +180,7 @@ cache_way #(
     .load_type(input_data_source_sel),
     .byte_sel(input_byte_sel_mux_out),
     .tag_in,
-    .index,
+    .index_in(index),
     .data_in(input_data_mux_out),
 
     /* OUTPUTS */
