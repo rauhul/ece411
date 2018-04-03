@@ -42,7 +42,7 @@ localparam integer WIDTH = 128;
 
 /* INPUTS */
 /** data **/
-logic [WIDTH-1:0] input_data_mux_out;
+logic       [WIDTH-1:0] input_data_mux_out;
 logic [1:0] [WIDTH-1:0] input_data_mux_in;
 assign input_data_mux_in[0] = input_wishbone_DAT_M;
 assign input_data_mux_in[1] = output_wishbone_DAT_S;
@@ -61,7 +61,7 @@ mux #(
 /** sel **/
 assign output_wishbone_SEL = 16'hFFFF;
 
-logic [15:0] byte_sel_mux_out;
+logic       [15:0] input_byte_sel_mux_out;
 logic [1:0] [15:0] input_byte_sel_mux_in;
 assign input_byte_sel_mux_in[0] = input_wishbone_SEL;
 assign input_byte_sel_mux_in[1] = output_wishbone_SEL;

@@ -164,7 +164,7 @@ always_comb begin : next_state_logic
     case(state)
         s_idle_hit: begin
             if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
-                if (~(hit_0 | hit_1)) begin : miss
+                if (~(|hit)) begin : miss
                     if (~output_wishbone_RTY) begin : downstream_ready
                         if (dirty) begin : dirty_miss
                             next_state = s_flush;
