@@ -1,6 +1,6 @@
 module cache_lru #(
-    parameter ASSOCIATIVITY = 2, // Min 2, must be power of 2
-    parameter NUM_LINES = 2      // Min 2, must be power of 2
+    parameter NUM_LINES = 8,     // Min 2, must be power of 2
+    parameter ASSOCIATIVITY = 2  // Min 2, must be power of 2
 ) (
     /* INPUTS */
     input clk,

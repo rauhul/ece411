@@ -145,11 +145,6 @@ typedef enum bit [3:0] {
 typedef logic  [7:0] lc3b_byte;
 typedef logic  [1:0] lc3b_mem_wmask;
 
-typedef logic [127:0] lc3b_cache_word;
 // ADDR: {[15:7] tag, [6:4] index, [3:0] offset }
-typedef logic [8:0] lc3b_cache_tag;
-typedef logic [2:0] lc3b_cache_index;
-typedef logic [3:0] lc3b_cache_offset;
-
 
 endpackage : lc3b_types

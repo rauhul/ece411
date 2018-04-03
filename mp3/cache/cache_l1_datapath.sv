@@ -1,113 +1,130 @@
 import lc3b_types::*;
 
-// TODO: add parameter associativity
-module cache_l1_datapath (
+// TODO: add parameter width
+// TODO: NUM_LINES not supported yet
+module cache_datapath #(
+    parameter NUM_LINES = 8,    // Min 2, must be power of 2
+    parameter ASSOCIATIVITY = 2 // Min 2, must be power of 2
+) (
     /* INPUTS */
     input clk,
 
     /* controller->datapath */
-    input cache_way_sel,
-    input data_source_sel,
-    input tag_bypass_sel,
-    input load,
-    input load_lru,
+    input logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel,
+    input logic input_data_source_sel,
+    input logic tag_bypass_sel,
+    input logic load,
+    input logic load_lru,
 
     /* input_wishbone->cache */
-    input [11:0] input_wishbone_ADR,
-    input [15:0] input_wishbone_SEL,
-    input lc3b_cache_word input_wishbone_DAT_M,
+    input logic [11:0] input_wishbone_ADR,
+    input logic [15:0] input_wishbone_SEL,
+    input logic [WIDTH-1:0] input_wishbone_DAT_M,
 
     /* output_wishbone->cache */
-    input lc3b_cache_word output_wishbone_DAT_S,
+    input logic [WIDTH-1:0] output_wishbone_DAT_S,
 
     /* OUTPUTS */
     /* datapath->controller */
-    output logic hit_0,
-    output logic hit_1,
+    output logic [ASSOCIATIVITY-1:0] hit,
     output logic dirty,
     output logic lru,
 
     /* cache_datapath->CPU */
-    output lc3b_cache_word input_wishbone_DAT_S,
+    output logic [WIDTH-1:0] input_wishbone_DAT_S,
 
     /* cache_datapath->memory */
-    output [11:0] output_wishbone_ADR,
-    output [15:0] output_wishbone_SEL,
-    output lc3b_cache_word output_wishbone_DAT_M
+    output logic [11:0] output_wishbone_ADR,
+    output logic [15:0] output_wishbone_SEL,
+    output logic [WIDTH-1:0] output_wishbone_DAT_M
 );
 
-/*
- * MUXES
- */
-// data
-logic [127:0] data_in_mux_out;
-logic [1:0] [127:0] data_in_mux_in;
-assign data_in_mux_in[0] = input_wishbone_DAT_M;
-assign data_in_mux_in[1] = output_wishbone_DAT_S;
-mux #(2, 128) data_in_mux (
+localparam integer WIDTH = 128;
+
+
+/* INPUTS */
+/** data **/
+logic [WIDTH-1:0] input_data_mux_out;
+logic [1:0] [WIDTH-1:0] input_data_mux_in;
+assign input_data_mux_in[0] = input_wishbone_DAT_M;
+assign input_data_mux_in[1] = output_wishbone_DAT_S;
+mux #(2, WIDTH) input_data_mux (
     /* INPUTS */
-    .sel(data_source_sel),
-    .in(data_in_mux_in),
+    .sel(input_data_source_sel),
+    .in(input_data_mux_in),
 
     /* OUTPUTS */
-    .out(data_in_mux_out)
+    .out(input_data_mux_out)
 );
 
-// sel
+/** sel **/
 assign output_wishbone_SEL = 16'hFFFF;
 
 logic [15:0] byte_sel_mux_out;
-logic [1:0] [15:0] byte_sel_mux_in;
-assign byte_sel_mux_in[0] = input_wishbone_SEL;
-assign byte_sel_mux_in[1] = output_wishbone_SEL;
-mux #(2, 16) byte_sel_mux (
+logic [1:0] [15:0] input_byte_sel_mux_in;
+assign input_byte_sel_mux_in[0] = input_wishbone_SEL;
+assign input_byte_sel_mux_in[1] = output_wishbone_SEL;
+
+mux #(
+    ASSOCIATIVITY,
+    16
+) input_byte_sel_mux (
     /* INPUTS */
-    .sel(data_source_sel),
-    .in(byte_sel_mux_in),
+    .sel(input_data_source_sel),
+    .in(input_byte_sel_mux_in),
 
     /* OUTPUTS */
-    .out(byte_sel_mux_out)
+    .out(input_byte_sel_mux_out)
 );
 
-// tag
-lc3b_cache_tag tag_in;
+/** tag **/
+logic [8:0] tag_in;
 assign tag_in = input_wishbone_ADR[11:3];
 
-// index
+/** index **/
 lc3b_cache_index index;
 assign index = input_wishbone_ADR[2:0];
 
-
-/* output muxes */
-// data
-lc3b_cache_word data_0;
-lc3b_cache_word data_1;
-
-lc3b_cache_word data_out_mux_out;
-logic [1:0] [127:0] data_out_mux_in;
-assign data_out_mux_in[0] = data_0;
-assign data_out_mux_in[1] = data_1;
-mux #(2, 128) data_out_mux (
+/** load **/
+logic [ASSOCIATIVITY-1:0] load_demux_out;
+demux #(
+    ASSOCIATIVITY,
+    1
+) load_demux (
     /* INPUTS */
     .sel(cache_way_sel),
-    .in(data_out_mux_in),
+    .in(load),
 
     /* OUTPUTS */
-    .out(data_out_mux_out)
+    .out(load_demux_out)
 );
 
-assign input_wishbone_DAT_S = data_out_mux_out;
-assign output_wishbone_DAT_M = data_out_mux_out;
+/* OUTPUTS */
+/** data **/
+logic [WIDTH-1:0] output_data_mux_out;
+logic [ASSOCIATIVITY-1:0] [WIDTH-1:0] output_data_mux_in;
+mux #(
+    ASSOCIATIVITY,
+    WIDTH
+) output_data_mux (
+    /* INPUTS */
+    .sel(cache_way_sel),
+    .in(output_data_mux_in),
 
-// tag
-lc3b_cache_tag tag_0;
-lc3b_cache_tag tag_1;
+    /* OUTPUTS */
+    .out(output_data_mux_out)
+);
 
+assign input_wishbone_DAT_S = output_data_mux_out;
+assign output_wishbone_DAT_M = output_data_mux_out;
+
+/** tag **/
 logic [8:0] tag_mux_out;
-logic [1:0] [8:0] tag_mux_in;
-assign tag_mux_in[0] = tag_0;
-assign tag_mux_in[1] = tag_1;
-mux #(2, 9) tag_mux (
+logic [ASSOCIATIVITY-1:0] [8:0] tag_mux_in;
+mux #(
+    ASSOCIATIVITY,
+    9
+) tag_mux (
     /* INPUTS */
     .sel(cache_way_sel),
     .in(tag_mux_in),
@@ -120,7 +137,10 @@ logic [8:0] tag_bypass_mux_out;
 logic [1:0] [8:0] tag_bypass_mux_in;
 assign tag_bypass_mux_in[0] = tag_mux_out;
 assign tag_bypass_mux_in[1] = tag_in;
-mux #(2, 9) tag_bypass_mux (
+mux #(
+    ASSOCIATIVITY,
+    9
+) tag_bypass_mux (
     /* INPUTS */
     .sel(tag_bypass_sel),
     .in(tag_bypass_mux_in),
@@ -131,15 +151,13 @@ mux #(2, 9) tag_bypass_mux (
 
 assign output_wishbone_ADR = {tag_bypass_mux_out, index};
 
-// dirty
-logic dirty_0;
-logic dirty_1;
-
+/** dirty **/
 logic dirty_mux_out;
-logic [1:0] dirty_mux_in;
-assign dirty_mux_in[0] = dirty_0;
-assign dirty_mux_in[1] = dirty_1;
-mux #(2, 1) dirty_mux (
+logic [ASSOCIATIVITY-1:0] dirty_mux_in;
+mux #(
+    ASSOCIATIVITY,
+    1
+) dirty_mux (
     /* INPUTS */
     .sel(lru),
     .in(dirty_mux_in),
@@ -151,60 +169,34 @@ mux #(2, 1) dirty_mux (
 assign dirty = dirty_mux_out;
 
 /*
- * DEMUXES
- */
- /* load */
-logic [1:0] load_demux_out;
-demux #(2, 1) load_demux (
-    /* INPUTS */
-    .sel(cache_way_sel),
-    .in(load),
-
-    /* OUTPUTS */
-    .out(load_demux_out)
-);
-
-/*
  * WAYS
  */
-cache_way cache_way_0 (
+cache_way #(
+    NUM_LINES
+) _cache_way[ASSOCIATIVITY-1:0] (
     /* INPUTS */
     .clk,
-    .load(load_demux_out[0]),
-    .load_type(data_source_sel),
-    .byte_sel(byte_sel_mux_out),
+    .load(load_demux_out),
+    .load_type(input_data_source_sel),
+    .byte_sel(input_byte_sel_mux_out),
     .tag_in,
     .index,
-    .data_in(data_in_mux_out),
+    .data_in(input_data_mux_out),
 
     /* OUTPUTS */
-    .tag_out(tag_0),
-    .data_out(data_0),
-    .dirty_out(dirty_0),
-    .hit_out(hit_0)
-);
-
-cache_way cache_way_1 (
-    /* INPUTS */
-    .clk,
-    .load(load_demux_out[1]),
-    .load_type(data_source_sel),
-    .byte_sel(byte_sel_mux_out),
-    .tag_in,
-    .index,
-    .data_in(data_in_mux_out),
-
-    /* OUTPUTS */
-    .tag_out(tag_1),
-    .data_out(data_1),
-    .dirty_out(dirty_1),
-    .hit_out(hit_1)
+    .data_out(output_data_mux_in),
+    .tag_out(tag_mux_in),
+    .dirty_out(dirty_mux_in),
+    .hit_out(hit)
 );
 
 /*
  * LRU
  */
-cache_lru #(2, 8) _cache_lru (
+cache_lru #(
+    NUM_LINES,
+    ASSOCIATIVITY
+) _cache_lru (
     /* INPUTS */
     .clk,
     .mru_in(cache_way_sel),
