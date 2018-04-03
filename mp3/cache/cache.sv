@@ -13,15 +13,15 @@ logic clk;
 assign clk = input_wishbone.CLK;
 
 /* set <-> set_controller */
-logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel,
-logic input_data_source_sel,
-logic tag_bypass_sel,
-logic load,
-logic load_lru,
+logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel;
+logic input_data_source_sel;
+logic tag_bypass_sel;
+logic load;
+logic load_lru;
 
-logic [ASSOCIATIVITY-1:0] hit,
-logic dirty,
-logic [$clog2(ASSOCIATIVITY)-1:0] lru,
+logic [ASSOCIATIVITY-1:0] hit;
+logic dirty;
+logic [$clog2(ASSOCIATIVITY)-1:0] lru;
 
 /* modules */
 cache_datapath #(
@@ -98,6 +98,5 @@ cache_controller #(
     .output_wishbone_STB(output_wishbone.STB),
     .output_wishbone_WE(output_wishbone.WE)
 );
-
 
 endmodule : cache
