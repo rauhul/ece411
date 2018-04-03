@@ -21,16 +21,18 @@ module stage_IF (
 lc3b_word pc_out;
 lc3b_word pc_mux_out;
 
-mux4 pc_mux (
+logic [3:0] [15:0] pc_mux_in;
+assign pc_mux_in[0] = pc_plus2_out;
+assign pc_mux_in[1] = alu_in;
+assign pc_mux_in[2] = pcn_in;
+assign pc_mux_in[3] = mdr_in;
+mux #(4, 16) pc_mux (
     /* INPUTS */
     .sel(pc_mux_sel),
-    .a(pc_plus2_out),
-    .b(alu_in),
-    .c(pcn_in),
-    .d(mdr_in),
+    .in(pc_mux_in),
 
     /* OUTPUTS */
-    .f(pc_mux_out)
+    .out(pc_mux_out)
 );
 
 register pc (

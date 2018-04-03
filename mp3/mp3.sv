@@ -17,7 +17,7 @@ cpu _cpu (
     .data_memory_wishbone
 );
 
-cache _cache (
+compound_cache _compound_cache (
     /* SLAVES */
     .instruction_memory_wishbone,
     .data_memory_wishbone,

@@ -37,16 +37,18 @@ logic br_en_in;
 assign br_en_in = |(cc_out & ir_in[11:9]);
 
 /* CC */
-mux4 cc_gen_mux (
+logic [3:0] [15:0] cc_gen_mux_in;
+assign cc_gen_mux_in[0] = pcn_in;
+assign cc_gen_mux_in[1] = alu_in;
+assign cc_gen_mux_in[2] = mdr_out;
+assign cc_gen_mux_in[3] = sr2_in;
+mux #(4, 16) cc_gen_mux (
     /* INPUTS */
     .sel(control_in.cc_gen_mux_sel),
-    .a(pcn_in),
-    .b(alu_in),
-    .c(mdr_out),
-    .d(sr2_in),
+    .in(cc_gen_mux_in),
 
     /* OUTPUTS */
-    .f(cc_gen_mux_out)
+    .out(cc_gen_mux_out)
 );
 
 gencc cc_gen (
@@ -80,7 +82,6 @@ register #(.width(1)) br_en (
 );
 
 /* MEMORY INTERFACE */
-// TODO: Detemine if this should also be stalled
 mem_access_controller _mem_access_controller (
     /* INPUTS */
     .clk,
@@ -97,16 +98,17 @@ mem_access_controller _mem_access_controller (
     .request_stall
 );
 
-mux4 data_memory_addr_mux (
+logic [2:0] [15:0] data_memory_addr_mux_in;
+assign data_memory_addr_mux_in[0] = trapvect8;
+assign data_memory_addr_mux_in[1] = alu_in;
+assign data_memory_addr_mux_in[2] = internal_mdr_out;
+mux #(3, 16) data_memory_addr_mux (
     /* INPUTS */
     .sel(data_memory_addr_mux_sel),
-    .a(trapvect8),
-    .b(alu_in),
-    .c(internal_mdr_out),
-    .d(16'bx),
+    .in(data_memory_addr_mux_in),
 
 	 /* OUTPUTS */
-    .f(data_memory_addr_mux_out)
+    .out(data_memory_addr_mux_out)
 );
 
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];

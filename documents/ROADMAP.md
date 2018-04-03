@@ -1,5 +1,6 @@
 # Roadmap
 
+## Checkpoint 1
 In checkpoint 2, we will be finishing all other lc-3b instructions, caches, and wishbone interconnect and paper design for data forwarding.
 Overall, we are going to split parts and combine and debug. These are the assignments for the parts.
 
@@ -12,3 +13,7 @@ L1, L2 caches - Rauhul
 multi-cycle L2 accesses - Kyung Jae
 
 paper design for data forwarding - Won Jae, Rauhul
+
+## Checkpoint 2
+In checkpoint 3, we will add an L2 cache to our cache hierarchy. It will be mostly a copy of the L1 cache but with 8-way associativity and 256-bit lines. We will also implement data forwarding through the use of another module that interacts with our stall controller.
+

@@ -17,26 +17,30 @@ module stage_WB (
     output logic regfile_load_out
 );
 
-mux2 #(.width(3)) regfile_dest_mux (
+logic [1:0] [2:0] regfile_dest_mux_in;
+assign regfile_dest_mux_in[0] = ir_in[11:9]; // dest
+assign regfile_dest_mux_in[1] = 3'b111;      // R7
+mux #(2, 3) regfile_dest_mux (
     /* INPUTS */
     .sel(control_in.regfile_dest_mux_sel),
-    .a(ir_in[11:9]), // dest
-    .b(3'b111),      // R7
+    .in(regfile_dest_mux_in),
 
     /* OUTPUTS */
-    .f(regfile_dest_out)
+    .out(regfile_dest_out)
 );
 
-mux4 regfile_data_mux (
+logic [3:0] [15:0] regfile_data_mux_in;
+assign regfile_data_mux_in[0] = pc_in;
+assign regfile_data_mux_in[1] = pcn_in;
+assign regfile_data_mux_in[2] = mdr_in;
+assign regfile_data_mux_in[3] = alu_in;
+mux #(4, 16) regfile_data_mux (
     /* INPUTS */
     .sel(control_in.regfile_data_mux_sel),
-    .a(pc_in),
-    .b(pcn_in),
-    .c(mdr_in),
-    .d(alu_in),
+    .in(regfile_data_mux_in),
 
     /* OUTPUTS */
-    .f(regfile_data_out)
+    .out(regfile_data_out)
 );
 
 assign regfile_load_out = control_in.regfile_load;
