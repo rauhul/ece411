@@ -1,6 +1,8 @@
+import lc3b_types::*;
+
 module forwarding_controller(
 	 input lc3b_word ir_curr,
-    input lc3b_word ir_EX_MEM,
+	 input lc3b_word ir_EX_MEM,
 	 input lc3b_word ir_MEM_WB,
 	 input lc3b_reg sr1,
 	 input lc3b_reg sr2,
@@ -34,74 +36,181 @@ always_comb begin
 	 forward_B = 2'b00;
 	 EX_MEM_has_DR = 0;
 	 MEM_WB_has_DR = 0;
-	 if(opcode_EX_MEM = op_add || opcode_EX_MEM = op_and || opcode_EX_MEM = op_ldb || opcode_EX_MEM = op_ldi || opcode_EX_MEM = op_ldr || opcode_EX_MEM = op_lea || 
-		 opcode_EX_MEM = op_not || opcode_EX_MEM = op_shf)
+	 if(opcode_EX_MEM == op_add || opcode_EX_MEM == op_and || opcode_EX_MEM == op_ldb || opcode_EX_MEM == op_ldi || opcode_EX_MEM == op_ldr || opcode_EX_MEM == op_lea || 
+		 opcode_EX_MEM == op_not || opcode_EX_MEM == op_shf) begin
 		  EX_MEM_has_DR = 1;
-	 if(opcode_MEM_WB = op_add || opcode_MEM_WB = op_and || opcode_MEM_WB = op_ldb || opcode_MEM_WB = op_ldi || opcode_MEM_WB = op_ldr || opcode_MEM_WB = op_lea || 
-		 opcode_MEM_WB = op_not || opcode_MEM_WB = op_shf)
+	 end
+	 if(opcode_MEM_WB == op_add || opcode_MEM_WB == op_and || opcode_MEM_WB == op_ldb || opcode_MEM_WB == op_ldi || opcode_MEM_WB == op_ldr || opcode_MEM_WB == op_lea || 
+		 opcode_MEM_WB == op_not || opcode_MEM_WB == op_shf) begin
 		  MEM_WB_has_DR = 1;
-		  
+	 end
     /* Assign control signals based on opcode */
     case (opcode_curr)
         /* ALU OPS */
         op_add: begin
-				if(MEM_WB_has_DR){
-					if(DR_MEM_WB == sr1)
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
 						forward_A = 2'b10;
-					if(DR_MEM_WB == sr2)
+					end
+					if(DR_MEM_WB == sr2) begin
 						forward_B = 2'b10;
-				}
-				if(EX_MEM_has_DR){
-					if(DR_EX_MEM == sr1)
+					end
+				end
+				if(EX_MEM_has_DR)begin
+					if(DR_EX_MEM == sr1) begin
 						forward_A = 2'b01;
-					if(DR_EX_MEM == sr2)
+					end
+					if(DR_EX_MEM == sr2) begin
 						forward_B = 2'b01;
-				}
+					end
+				end
         end
 
         op_and: begin
-				if(MEM_WB_has_DR){
-					if(DR_MEM_WB == sr1)
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
 						forward_A = 2'b10;
-					if(DR_MEM_WB == sr2)
+					end
+					if(DR_MEM_WB == sr2) begin
 						forward_B = 2'b10;
-				}
-				if(EX_MEM_has_DR){
-					if(DR_EX_MEM == sr1)
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
 						forward_A = 2'b01;
-					if(DR_EX_MEM == sr2)
+					end
+					if(DR_EX_MEM == sr2) begin
 						forward_B = 2'b01;
-				}
+					end
+				end
         end
 
-        op_lea: begin
-        end
+        //op_lea: begin
+        //end
 
         op_not: begin
+			   if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         op_shf: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         /* DATA MEMORY OPS */
         /* LOAD */
         op_ldb: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         op_ldi: begin
+			   if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         op_ldr: begin
+		      if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         /* STORE */
         op_stb: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+					if(DR_MEM_WB == sr2) begin
+						forward_B = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR)begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+					if(DR_EX_MEM == sr2) begin
+						forward_B = 2'b01;
+					end
+				end
         end
 
         op_sti: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+					if(DR_MEM_WB == sr2) begin
+						forward_B = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR)begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+					if(DR_EX_MEM == sr2) begin
+						forward_B = 2'b01;
+					end
+				end
         end
 
         op_str: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+					if(DR_MEM_WB == sr2) begin
+						forward_B = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR)begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+					if(DR_EX_MEM == sr2) begin
+						forward_B = 2'b01;
+					end
+				end
         end
 
         /* PC CHANGING OPS */
@@ -109,17 +218,36 @@ always_comb begin
         //end
 
         op_jmp: begin
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         op_jsr: begin
-            /* IF */
+				if(MEM_WB_has_DR) begin
+					if(DR_MEM_WB == sr1) begin
+						forward_A = 2'b10;
+					end
+				end
+				if(EX_MEM_has_DR) begin
+					if(DR_EX_MEM == sr1) begin
+						forward_A = 2'b01;
+					end
+				end
         end
 
         //op_trap: begin
         //end
 
         default: begin
-            control_out = 0; /* Unknown opcode, set control word to zero */
+            //control_out = 0; /* Unknown opcode, set control word to zero */
         end
     endcase
 end

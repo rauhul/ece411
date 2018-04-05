@@ -11,8 +11,10 @@ module stage_ID (
 
     /* OUTPUTS */
     output lc3b_control_word control_out,
-    output lc3b_word sr1_out,
-    output lc3b_word sr2_out
+    output lc3b_word sr1_data,
+    output lc3b_word sr2_data,
+	 output lc3b_reg sr1,
+	 output lc3b_reg sr2
 );
 
 lc3b_reg regfile_sr1_mux_out;
@@ -57,8 +59,11 @@ regfile _regfile (
     .dest(regfile_dest_in),
 
     /* OUTPUTS */
-    .reg_a(sr1_out),
-    .reg_b(sr2_out)
+    .reg_a(sr1_data),
+    .reg_b(sr2_data)
 );
+
+assign sr1 = regfile_sr1_mux_out;
+assign sr2 = regfile_sr2_mux_out;
 
 endmodule : stage_ID

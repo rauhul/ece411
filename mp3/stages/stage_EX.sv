@@ -64,7 +64,7 @@ mux4 forward_A_mux (
 	.c(data_WB),
 	.d(16'b0),
 	.f(forward_A_mux_out)
-)
+);
 
 mux4 forward_B_mux (
 	.sel(forward_B),
@@ -73,7 +73,7 @@ mux4 forward_B_mux (
 	.c(data_WB),
 	.d(16'b0),
 	.f(forward_B_mux_out)
-)
+);
 
 mux8 general_alu_mux (
     /* INPUTS */

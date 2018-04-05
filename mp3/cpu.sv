@@ -63,6 +63,55 @@ lc3b_word barrier_MEM_WB_mdr;
 lc3b_word barrier_MEM_WB_pcn;
 lc3b_word stage_IF_ir;
 lc3b_word stage_IF_pc_plus2;
+
+/* BARRIER IF <-> ID */
+lc3b_word barrier_IF_ID_ir;
+lc3b_word barrier_IF_ID_pc;
+
+/* STAGE ID */
+lc3b_reg stage_WB_regfile_dest;
+lc3b_word stage_WB_regfile_data;
+logic stage_WB_regfile_load;
+lc3b_control_word stage_ID_control;
+lc3b_word stage_ID_sr1;
+lc3b_word stage_ID_sr2;
+lc3b_reg sr1;
+lc3b_reg sr2;
+
+
+/* BARRIER ID <-> EX */
+lc3b_control_word barrier_ID_EX_control;
+lc3b_word barrier_ID_EX_ir;
+lc3b_word barrier_ID_EX_pc;
+lc3b_word barrier_ID_EX_sr1;
+lc3b_word barrier_ID_EX_sr2;
+
+/* STAGE EX */
+lc3b_word stage_EX_alu;
+lc3b_word stage_EX_pcn;
+
+/* BARRIER EX <-> MEM */
+lc3b_control_word barrier_EX_MEM_control;
+lc3b_word barrier_EX_MEM_alu;
+lc3b_word barrier_EX_MEM_ir;
+lc3b_word barrier_EX_MEM_pc;
+lc3b_word barrier_EX_MEM_pcn;
+lc3b_word barrier_EX_MEM_sr2;
+
+/* STAGE MEM */
+// stage_MEM_br_en is defined above branch_logic
+lc3b_word stage_MEM_mdr;
+
+/* BARRIER MEM <-> WB */
+// barrier_MEM_WB_control is defined above stage_IF
+// barrier_MEM_WB_alu is defined above stage_IF
+lc3b_word barrier_MEM_WB_ir;
+// barrier_MEM_WB_mdr is defined above stage_IF
+lc3b_word barrier_MEM_WB_pc;
+// barrier_MEM_WB_pcn is defined above stage_IF
+
+
+/* STAGE IF */
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
@@ -83,8 +132,6 @@ stage_IF _stage_IF (
 
 
 /* BARRIER IF <-> ID */
-lc3b_word barrier_IF_ID_ir;
-lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
@@ -99,12 +146,6 @@ barrier_IF_ID _barrier_IF_ID (
 
 
 /* STAGE ID */
-lc3b_reg stage_WB_regfile_dest;
-lc3b_word stage_WB_regfile_data;
-logic stage_WB_regfile_load;
-lc3b_control_word stage_ID_control;
-lc3b_word stage_ID_sr1;
-lc3b_word stage_ID_sr2;
 stage_ID _stage_ID (
     /* INPUTS */
     .clk,
@@ -116,17 +157,15 @@ stage_ID _stage_ID (
 
     /* OUTPUTS */
     .control_out(stage_ID_control),
-    .sr1_out(stage_ID_sr1),
-    .sr2_out(stage_ID_sr2)
+    .sr1_data(stage_ID_sr1),
+    .sr2_data(stage_ID_sr2),
+	 .sr1(sr1),
+	 .sr2(sr2)
 );
 
-
+lc3b_reg sr1_out;
+lc3b_reg sr2_out;
 /* BARRIER ID <-> EX */
-lc3b_control_word barrier_ID_EX_control;
-lc3b_word barrier_ID_EX_ir;
-lc3b_word barrier_ID_EX_pc;
-lc3b_word barrier_ID_EX_sr1;
-lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
@@ -134,34 +173,36 @@ barrier_ID_EX _barrier_ID_EX (
     .control_in(stage_ID_control),
     .ir_in(barrier_IF_ID_ir),
     .pc_in(barrier_IF_ID_pc),
-    .sr1_in(stage_ID_sr1),
-    .sr2_in(stage_ID_sr2),
+    .sr1_data_in(stage_ID_sr1),
+    .sr2_data_in(stage_ID_sr2),
+	 .sr1_in(sr1),
+	 .sr2_in(sr2),
 
     /* OUTPUTS */
     .control_out(barrier_ID_EX_control),
     .ir_out(barrier_ID_EX_ir),
     .pc_out(barrier_ID_EX_pc),
-    .sr1_out(barrier_ID_EX_sr1),
-    .sr2_out(barrier_ID_EX_sr2)
+    .sr1_data_out(barrier_ID_EX_sr1),
+    .sr2_data_out(barrier_ID_EX_sr2),
+	 .sr1_out(sr1_out),
+	 .sr2_out(sr2_out)
 );
 
 /* FORWARDING LOGIC */
 logic [1:0] forward_A;
-logic [1:0] forward_A;
+logic [1:0] forward_B;
 
 forwarding_controller _forwarding_controller(
 	 .ir_curr(barrier_ID_EX_ir),
     .ir_EX_MEM(barrier_EX_MEM_ir),
 	 .ir_MEM_WB(barrier_MEM_WB_ir),
-	 .sr1(barrier_ID_EX_sr1),
-	 .sr2(barrier_ID_EX_sr2),
+	 .sr1(sr1_out),
+	 .sr2(sr2_out),
 	 .forward_A,
 	 .forward_B
 );
 
 /* STAGE EX */
-lc3b_word stage_EX_alu;
-lc3b_word stage_EX_pcn;
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
@@ -172,7 +213,7 @@ stage_EX _stage_EX (
     .sr1_in(barrier_ID_EX_sr1),
     .sr2_in(barrier_ID_EX_sr2),
 	 .forward_A,
-	 .forward_B
+	 .forward_B,
 	 .data_EX_MEM(barrier_EX_MEM_alu),
 	 .data_WB(stage_WB_regfile_data),
 
@@ -183,12 +224,6 @@ stage_EX _stage_EX (
 
 
 /* BARRIER EX <-> MEM */
-lc3b_control_word barrier_EX_MEM_control;
-lc3b_word barrier_EX_MEM_alu;
-lc3b_word barrier_EX_MEM_ir;
-lc3b_word barrier_EX_MEM_pc;
-lc3b_word barrier_EX_MEM_pcn;
-lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
@@ -211,8 +246,6 @@ barrier_EX_MEM _barrier_EX_MEM (
 
 
 /* STAGE MEM */
-// stage_MEM_br_en is defined above branch_logic
-lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
@@ -234,12 +267,6 @@ stage_MEM _stage_MEM (
 
 
 /* BARRIER MEM <-> WB */
-// barrier_MEM_WB_control is defined above stage_IF
-// barrier_MEM_WB_alu is defined above stage_IF
-lc3b_word barrier_MEM_WB_ir;
-// barrier_MEM_WB_mdr is defined above stage_IF
-lc3b_word barrier_MEM_WB_pc;
-// barrier_MEM_WB_pcn is defined above stage_IF
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
