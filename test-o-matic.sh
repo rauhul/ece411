@@ -12,7 +12,7 @@ MP_DIR=$HOME/ece411_team_3/$MP
 #Location of LC3bAssembler; Should usually be in bin
 ASSEMBLER=$HOME/ece411_team_3/bin/LC3bAssembler
 #Addressability of physical memory; from load_memory.sh
-ADDRESSABILITY=1
+ADDRESSABILITY=16
 
 #Testcode directory;Not required but can be used to avoid entering path everytime
 TESTCODE_DIR=$HOME/ece411_team_3/testcode
@@ -23,7 +23,7 @@ TESTCODE_DIR=$HOME/ece411_team_3/testcode
 #See line :183
 #If regfile not found comment out 184 and uncomment 183 and the following line
 REG_FILE={/mp3_tb/dut/_cpu/_stage_ID/_regfile/data}
-RUN_TIME=100us
+RUN_TIME=80us
 
 #Other debug signals
 #signals can be prefixed with -radix
