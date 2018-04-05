@@ -23,7 +23,7 @@ TESTCODE_DIR=$HOME/ece411_team_3/testcode
 #See line :183
 #If regfile not found comment out 184 and uncomment 183 and the following line
 REG_FILE={/mp3_tb/dut/_cpu/_stage_ID/_regfile/data}
-RUN_TIME=10000000ns
+RUN_TIME=100us
 
 #Other debug signals
 #signals can be prefixed with -radix
@@ -181,8 +181,8 @@ tail -n 7 "${MODELSIM}/${MP}_run_msim_rtl_verilog.do" | head -n 1 >> "${WORK_DIR
 #echo "restart -f" >> "${WORK_DIR}/do.do"
 
 #####EXPERIMENTAL#####
-echo 'add list -radix hexadecimal [concat [string range [find instances -r regfile] 0 [expr [string first " " [find instances -r regfile]] - 1]] "/data}"]' | tee -a "${WORK_DIR}/do.do" "${WORK_DIR}/repeat.do" > /dev/null
-#echo "add list -radix hexadecimal $REG_FILE" | tee -a "${WORK_DIR}/do.do" "${WORK_DIR}/repeat.do" > /dev/null
+#echo 'add list -radix hexadecimal [concat [string range [find instances -r regfile] 0 [expr [string first " " [find instances -r regfile]] - 1]] "/data}"]' | tee -a "${WORK_DIR}/do.do" "${WORK_DIR}/repeat.do" > /dev/null
+echo "add list -radix hexadecimal $REG_FILE" | tee -a "${WORK_DIR}/do.do" "${WORK_DIR}/repeat.do" > /dev/null
 
 #Debug signals
 if [[ -n $DBG_SIGNALS ]]; then

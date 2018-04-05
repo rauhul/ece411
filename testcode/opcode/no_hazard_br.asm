@@ -1,3 +1,5 @@
+ORIGIN 4x0000
+
 SEGMENT  CodeSegment:
 
     ADD R0, R0, 2
