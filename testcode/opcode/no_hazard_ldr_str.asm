@@ -20,6 +20,21 @@ SEGMENT  CodeSegment:
     STR  R4, R0, O_4
     STR  R5, R0, O_5
     STR  R6, R0, O_6
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+DONE:
+    BRnzp DONE
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
 
 I_1:  DATA2 4xDEAD
 I_2:  DATA2 4xBEEF

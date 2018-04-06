@@ -49,6 +49,15 @@ SEGMENT CodeSegment:
     NOP
     NOP
 
+DONE:
+    BRnzp DONE
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
 L_DATA_PTR_S:
     DATA2 L_DATA_1
     DATA2 L_DATA_2

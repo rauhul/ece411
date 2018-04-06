@@ -182,6 +182,21 @@ SEGMENT CodeSegment:
     NOP
     NOP
     STB R7, R6, 1
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+
+DONE:
+    BRnzp DONE
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
 
 L_DATA_1:
     DATA2 4x11EE
