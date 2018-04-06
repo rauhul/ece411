@@ -10,6 +10,26 @@ logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
+logic branch_controller_stage_IF_stall;
+logic barrier_IF_ID_reset;
+logic barrier_ID_EX_reset;
+logic barrier_EX_MEM_reset;
+logic barrier_MEM_WB_reset;
+branch_controller i_branch_controller (
+    /* INPUTS */
+    .barrier_IF_ID_opcode(lc3b_opcode'barrier_IF_ID_ir[15:12]),
+    .barrier_ID_EX_opcode(lc3b_opcode'barrier_ID_EX_ir[15:12]),
+    .barrier_EX_MEM_opcode(lc3b_opcode'barrier_EX_MEM_ir[15:12]),
+    .barrier_MEM_WB_opcode(lc3b_opcode'barrier_MEM_WB_ir[15:12]),
+
+    /* OUTPUTS */
+    .stage_IF_stall(branch_controller_stage_IF_stall),
+    .barrier_IF_ID_reset,
+    .barrier_ID_EX_reset,
+    .barrier_EX_MEM_reset,
+    .barrier_MEM_WB_reset
+);
+
 logic stage_IF_request_stall;
 logic stage_MEM_request_stall;
 logic barrier_EX_MEM_stall;
@@ -62,7 +82,7 @@ lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .stall(stage_IF_stall),
+    .stall(stage_IF_stall | branch_controller_stage_IF_stall),
     .pc_mux_sel(stage_IF_pc_mux_sel),
     .alu_in(barrier_MEM_WB_alu),
     .mdr_in(barrier_MEM_WB_mdr),
@@ -84,6 +104,7 @@ lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
+    .reset(barrier_IF_ID_reset),
     .stall(barrier_IF_ID_stall),
     .ir_in(stage_IF_ir),
     .pc_in(stage_IF_pc_plus2),
@@ -126,6 +147,7 @@ lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
+    .reset(barrier_ID_EX_reset),
     .stall(barrier_ID_EX_stall),
     .control_in(stage_ID_control),
     .ir_in(barrier_IF_ID_ir),
@@ -171,6 +193,7 @@ lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
+    .reset(barrier_EX_MEM_reset),
     .stall(barrier_EX_MEM_stall),
     .control_in(barrier_ID_EX_control),
     .alu_in(stage_EX_alu),
@@ -222,6 +245,7 @@ lc3b_word barrier_MEM_WB_pc;
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
+    .reset(barrier_MEM_WB_reset),
     .stall(barrier_MEM_WB_stall),
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),

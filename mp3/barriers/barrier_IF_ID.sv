@@ -3,6 +3,7 @@ import lc3b_types::*;
 module barrier_IF_ID (
     /* INPUTS */
     input clk,
+    input reset,
     input stall,
     input lc3b_word ir_in,
     input lc3b_word pc_in,
@@ -24,8 +25,13 @@ end
 /* FF */
 always_ff @(posedge clk) begin
     if (~stall) begin
-        ir = ir_in;
-        pc = pc_in;
+        if (reset) begin
+            ir = 0;
+            pc = 0;
+        end else begin
+            ir = ir_in;
+            pc = pc_in;
+        end
     end
 end
 

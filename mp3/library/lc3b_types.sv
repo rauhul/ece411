@@ -124,6 +124,7 @@ typedef enum bit [3:0] {
 
     op_add  = 4'b0001,
     op_and  = 4'b0101,
+    op_lea  = 4'b1110,
     op_not  = 4'b1001,
     op_shf  = 4'b1101,
 
@@ -137,7 +138,6 @@ typedef enum bit [3:0] {
     op_br   = 4'b0000,
     op_jmp  = 4'b1100,   /* also RET */
     op_jsr  = 4'b0100,   /* also JSRR */
-    op_lea  = 4'b1110,
     op_trap = 4'b1111
 } lc3b_opcode;
 

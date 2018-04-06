@@ -27,7 +27,7 @@ cache #(
 
 cache #(
     .NUM_LINES(8),
-    .ASSOCIATIVITY(8)
+    .ASSOCIATIVITY(4)
 ) d_cache (
     /* SLAVES */
     .input_wishbone(data_memory_wishbone),
@@ -47,7 +47,7 @@ cache_arbiter _cache_arbiter (
 
 cache #(
     .NUM_LINES(8),
-    .ASSOCIATIVITY(4)
+    .ASSOCIATIVITY(8)
 ) l2_cache (
     /* SLAVES */
     .input_wishbone(cache_arbiter_memory_wishbone),
