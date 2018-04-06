@@ -26,10 +26,10 @@ logic barrier_EX_MEM_reset;
 logic barrier_MEM_WB_reset;
 branch_controller i_branch_controller (
     /* INPUTS */
-    .barrier_IF_ID_opcode(lc3b_opcode'barrier_IF_ID_ir[15:12]),
-    .barrier_ID_EX_opcode(lc3b_opcode'barrier_ID_EX_ir[15:12]),
-    .barrier_EX_MEM_opcode(lc3b_opcode'barrier_EX_MEM_ir[15:12]),
-    .barrier_MEM_WB_opcode(lc3b_opcode'barrier_MEM_WB_ir[15:12]),
+    .barrier_IF_ID_opcode(lc3b_opcode'(barrier_IF_ID_ir[15:12])),
+    .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
+    .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
+    .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
 
     /* OUTPUTS */
     .stage_IF_stall(branch_controller_stage_IF_stall),

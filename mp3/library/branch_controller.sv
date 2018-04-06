@@ -30,25 +30,25 @@ always_comb begin
     barrier_EX_MEM_reset = 0;
     barrier_MEM_WB_reset = 0;
 
-    if (opcode_changes_pc(barrier_IF_ID_opcode) & barrier_IF_ID_valid) begin
+    if (`opcode_changes_pc(barrier_IF_ID_opcode) & barrier_IF_ID_valid) begin
         stage_IF_stall       = 1;
         barrier_IF_ID_reset  = 1;
     end
 
-    if (opcode_changes_pc(barrier_ID_EX_opcode) & barrier_ID_EX_valid) begin
+    if (`opcode_changes_pc(barrier_ID_EX_opcode) & barrier_ID_EX_valid) begin
         stage_IF_stall       = 1;
         barrier_IF_ID_reset  = 1;
         barrier_ID_EX_reset  = 1;
     end
 
-    if (opcode_changes_pc(barrier_EX_MEM_opcode) & barrier_EX_MEM_valid) begin
+    if (`opcode_changes_pc(barrier_EX_MEM_opcode) & barrier_EX_MEM_valid) begin
         stage_IF_stall       = 1;
         barrier_IF_ID_reset  = 1;
         barrier_ID_EX_reset  = 1;
         barrier_EX_MEM_reset = 1;
     end
 
-    if (opcode_changes_pc(barrier_MEM_WB_opcode) & barrier_MEM_WB_valid) begin
+    if (`opcode_changes_pc(barrier_MEM_WB_opcode) & barrier_MEM_WB_valid) begin
         barrier_ID_EX_reset  = 1;
         barrier_EX_MEM_reset = 1;
         barrier_MEM_WB_reset = 1;
