@@ -10,11 +10,16 @@ logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
-logic branch_controller_stage_IF_stall;
+logic barrier_IF_ID_valid;
+logic barrier_ID_EX_valid;
+logic barrier_EX_MEM_valid;
+logic barrier_MEM_WB_valid;
 lc3b_word barrier_IF_ID_ir;
 lc3b_word barrier_ID_EX_ir;
 lc3b_word barrier_EX_MEM_ir;
 lc3b_word barrier_MEM_WB_ir;
+
+logic branch_controller_stage_IF_stall;
 logic barrier_IF_ID_reset;
 logic barrier_ID_EX_reset;
 logic barrier_EX_MEM_reset;
@@ -115,7 +120,8 @@ barrier_IF_ID _barrier_IF_ID (
 
     /* OUTPUTS */
     .ir_out(barrier_IF_ID_ir),
-    .pc_out(barrier_IF_ID_pc)
+    .pc_out(barrier_IF_ID_pc),
+    .valid_out(barrier_IF_ID_valid)
 );
 
 
@@ -164,7 +170,8 @@ barrier_ID_EX _barrier_ID_EX (
     .ir_out(barrier_ID_EX_ir),
     .pc_out(barrier_ID_EX_pc),
     .sr1_out(barrier_ID_EX_sr1),
-    .sr2_out(barrier_ID_EX_sr2)
+    .sr2_out(barrier_ID_EX_sr2),
+    .valid_out(barrier_ID_EX_valid)
 );
 
 
@@ -212,7 +219,8 @@ barrier_EX_MEM _barrier_EX_MEM (
     .ir_out(barrier_EX_MEM_ir),
     .pc_out(barrier_EX_MEM_pc),
     .pcn_out(barrier_EX_MEM_pcn),
-    .sr2_out(barrier_EX_MEM_sr2)
+    .sr2_out(barrier_EX_MEM_sr2),
+    .valid_out(barrier_EX_MEM_valid)
 );
 
 
@@ -264,7 +272,8 @@ barrier_MEM_WB _barrier_MEM_WB (
     .ir_out(barrier_MEM_WB_ir),
     .mdr_out(barrier_MEM_WB_mdr),
     .pc_out(barrier_MEM_WB_pc),
-    .pcn_out(barrier_MEM_WB_pcn)
+    .pcn_out(barrier_MEM_WB_pcn),
+    .valid_out(barrier_MEM_WB_valid)
 );
 
 

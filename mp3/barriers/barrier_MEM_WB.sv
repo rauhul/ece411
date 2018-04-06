@@ -18,7 +18,8 @@ module barrier_MEM_WB (
     output lc3b_word ir_out,
     output lc3b_word mdr_out,
     output lc3b_word pc_out,
-    output lc3b_word pcn_out
+    output lc3b_word pcn_out,
+    output logic valid_out
 );
 
 lc3b_control_word control;
@@ -27,6 +28,7 @@ lc3b_word ir;
 lc3b_word mdr;
 lc3b_word pc;
 lc3b_word pcn;
+logic valid;
 
 /* INITIAL */
 initial begin
@@ -36,6 +38,7 @@ initial begin
     mdr     = 0;
     pc      = 0;
     pcn     = 0;
+    valid   = 0;
 end
 
 /* FF */
@@ -48,6 +51,7 @@ always_ff @(posedge clk) begin
             mdr     = 0;
             pc      = 0;
             pcn     = 0;
+            valid   = 0;
         end else begin
             control = control_in;
             alu     = alu_in;
@@ -55,6 +59,7 @@ always_ff @(posedge clk) begin
             mdr     = mdr_in;
             pc      = pc_in;
             pcn     = pcn_in;
+            valid   = 1;
         end
     end
 end
@@ -66,5 +71,6 @@ assign ir_out      = ir;
 assign mdr_out     = mdr;
 assign pc_out      = pc;
 assign pcn_out     = pcn;
+assign valid_out   = valid;
 
 endmodule : barrier_MEM_WB
