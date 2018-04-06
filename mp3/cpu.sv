@@ -11,6 +11,10 @@ assign clk = instruction_memory_wishbone.CLK;
 
 /* STALL LOGIC */
 logic branch_controller_stage_IF_stall;
+lc3b_word barrier_IF_ID_ir;
+lc3b_word barrier_ID_EX_ir;
+lc3b_word barrier_EX_MEM_ir;
+lc3b_word barrier_MEM_WB_ir;
 logic barrier_IF_ID_reset;
 logic barrier_ID_EX_reset;
 logic barrier_EX_MEM_reset;
@@ -99,7 +103,7 @@ stage_IF _stage_IF (
 
 
 /* BARRIER IF <-> ID */
-lc3b_word barrier_IF_ID_ir;
+// barrier_IF_ID_ir is defined above branch_controller
 lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
@@ -140,7 +144,7 @@ stage_ID _stage_ID (
 
 /* BARRIER ID <-> EX */
 lc3b_control_word barrier_ID_EX_control;
-lc3b_word barrier_ID_EX_ir;
+// barrier_ID_EX_ir is defined above branch_controller
 lc3b_word barrier_ID_EX_pc;
 lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_ID_EX_sr2;
@@ -186,7 +190,7 @@ stage_EX _stage_EX (
 /* BARRIER EX <-> MEM */
 lc3b_control_word barrier_EX_MEM_control;
 lc3b_word barrier_EX_MEM_alu;
-lc3b_word barrier_EX_MEM_ir;
+// barrier_EX_MEM_ir is defined above branch_controller
 lc3b_word barrier_EX_MEM_pc;
 lc3b_word barrier_EX_MEM_pcn;
 lc3b_word barrier_EX_MEM_sr2;
@@ -238,7 +242,7 @@ stage_MEM _stage_MEM (
 /* BARRIER MEM <-> WB */
 // barrier_MEM_WB_control is defined above stage_IF
 // barrier_MEM_WB_alu is defined above stage_IF
-lc3b_word barrier_MEM_WB_ir;
+// barrier_MEM_WB_ir is defined above branch_controller
 // barrier_MEM_WB_mdr is defined above stage_IF
 lc3b_word barrier_MEM_WB_pc;
 // barrier_MEM_WB_pcn is defined above stage_IF
