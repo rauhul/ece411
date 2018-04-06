@@ -26,6 +26,10 @@ logic barrier_EX_MEM_reset;
 logic barrier_MEM_WB_reset;
 branch_controller i_branch_controller (
     /* INPUTS */
+    .barrier_IF_ID_valid,
+    .barrier_ID_EX_valid,
+    .barrier_EX_MEM_valid,
+    .barrier_MEM_WB_valid,
     .barrier_IF_ID_opcode(lc3b_opcode'(barrier_IF_ID_ir[15:12])),
     .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
     .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
@@ -164,6 +168,7 @@ barrier_ID_EX _barrier_ID_EX (
     .pc_in(barrier_IF_ID_pc),
     .sr1_in(stage_ID_sr1),
     .sr2_in(stage_ID_sr2),
+    .valid_in(barrier_IF_ID_valid),
 
     /* OUTPUTS */
     .control_out(barrier_ID_EX_control),
@@ -212,6 +217,7 @@ barrier_EX_MEM _barrier_EX_MEM (
     .pc_in(barrier_ID_EX_pc),
     .pcn_in(stage_EX_pcn),
     .sr2_in(barrier_ID_EX_sr2),
+    .valid_in(barrier_ID_EX_valid),
 
     /* OUTPUTS */
     .control_out(barrier_EX_MEM_control),
@@ -265,6 +271,7 @@ barrier_MEM_WB _barrier_MEM_WB (
     .mdr_in(stage_MEM_mdr),
     .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
+    .valid_in(barrier_EX_MEM_valid),
 
     /* OUTPUTS */
     .control_out(barrier_MEM_WB_control),

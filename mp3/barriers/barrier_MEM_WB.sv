@@ -11,6 +11,7 @@ module barrier_MEM_WB (
     input lc3b_word mdr_in,
     input lc3b_word pc_in,
     input lc3b_word pcn_in,
+    input logic valid_in,
 
     /* OUTPUTS */
     output lc3b_control_word control_out,
@@ -59,7 +60,7 @@ always_ff @(posedge clk) begin
             mdr     = mdr_in;
             pc      = pc_in;
             pcn     = pcn_in;
-            valid   = 1;
+            valid   = valid_in;
         end
     end
 end

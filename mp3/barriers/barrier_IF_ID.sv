@@ -14,9 +14,13 @@ module barrier_IF_ID (
     output logic valid_out
 );
 
+`define instruction_is_not_NOP(instruction) \
+(|instruction)
+
 lc3b_word ir;
 lc3b_word pc;
 logic valid;
+
 /* INITIAL */
 initial begin
     ir    = 0;
@@ -34,7 +38,7 @@ always_ff @(posedge clk) begin
         end else begin
             ir    = ir_in;
             pc    = pc_in;
-            valid = 1;
+            valid = `instruction_is_not_NOP(ir_in);
         end
     end
 end

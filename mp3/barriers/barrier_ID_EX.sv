@@ -10,6 +10,7 @@ module barrier_ID_EX (
     input lc3b_word pc_in,
     input lc3b_word sr1_in,
     input lc3b_word sr2_in,
+    input logic valid_in,
 
     /* OUTPUTS */
     output lc3b_control_word control_out,
@@ -53,7 +54,7 @@ always_ff @(posedge clk) begin
             pc      = pc_in;
             sr1     = sr1_in;
             sr2     = sr2_in;
-            valid   = 1;
+            valid   = valid_in;
         end
     end
 end
