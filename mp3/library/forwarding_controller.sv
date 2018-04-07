@@ -37,11 +37,11 @@ always_comb begin
     EX_MEM_has_DR = 0;
     MEM_WB_has_DR = 0;
     if(opcode_EX_MEM == op_add || opcode_EX_MEM == op_and || opcode_EX_MEM == op_ldb || opcode_EX_MEM == op_ldi || opcode_EX_MEM == op_ldr || opcode_EX_MEM == op_lea ||
-        opcode_EX_MEM = = op_not || opcode_EX_MEM == op_shf) begin
+        opcode_EX_MEM == op_not || opcode_EX_MEM == op_shf) begin
         EX_MEM_has_DR = 1;
     end
     if(opcode_MEM_WB == op_add || opcode_MEM_WB == op_and || opcode_MEM_WB == op_ldb || opcode_MEM_WB == op_ldi || opcode_MEM_WB == op_ldr || opcode_MEM_WB == op_lea ||
-        opcode_MEM_WB = = op_not || opcode_MEM_WB == op_shf) begin
+        opcode_MEM_WB == op_not || opcode_MEM_WB == op_shf) begin
         MEM_WB_has_DR = 1;
     end
     /* Assign control signals based on opcode */

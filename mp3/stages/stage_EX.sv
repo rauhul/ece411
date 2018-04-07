@@ -77,10 +77,10 @@ logic [3:0] [15:0] forward_A_mux_in;
 assign forward_A_mux_in[0] = sr1_in;
 assign forward_A_mux_in[1] = alu_EX_MEM;
 assign forward_A_mux_in[2] = data_WB;
-assign forward_A_mux_in[2] = pcn_EX_MEM;
+assign forward_A_mux_in[3] = pcn_EX_MEM;
 mux #(4, 16) forward_A_mux (
     /* INPUTS */
-    .sel(forward_A),
+    .sel(forward_A_mux_sel),
     .in(forward_A_mux_in),
 
     /* OUTPUTS */
@@ -92,10 +92,10 @@ logic [3:0] [15:0] forward_B_mux_in;
 assign forward_B_mux_in[0] = general_alu_mux_out;
 assign forward_B_mux_in[1] = alu_EX_MEM;
 assign forward_B_mux_in[2] = data_WB;
-assign forward_B_mux_in[2] = pcn_EX_MEM;
+assign forward_B_mux_in[3] = pcn_EX_MEM;
 mux #(4, 16) forward_B_mux (
     /* INPUTS */
-    .sel(forward_B),
+    .sel(forward_B_mux_sel),
     .in(forward_B_mux_in),
 
     /* OUTPUTS */
