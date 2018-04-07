@@ -6,13 +6,13 @@ module regfile (
     input load,
     input stall,
     input lc3b_word in,
-    input lc3b_reg src_a,
-    input lc3b_reg src_b,
+    input lc3b_reg sr1,
+    input lc3b_reg sr2,
     input lc3b_reg dest,
 
     /* OUTPUTS */
-    output lc3b_word reg_a,
-    output lc3b_word reg_b
+    output lc3b_word sr1_out,
+    output lc3b_word sr2_out
 );
 
 lc3b_word data [7:0];
@@ -32,8 +32,8 @@ always_ff @(posedge clk) begin
 end
 
 always_comb begin
-    reg_a = data[src_a];
-    reg_b = data[src_b];
+    sr1_out = data[sr1];
+    sr2_out = data[sr2];
 end
 
 endmodule : regfile

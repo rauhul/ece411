@@ -56,20 +56,20 @@ adder pc_adder (
     .f(pcn_out)
 );
 
-logic       [15:0] general_alu_mux_out;
-logic [4:0] [15:0] general_alu_mux_in;
-assign general_alu_mux_in[0] = sr2_in;
-assign general_alu_mux_in[1] = imm4;
-assign general_alu_mux_in[2] = imm5;
-assign general_alu_mux_in[3] = offset6_b;
-assign general_alu_mux_in[4] = offset6_w;
-mux #(5, 16) general_alu_mux (
+logic       [15:0] alu_mux_out;
+logic [4:0] [15:0] alu_mux_in;
+assign alu_mux_in[0] = sr2_in;
+assign alu_mux_in[1] = imm4;
+assign alu_mux_in[2] = imm5;
+assign alu_mux_in[3] = offset6_b;
+assign alu_mux_in[4] = offset6_w;
+mux #(5, 16) alu_mux (
     /* INPUTS */
-    .sel(control_in.general_alu_mux_sel),
-    .in(general_alu_mux_in),
+    .sel(control_in.alu_mux_sel),
+    .in(alu_mux_in),
 
     /* OUTPUTS */
-    .out(general_alu_mux_out)
+    .out(alu_mux_out)
 );
 
 logic       [15:0] forward_A_mux_out;
@@ -89,7 +89,7 @@ mux #(4, 16) forward_A_mux (
 
 logic       [15:0] forward_B_mux_out;
 logic [3:0] [15:0] forward_B_mux_in;
-assign forward_B_mux_in[0] = general_alu_mux_out;
+assign forward_B_mux_in[0] = alu_mux_out;
 assign forward_B_mux_in[1] = alu_EX_MEM;
 assign forward_B_mux_in[2] = data_WB;
 assign forward_B_mux_in[3] = pcn_EX_MEM;
@@ -102,9 +102,9 @@ mux #(4, 16) forward_B_mux (
     .out(forward_B_mux_out)
 );
 
-alu general_alu (
+alu _alu (
     /* INPUTS */
-    .aluop(control_in.general_alu_op),
+    .aluop(control_in.alu_op),
     .a(forward_A_mux_out),
     .b(forward_B_mux_out),
 

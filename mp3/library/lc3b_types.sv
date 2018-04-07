@@ -22,15 +22,6 @@ typedef enum bit [1:0] {
 } lc3b_pc_mux_sel;
 
 /* ID TYPES */
-typedef enum bit {
-    lc3b_regfile_sr1_mux_sel_sr1,
-    lc3b_regfile_sr1_mux_sel_dest
-} lc3b_regfile_sr1_mux_sel;
-
-typedef enum bit {
-    lc3b_regfile_sr2_mux_sel_sr2,
-    lc3b_regfile_sr2_mux_sel_dest
-} lc3b_regfile_sr2_mux_sel;
 
 /* EX TYPES */
 typedef enum bit {
@@ -39,15 +30,15 @@ typedef enum bit {
 } lc3b_pc_adder_mux_sel;
 
 typedef enum bit [2:0] {
-    lc3b_general_alu_mux_sel_sr2,
-    lc3b_general_alu_mux_sel_imm4,
-    lc3b_general_alu_mux_sel_imm5,
-    lc3b_general_alu_mux_sel_offset6_b,
-    lc3b_general_alu_mux_sel_offset6_w,
-    lc3b_general_alu_mux_sel_x1,
-    lc3b_general_alu_mux_sel_x2,
-    lc3b_general_alu_mux_sel_x3
-} lc3b_general_alu_mux_sel;
+    lc3b_alu_mux_sel_sr2,
+    lc3b_alu_mux_sel_imm4,
+    lc3b_alu_mux_sel_imm5,
+    lc3b_alu_mux_sel_offset6_b,
+    lc3b_alu_mux_sel_offset6_w,
+    lc3b_alu_mux_sel_x1,
+    lc3b_alu_mux_sel_x2,
+    lc3b_alu_mux_sel_x3
+} lc3b_alu_mux_sel;
 
 typedef enum bit [3:0] {
     lc3b_alu_op_add,
@@ -94,13 +85,13 @@ typedef struct packed {
     lc3b_pc_mux_sel pc_mux_sel;
 
     /* ID */
-    lc3b_regfile_sr1_mux_sel regfile_sr1_mux_sel;
-    lc3b_regfile_sr2_mux_sel regfile_sr2_mux_sel;
+    lc3b_reg regfile_sr1;
+    lc3b_reg regfile_sr2;
 
     /* EX */
     lc3b_pc_adder_mux_sel pc_adder_mux_sel;
-    lc3b_general_alu_mux_sel general_alu_mux_sel;
-    lc3b_alu_op general_alu_op;
+    lc3b_alu_mux_sel alu_mux_sel;
+    lc3b_alu_op alu_op;
 
     /* MEM */
     logic cc_load;
