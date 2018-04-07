@@ -214,8 +214,9 @@ stage_EX _stage_EX (
     .sr2_in(barrier_ID_EX_sr2),
 	 .forward_A,
 	 .forward_B,
-	 .data_EX_MEM(barrier_EX_MEM_alu),
+	 .alu_EX_MEM(barrier_EX_MEM_alu),
 	 .data_WB(stage_WB_regfile_data),
+	 .pcn_EX_MEM(barrier_EX_MEM_pcn),
 
     /* OUTPUTS */
     .alu_out(stage_EX_alu),

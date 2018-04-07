@@ -58,10 +58,14 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR)begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 					if(DR_EX_MEM == sr2) begin
-						forward_B = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_B = 2'b11;
+						else forward_B = 2'b01;
 					end
 				end
         end
@@ -77,10 +81,14 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 					if(DR_EX_MEM == sr2) begin
-						forward_B = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_B = 2'b11;
+						else forward_B = 2'b01;
 					end
 				end
         end
@@ -96,7 +104,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -109,7 +119,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -124,7 +136,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -137,7 +151,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -150,7 +166,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -167,10 +185,14 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR)begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 					if(DR_EX_MEM == sr2) begin
-						forward_B = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_B = 2'b11;
+						else forward_B = 2'b01;
 					end
 				end
         end
@@ -186,10 +208,14 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR)begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 					if(DR_EX_MEM == sr2) begin
-						forward_B = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_B = 2'b11;
+						else forward_B = 2'b01;
 					end
 				end
         end
@@ -205,10 +231,14 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR)begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 					if(DR_EX_MEM == sr2) begin
-						forward_B = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_B = 2'b11;
+						else forward_B = 2'b01;
 					end
 				end
         end
@@ -225,7 +255,9 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
@@ -238,14 +270,15 @@ always_comb begin
 				end
 				if(EX_MEM_has_DR) begin
 					if(DR_EX_MEM == sr1) begin
-						forward_A = 2'b01;
+						if(opcode_EX_MEM == op_lea)
+							forward_A = 2'b11;
+						else forward_A = 2'b01;
 					end
 				end
         end
 
         //op_trap: begin
         //end
-
         default: begin
             //control_out = 0; /* Unknown opcode, set control word to zero */
         end

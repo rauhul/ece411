@@ -11,8 +11,9 @@ module stage_EX (
     input lc3b_word sr2_in,
 	 input logic [1:0] forward_A,
 	 input logic [1:0] forward_B,
-	 input lc3b_word data_EX_MEM,
+	 input lc3b_word alu_EX_MEM,
 	 input lc3b_word data_WB,
+	 input lc3b_word pcn_EX_MEM,
     /* OUTPUTS */
     output lc3b_word alu_out,
     output lc3b_word pcn_out
@@ -60,18 +61,18 @@ adder pc_adder (
 mux4 forward_A_mux (
 	.sel(forward_A),
 	.a(sr1_in),
-	.b(data_EX_MEM),
+	.b(alu_EX_MEM),
 	.c(data_WB),
-	.d(16'b0),
+	.d(pcn_EX_MEM),
 	.f(forward_A_mux_out)
 );
 
 mux4 forward_B_mux (
 	.sel(forward_B),
 	.a(sr2_in),
-	.b(data_EX_MEM),
+	.b(alu_EX_MEM),
 	.c(data_WB),
-	.d(16'b0),
+	.d(pcn_EX_MEM),
 	.f(forward_B_mux_out)
 );
 
