@@ -12,11 +12,13 @@ lc3b_opcode opcode;
 assign      opcode = lc3b_opcode'(ir_in[15:12]);
 
 lc3b_reg dest;
-assign   dest = ir_in[11: 9];
+assign   dest = ir_in[11:9];
 lc3b_reg sr1;
-assign   sr1  = ir_in[ 8: 6];
+assign   sr1  = ir_in[ 8:6];
 lc3b_reg sr2;
-assign   sr2  = ir_in[15:12];
+assign   sr2  = ir_in[ 2:0];
+lc3b_reg r7;
+assign   r7   = 3'b111;
 
 always_comb begin
     /* IF */
@@ -43,7 +45,7 @@ always_comb begin
 
     /* WB */
     control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-    control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+    control_out.regfile_dest = 0
     control_out.regfile_load = 0;
 
     /* Assign control signals based on opcode */
@@ -70,7 +72,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1; // load regfile
         end
 
@@ -95,7 +97,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1; // load regfile
         end
 
@@ -114,7 +116,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pcn;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1;
         end
 
@@ -134,7 +136,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1; // load regfile
         end
 
@@ -161,7 +163,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1; // load regfile
         end
 
@@ -187,7 +189,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_mdr;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1;
         end
 
@@ -211,7 +213,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_mdr;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1;
         end
 
@@ -236,7 +238,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_mdr;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_dest;
+            control_out.regfile_dest = dest;
             control_out.regfile_load = 1; // load regfile
         end
 
@@ -355,7 +357,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_r7;
+            control_out.regfile_dest = r7;
             control_out.regfile_load = 1;
         end
 
@@ -376,7 +378,7 @@ always_comb begin
 
             /* WB */
             control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_pc;
-            control_out.regfile_dest_mux_sel = lc3b_regfile_dest_mux_sel_r7;
+            control_out.regfile_dest = r7;
             control_out.regfile_load = 1;
         end
 

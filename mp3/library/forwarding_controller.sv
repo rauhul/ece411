@@ -1,6 +1,14 @@
 import lc3b_types::*;
 
 module forwarding_controller (
+    // input lc3b_opcode barrier_ID_EX_opcode,
+    // input lc3b_opcode barrier_EX_MEM_opcode,
+    // input lc3b_opcode barrier_MEM_WB_opcode,
+
+    // input lc3b_control_word barrier_ID_EX_control,
+    // input lc3b_control_word barrier_EX_MEM_control,
+    // input lc3b_control_word barrier_MEM_WB_control,
+
     input lc3b_word ir_curr,
     input lc3b_word ir_EX_MEM,
     input lc3b_word ir_MEM_WB,

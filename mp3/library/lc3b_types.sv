@@ -73,11 +73,6 @@ typedef enum bit [1:0] {
     lc3b_regfile_data_mux_sel_alu
 } lc3b_regfile_data_mux_sel;
 
-typedef enum bit {
-    lc3b_regfile_dest_mux_sel_dest,
-    lc3b_regfile_dest_mux_sel_r7
-} lc3b_regfile_dest_mux_sel;
-
 /* CONTROL WORD */
 typedef struct packed {
     /* IF */
@@ -104,7 +99,7 @@ typedef struct packed {
 
     /* WB */
     lc3b_regfile_data_mux_sel regfile_data_mux_sel;
-    lc3b_regfile_dest_mux_sel regfile_dest_mux_sel;
+    lc3b_reg regfile_dest;
     logic regfile_load;
 
 } lc3b_control_word;
