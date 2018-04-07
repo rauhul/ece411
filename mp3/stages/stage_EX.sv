@@ -9,11 +9,12 @@ module stage_EX (
     input lc3b_word pc_in,
     input lc3b_word sr1_in,
     input lc3b_word sr2_in,
+
+    // forwarding
     input logic [1:0] forward_A_mux_sel,
     input logic [1:0] forward_B_mux_sel,
-    input lc3b_word alu_EX_MEM,
-    input lc3b_word data_WB,
-    input lc3b_word pcn_EX_MEM,
+    input lc3b_word stage_MEM_regfile_data,
+    input lc3b_word stage_WB_regfile_data,
 
     /* OUTPUTS */
     output lc3b_word alu_out,
@@ -26,7 +27,6 @@ lc3b_word offset6_b; // byte aligned
 lc3b_word offset6_w; // word aligned
 lc3b_word offset9;
 lc3b_word offset11;
-
 assign imm4    = $unsigned( ir_in[ 3:0]);
 assign imm5      = $signed( ir_in[ 4:0]);
 assign offset6_b = $signed( ir_in[ 5:0]);
@@ -34,6 +34,7 @@ assign offset6_w = $signed({ir_in[ 5:0], 1'b0});
 assign offset9   = $signed({ir_in[ 8:0], 1'b0});
 assign offset11  = $signed({ir_in[10:0], 1'b0});
 
+/* ADDER */
 logic       [15:0] pc_adder_mux_out;
 logic [1:0] [15:0] pc_adder_mux_in;
 assign pc_adder_mux_in[0] = offset9;
@@ -56,6 +57,22 @@ adder pc_adder (
     .f(pcn_out)
 );
 
+
+/* ALU */
+logic       [15:0] forward_A_mux_out;
+logic [2:0] [15:0] forward_A_mux_in;
+assign forward_A_mux_in[0] = sr1_in;
+assign forward_A_mux_in[1] = stage_MEM_regfile_data;
+assign forward_A_mux_in[2] = stage_WB_regfile_data;
+mux #(3, 16) forward_A_mux (
+    /* INPUTS */
+    .sel(forward_A_mux_sel),
+    .in(forward_A_mux_in),
+
+    /* OUTPUTS */
+    .out(forward_A_mux_out)
+);
+
 logic       [15:0] alu_mux_out;
 logic [4:0] [15:0] alu_mux_in;
 assign alu_mux_in[0] = sr2_in;
@@ -72,28 +89,12 @@ mux #(5, 16) alu_mux (
     .out(alu_mux_out)
 );
 
-logic       [15:0] forward_A_mux_out;
-logic [3:0] [15:0] forward_A_mux_in;
-assign forward_A_mux_in[0] = sr1_in;
-assign forward_A_mux_in[1] = alu_EX_MEM;
-assign forward_A_mux_in[2] = data_WB;
-assign forward_A_mux_in[3] = pcn_EX_MEM;
-mux #(4, 16) forward_A_mux (
-    /* INPUTS */
-    .sel(forward_A_mux_sel),
-    .in(forward_A_mux_in),
-
-    /* OUTPUTS */
-    .out(forward_A_mux_out)
-);
-
 logic       [15:0] forward_B_mux_out;
-logic [3:0] [15:0] forward_B_mux_in;
+logic [2:0] [15:0] forward_B_mux_in;
 assign forward_B_mux_in[0] = alu_mux_out;
-assign forward_B_mux_in[1] = alu_EX_MEM;
-assign forward_B_mux_in[2] = data_WB;
-assign forward_B_mux_in[3] = pcn_EX_MEM;
-mux #(4, 16) forward_B_mux (
+assign forward_B_mux_in[1] = stage_MEM_regfile_data;
+assign forward_B_mux_in[2] = stage_WB_regfile_data;
+mux #(3, 16) forward_B_mux (
     /* INPUTS */
     .sel(forward_B_mux_sel),
     .in(forward_B_mux_in),

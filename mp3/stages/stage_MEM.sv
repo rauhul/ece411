@@ -7,6 +7,7 @@ module stage_MEM (
     input lc3b_control_word control_in,
     input lc3b_word alu_in,
     input lc3b_word ir_in,
+    input lc3b_word pc_in,
     input lc3b_word pcn_in,
     input lc3b_word sr2_in,
 
@@ -14,6 +15,7 @@ module stage_MEM (
     output logic br_en_out,
     output lc3b_word mdr_out,
     output logic request_stall,
+    output lc3b_word regfile_data_out,
 
     /* MEMORY INTERFACE */
     wishbone.master data_memory_wishbone
@@ -159,6 +161,23 @@ register internal_mdr (
 
     /* OUTPUTS */
     .out(internal_mdr_out)
+);
+
+
+/* FORWARDING LOGIC */
+// should be identical to WB regfile_data_mux, without mdr
+logic [3:0] [15:0] regfile_data_mux_in;
+assign regfile_data_mux_in[0] = pc_in;
+assign regfile_data_mux_in[1] = pcn_in;
+assign regfile_data_mux_in[2] = 16'bx;
+assign regfile_data_mux_in[3] = alu_in;
+mux #(4, 16) regfile_data_mux (
+    /* INPUTS */
+    .sel(control_in.regfile_data_mux_sel),
+    .in(regfile_data_mux_in),
+
+    /* OUTPUTS */
+    .out(regfile_data_out)
 );
 
 endmodule: stage_MEM

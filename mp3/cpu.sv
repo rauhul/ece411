@@ -9,7 +9,7 @@ module cpu (
 logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
-/* DATA_FORWARDING LOGIC */
+/* DATA FORWARDING LOGIC */
 
 
 /* BRANCH LOGIC */
@@ -27,7 +27,7 @@ logic barrier_IF_ID_reset;
 logic barrier_ID_EX_reset;
 logic barrier_EX_MEM_reset;
 logic barrier_MEM_WB_reset;
-branch_controller i_branch_controller (
+branch_controller _branch_controller (
     /* INPUTS */
     .barrier_IF_ID_valid,
     .barrier_ID_EX_valid,
@@ -242,6 +242,7 @@ barrier_EX_MEM _barrier_EX_MEM (
 /* STAGE MEM */
 // stage_MEM_br_en is defined above branch_logic
 lc3b_word stage_MEM_mdr;
+logic [15:0] stage_MEM_regfile_data;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
@@ -249,6 +250,7 @@ stage_MEM _stage_MEM (
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
+    .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr2_in(barrier_EX_MEM_sr2),
 
@@ -256,6 +258,7 @@ stage_MEM _stage_MEM (
     .br_en_out(stage_MEM_br_en),
     .mdr_out(stage_MEM_mdr),
     .request_stall(stage_MEM_request_stall),
+    .regfile_data_out(stage_MEM_regfile_data),
 
     /* MEMORY INTERFACE */
     .data_memory_wishbone
