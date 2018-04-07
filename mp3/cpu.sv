@@ -187,6 +187,7 @@ barrier_ID_EX _barrier_ID_EX (
 /* STAGE EX */
 lc3b_word stage_EX_alu;
 lc3b_word stage_EX_pcn;
+lc3b_word stage_MEM_regfile_data;
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
@@ -198,9 +199,8 @@ stage_EX _stage_EX (
     .sr2_in(barrier_ID_EX_sr2),
     .forward_A_mux_sel(0),
     .forward_B_mux_sel(0),
-    .alu_EX_MEM(0),
-    .data_WB(0),
-    .pcn_EX_MEM(0),
+    .stage_MEM_regfile_data,
+    .stage_WB_regfile_data,
 
     /* OUTPUTS */
     .alu_out(stage_EX_alu),
@@ -242,7 +242,6 @@ barrier_EX_MEM _barrier_EX_MEM (
 /* STAGE MEM */
 // stage_MEM_br_en is defined above branch_logic
 lc3b_word stage_MEM_mdr;
-logic [15:0] stage_MEM_regfile_data;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
