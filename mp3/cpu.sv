@@ -9,7 +9,10 @@ module cpu (
 logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
-/* STALL LOGIC */
+/* DATA_FORWARDING LOGIC */
+
+
+/* BRANCH LOGIC */
 logic barrier_IF_ID_valid;
 logic barrier_ID_EX_valid;
 logic barrier_EX_MEM_valid;
@@ -43,6 +46,7 @@ branch_controller i_branch_controller (
     .barrier_MEM_WB_reset
 );
 
+/* STALL LOGIC */
 logic stage_IF_request_stall;
 logic stage_MEM_request_stall;
 logic barrier_EX_MEM_stall;
@@ -192,6 +196,11 @@ stage_EX _stage_EX (
     .pc_in(barrier_ID_EX_pc),
     .sr1_in(barrier_ID_EX_sr1),
     .sr2_in(barrier_ID_EX_sr2),
+    .forward_A_mux_sel(0),
+    .forward_B_mux_sel(0),
+    .alu_EX_MEM(0),
+    .data_WB(0),
+    .pcn_EX_MEM(0),
 
     /* OUTPUTS */
     .alu_out(stage_EX_alu),

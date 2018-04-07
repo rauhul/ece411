@@ -45,7 +45,7 @@ always_comb begin
 
     /* WB */
     control_out.regfile_data_mux_sel = lc3b_regfile_data_mux_sel_alu;
-    control_out.regfile_dest = 0
+    control_out.regfile_dest = 0;
     control_out.regfile_load = 0;
 
     /* Assign control signals based on opcode */
