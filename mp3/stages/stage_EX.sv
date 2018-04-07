@@ -11,8 +11,8 @@ module stage_EX (
     input lc3b_word sr2_in,
 
     // forwarding
-    input logic [1:0] forward_A_mux_sel,
-    input logic [1:0] forward_B_mux_sel,
+    input lc3b_forward_mux_sel forward_A_mux_sel,
+    input lc3b_forward_mux_sel forward_B_mux_sel,
     input lc3b_word stage_MEM_regfile_data,
     input lc3b_word stage_WB_regfile_data,
 

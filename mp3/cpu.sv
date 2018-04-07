@@ -9,7 +9,29 @@ module cpu (
 logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
+
 /* DATA FORWARDING LOGIC */
+lc3b_word barrier_ID_EX_ir;
+lc3b_word barrier_EX_MEM_ir;
+lc3b_word barrier_MEM_WB_ir;
+lc3b_control_word barrier_ID_EX_control;
+lc3b_control_word barrier_EX_MEM_control;
+lc3b_control_word barrier_MEM_WB_control;
+lc3b_forward_mux_sel forward_A_mux_sel;
+lc3b_forward_mux_sel forward_B_mux_sel;
+forwarding_controller _forwarding_controller (
+    /* INPUTS */
+    .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
+    .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
+    .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
+    .barrier_ID_EX_control(barrier_ID_EX_control),
+    .barrier_EX_MEM_control(barrier_EX_MEM_control),
+    .barrier_MEM_WB_control(barrier_MEM_WB_control),
+
+    /* OUTPUTS */
+    .forward_A_mux_sel,
+    .forward_B_mux_sel
+);
 
 
 /* BRANCH LOGIC */
@@ -18,10 +40,6 @@ logic barrier_ID_EX_valid;
 logic barrier_EX_MEM_valid;
 logic barrier_MEM_WB_valid;
 lc3b_word barrier_IF_ID_ir;
-lc3b_word barrier_ID_EX_ir;
-lc3b_word barrier_EX_MEM_ir;
-lc3b_word barrier_MEM_WB_ir;
-
 logic branch_controller_stage_IF_stall;
 logic barrier_IF_ID_reset;
 logic barrier_ID_EX_reset;
@@ -79,7 +97,6 @@ stall_controller _stall_controller (
 
 /* BRANCH LOGIC */
 logic stage_MEM_br_en;
-lc3b_control_word barrier_MEM_WB_control;
 
 lc3b_pc_mux_sel stage_IF_pc_mux_sel;
 always_comb begin
@@ -157,8 +174,8 @@ stage_ID _stage_ID (
 
 
 /* BARRIER ID <-> EX */
-lc3b_control_word barrier_ID_EX_control;
-// barrier_ID_EX_ir is defined above branch_controller
+// barrier_ID_EX_control is defined above forwarding_controller
+// barrier_ID_EX_ir is defined above forwarding_controller
 lc3b_word barrier_ID_EX_pc;
 lc3b_word barrier_ID_EX_sr1;
 lc3b_word barrier_ID_EX_sr2;
@@ -197,8 +214,8 @@ stage_EX _stage_EX (
     .pc_in(barrier_ID_EX_pc),
     .sr1_in(barrier_ID_EX_sr1),
     .sr2_in(barrier_ID_EX_sr2),
-    .forward_A_mux_sel(0),
-    .forward_B_mux_sel(0),
+    .forward_A_mux_sel,
+    .forward_B_mux_sel,
     .stage_MEM_regfile_data,
     .stage_WB_regfile_data,
 
@@ -209,9 +226,9 @@ stage_EX _stage_EX (
 
 
 /* BARRIER EX <-> MEM */
-lc3b_control_word barrier_EX_MEM_control;
+// barrier_EX_MEM_control is defined above forwarding_controller
 lc3b_word barrier_EX_MEM_alu;
-// barrier_EX_MEM_ir is defined above branch_controller
+// barrier_EX_MEM_ir is defined above forwarding_controller
 lc3b_word barrier_EX_MEM_pc;
 lc3b_word barrier_EX_MEM_pcn;
 lc3b_word barrier_EX_MEM_sr2;
@@ -265,9 +282,9 @@ stage_MEM _stage_MEM (
 
 
 /* BARRIER MEM <-> WB */
-// barrier_MEM_WB_control is defined above stage_IF
+// barrier_MEM_WB_control is defined above forwarding_controller
 // barrier_MEM_WB_alu is defined above stage_IF
-// barrier_MEM_WB_ir is defined above branch_controller
+// barrier_MEM_WB_ir is defined above forwarding_controller
 // barrier_MEM_WB_mdr is defined above stage_IF
 lc3b_word barrier_MEM_WB_pc;
 // barrier_MEM_WB_pcn is defined above stage_IF

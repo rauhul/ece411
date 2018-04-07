@@ -127,10 +127,11 @@ typedef enum bit [3:0] {
     op_trap = 4'b1111
 } lc3b_opcode;
 
-/* OLD */
-typedef logic  [7:0] lc3b_byte;
-typedef logic  [1:0] lc3b_mem_wmask;
-
-// ADDR: {[15:7] tag, [6:4] index, [3:0] offset }
+/* FOWARDING */
+typedef enum bit [1:0] {
+    lc3b_forward_mux_sel_pass,
+    lc3b_forward_mux_sel_stage_MEM_regfile_data,
+    lc3b_forward_mux_sel_stage_WB_regfile_data
+} lc3b_forward_mux_sel;
 
 endpackage : lc3b_types
