@@ -26,8 +26,10 @@ always_comb begin
     control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
     /* ID */
-    control_out.regfile_sr1 = 0;
-    control_out.regfile_sr2 = 0;
+    control_out.requires_sr1 = 0;
+    control_out.requires_sr2 = 0;
+    control_out.regfile_sr1  = 0;
+    control_out.regfile_sr2  = 0;
 
     /* EX */
     control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
@@ -56,14 +58,18 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
             control_out.regfile_sr2 = sr2;
 
             /* EX */
-            if (ir_in[5] == 0)
+            if (ir_in[5] == 0) begin
+                control_out.requires_sr2 = 1;
                 control_out.alu_mux_sel = lc3b_alu_mux_sel_sr2;
-            else
+            end else begin
+                control_out.requires_sr2 = 0;
                 control_out.alu_mux_sel = lc3b_alu_mux_sel_imm5;
+            end
             control_out.alu_op = lc3b_alu_op_add;
 
             /* MEM */
@@ -81,14 +87,18 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
             control_out.regfile_sr2 = sr2;
 
             /* EX */
-            if (ir_in[5] == 0)
+            if (ir_in[5] == 0) begin
+                control_out.requires_sr2 = 1;
                 control_out.alu_mux_sel = lc3b_alu_mux_sel_sr2;
-            else
+            end else begin
+                control_out.requires_sr2 = 0;
                 control_out.alu_mux_sel = lc3b_alu_mux_sel_imm5;
+            end
             control_out.alu_op = lc3b_alu_op_and;
 
             /* MEM */
@@ -125,6 +135,7 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -145,6 +156,7 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -173,6 +185,7 @@ always_comb begin
             /* IF */
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -197,6 +210,7 @@ always_comb begin
             /* IF */
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -222,6 +236,7 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -248,6 +263,8 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
+            control_out.requires_sr2 = 1;
             control_out.regfile_sr1 = sr1;
             control_out.regfile_sr2 = dest;
 
@@ -268,6 +285,8 @@ always_comb begin
             /* IF */
 
             /* ID */
+            control_out.requires_sr1 = 1;
+            control_out.requires_sr2 = 1;
             control_out.regfile_sr1 = sr1;
             control_out.regfile_sr2 = dest;
 
@@ -289,6 +308,8 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
             /* ID */
+            control_out.requires_sr1 = 1;
+            control_out.requires_sr2 = 1;
             control_out.regfile_sr1 = sr1;
             control_out.regfile_sr2 = dest;
 
@@ -328,6 +349,7 @@ always_comb begin
             control_out.pc_mux_sel = lc3b_pc_mux_sel_alu;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */
@@ -347,6 +369,7 @@ always_comb begin
                 control_out.pc_mux_sel = lc3b_pc_mux_sel_pcn;
 
             /* ID */
+            control_out.requires_sr1 = 1;
             control_out.regfile_sr1 = sr1;
 
             /* EX */

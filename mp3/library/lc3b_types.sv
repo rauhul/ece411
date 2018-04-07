@@ -80,6 +80,8 @@ typedef struct packed {
     lc3b_pc_mux_sel pc_mux_sel;
 
     /* ID */
+    logic requires_sr1;
+    logic requires_sr2;
     lc3b_reg regfile_sr1;
     lc3b_reg regfile_sr2;
 
