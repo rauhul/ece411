@@ -11,8 +11,9 @@ module stage_EX (
     input lc3b_word sr2_in,
     input logic [1:0] forward_A_mux_sel,
     input logic [1:0] forward_B_mux_sel,
-    input lc3b_word data_EX_MEM,
+    input lc3b_word alu_EX_MEM,
     input lc3b_word data_WB,
+    input lc3b_word pcn_EX_MEM,
 
     /* OUTPUTS */
     output lc3b_word alu_out,
@@ -72,11 +73,12 @@ mux #(5, 16) general_alu_mux (
 );
 
 logic       [15:0] forward_A_mux_out;
-logic [2:0] [15:0] forward_A_mux_in;
+logic [3:0] [15:0] forward_A_mux_in;
 assign forward_A_mux_in[0] = sr1_in;
-assign forward_A_mux_in[1] = data_EX_MEM;
+assign forward_A_mux_in[1] = alu_EX_MEM;
 assign forward_A_mux_in[2] = data_WB;
-mux #(3, 16) forward_A_mux (
+assign forward_A_mux_in[2] = pcn_EX_MEM;
+mux #(4, 16) forward_A_mux (
     /* INPUTS */
     .sel(forward_A),
     .in(forward_A_mux_in),
@@ -86,11 +88,12 @@ mux #(3, 16) forward_A_mux (
 );
 
 logic       [15:0] forward_B_mux_out;
-logic [2:0] [15:0] forward_B_mux_in;
+logic [3:0] [15:0] forward_B_mux_in;
 assign forward_B_mux_in[0] = general_alu_mux_out;
-assign forward_B_mux_in[1] = data_EX_MEM;
+assign forward_B_mux_in[1] = alu_EX_MEM;
 assign forward_B_mux_in[2] = data_WB;
-mux #(3, 16) forward_B_mux (
+assign forward_B_mux_in[2] = pcn_EX_MEM;
+mux #(4, 16) forward_B_mux (
     /* INPUTS */
     .sel(forward_B),
     .in(forward_B_mux_in),

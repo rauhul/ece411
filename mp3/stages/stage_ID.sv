@@ -15,9 +15,6 @@ module stage_ID (
     output lc3b_word sr2_out
 );
 
-lc3b_reg regfile_sr1_mux_out;
-lc3b_reg regfile_sr2_mux_out;
-
 control_rom _control_rom (
     /* INPUTS */
     .ir_in,
@@ -26,6 +23,7 @@ control_rom _control_rom (
     .control_out
 );
 
+logic       [2:0] regfile_sr1_mux_out;
 logic [1:0] [2:0] regfile_sr1_mux_in;
 assign regfile_sr1_mux_in[0] = ir_in[ 8:6]; // sr1
 assign regfile_sr1_mux_in[1] = ir_in[11:9]; // dest
@@ -38,6 +36,7 @@ mux #(2, 3) regfile_sr1_mux (
     .out(regfile_sr1_mux_out)
 );
 
+logic       [2:0] regfile_sr2_mux_out;
 logic [1:0] [2:0] regfile_sr2_mux_in;
 assign regfile_sr2_mux_in[0] = ir_in[ 2:0]; // sr2
 assign regfile_sr2_mux_in[1] = ir_in[11:9]; // dest
