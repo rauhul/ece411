@@ -191,6 +191,7 @@ barrier_ID_EX _barrier_ID_EX (
 /* STAGE EX */
 lc3b_word stage_EX_alu;
 lc3b_word stage_EX_pcn;
+lc3b_word stage_EX_sr2;
 lc3b_word stage_MEM_regfile_data;
 stage_EX _stage_EX (
     /* INPUTS */
@@ -208,7 +209,8 @@ stage_EX _stage_EX (
 
     /* OUTPUTS */
     .alu_out(stage_EX_alu),
-    .pcn_out(stage_EX_pcn)
+    .pcn_out(stage_EX_pcn),
+    .sr2_out(stage_EX_sr2)
 );
 
 
@@ -229,7 +231,7 @@ barrier_EX_MEM _barrier_EX_MEM (
     .ir_in(barrier_ID_EX_ir),
     .pc_in(barrier_ID_EX_pc),
     .pcn_in(stage_EX_pcn),
-    .sr2_in(barrier_ID_EX_sr2),
+    .sr2_in(stage_EX_sr2),
     .valid_in(barrier_ID_EX_valid),
 
     /* OUTPUTS */

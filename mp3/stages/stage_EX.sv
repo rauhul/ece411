@@ -18,7 +18,8 @@ module stage_EX (
 
     /* OUTPUTS */
     output lc3b_word alu_out,
-    output lc3b_word pcn_out
+    output lc3b_word pcn_out,
+    output lc3b_word sr2_out
 );
 
 lc3b_word imm4;
@@ -73,9 +74,24 @@ mux #(3, 16) forward_A_mux (
     .out(forward_EX_A_mux_out)
 );
 
+logic       [15:0] forward_EX_B_mux_out;
+logic [2:0] [15:0] forward_EX_B_mux_in;
+assign forward_EX_B_mux_in[0] = sr2_in;
+assign forward_EX_B_mux_in[1] = stage_MEM_regfile_data;
+assign forward_EX_B_mux_in[2] = stage_WB_regfile_data;
+mux #(3, 16) forward_B_mux (
+    /* INPUTS */
+    .sel(forward_EX_B_mux_sel),
+    .in(forward_EX_B_mux_in),
+
+    /* OUTPUTS */
+    .out(forward_EX_B_mux_out)
+);
+assign sr2_out = forward_EX_B_mux_out;
+
 logic       [15:0] alu_mux_out;
 logic [4:0] [15:0] alu_mux_in;
-assign alu_mux_in[0] = sr2_in;
+assign alu_mux_in[0] = forward_EX_B_mux_out;
 assign alu_mux_in[1] = imm4;
 assign alu_mux_in[2] = imm5;
 assign alu_mux_in[3] = offset6_b;
@@ -89,25 +105,11 @@ mux #(5, 16) alu_mux (
     .out(alu_mux_out)
 );
 
-logic       [15:0] forward_EX_B_mux_out;
-logic [2:0] [15:0] forward_EX_B_mux_in;
-assign forward_EX_B_mux_in[0] = alu_mux_out;
-assign forward_EX_B_mux_in[1] = stage_MEM_regfile_data;
-assign forward_EX_B_mux_in[2] = stage_WB_regfile_data;
-mux #(3, 16) forward_B_mux (
-    /* INPUTS */
-    .sel(forward_EX_B_mux_sel),
-    .in(forward_EX_B_mux_in),
-
-    /* OUTPUTS */
-    .out(forward_EX_B_mux_out)
-);
-
 alu _alu (
     /* INPUTS */
     .aluop(control_in.alu_op),
     .a(forward_EX_A_mux_out),
-    .b(forward_EX_B_mux_out),
+    .b(alu_mux_out),
 
     /* OUTPUTS */
     .f(alu_out)
