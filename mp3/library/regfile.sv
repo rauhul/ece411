@@ -38,11 +38,11 @@ always_comb begin
     // these if statements allow for same cycle access
     // TODO: not sure if ~stall should be in this condition
     if ((sr1 == dest) & load & ~stall) begin
-        sr1_out = in
+        sr1_out = in;
     end
 
     if ((sr2 == dest) & load & ~stall) begin
-        sr2_out = in
+        sr2_out = in;
     end
 end
 
