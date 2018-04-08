@@ -88,7 +88,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE library/physical_memory.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/plus2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/regfile.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/register.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/stall_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/stall_arbiter.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/wishbone.sv
 set_global_assignment -name SYSTEMVERILOG_FILE mp3.sv
 set_global_assignment -name SYSTEMVERILOG_FILE mp3_tb.sv

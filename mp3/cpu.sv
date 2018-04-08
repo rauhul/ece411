@@ -34,17 +34,28 @@ forwarding_controller _forwarding_controller (
 );
 
 
+/* STALL LOGIC */
+lc3b_pipeline_control_word i_cache_pipeline_control_request;
+lc3b_pipeline_control_word d_cache_pipeline_control_request;
+lc3b_pipeline_control_word branch_controller_pipeline_control_request;
+lc3b_pipeline_control_word pipeline_control_out;
+stall_arbiter _stall_arbiter (
+    /* INPUTS */
+    .i_cache_pipeline_control_request,
+    .d_cache_pipeline_control_request,
+    .branch_controller_pipeline_control_request,
+
+    /* OUTPUTS */
+    .pipeline_control_out
+);
+
+
 /* BRANCH LOGIC */
 logic barrier_IF_ID_valid;
 logic barrier_ID_EX_valid;
 logic barrier_EX_MEM_valid;
 logic barrier_MEM_WB_valid;
 lc3b_word barrier_IF_ID_ir;
-logic branch_controller_stage_IF_stall;
-logic barrier_IF_ID_reset;
-logic barrier_ID_EX_reset;
-logic barrier_EX_MEM_reset;
-logic barrier_MEM_WB_reset;
 branch_controller _branch_controller (
     /* INPUTS */
     .barrier_IF_ID_valid,
@@ -57,41 +68,7 @@ branch_controller _branch_controller (
     .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
 
     /* OUTPUTS */
-    .stage_IF_stall(branch_controller_stage_IF_stall),
-    .barrier_IF_ID_reset,
-    .barrier_ID_EX_reset,
-    .barrier_EX_MEM_reset,
-    .barrier_MEM_WB_reset
-);
-
-/* STALL LOGIC */
-logic stage_IF_request_stall;
-logic stage_MEM_request_stall;
-logic barrier_EX_MEM_stall;
-logic barrier_ID_EX_stall;
-logic barrier_IF_ID_stall;
-logic barrier_MEM_WB_stall;
-logic stage_EX_stall;
-logic stage_ID_stall;
-logic stage_IF_stall;
-logic stage_MEM_stall;
-logic stage_WB_stall;
-stall_controller _stall_controller (
-    /* INPUTS */
-    .clk,
-    .stage_IF_request_stall,
-    .stage_MEM_request_stall,
-
-    /* OUTPUTS */
-    .barrier_EX_MEM_stall,
-    .barrier_ID_EX_stall,
-    .barrier_IF_ID_stall,
-    .barrier_MEM_WB_stall,
-    .stage_EX_stall,
-    .stage_ID_stall,
-    .stage_IF_stall,
-    .stage_MEM_stall,
-    .stage_WB_stall
+    .branch_controller_pipeline_control_request
 );
 
 
@@ -116,7 +93,7 @@ lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
-    .stall(stage_IF_stall | branch_controller_stage_IF_stall),
+    .stall(pipeline_control_out.stage_IF_stall),
     .pc_mux_sel(stage_IF_pc_mux_sel),
     .alu_in(barrier_MEM_WB_alu),
     .mdr_in(barrier_MEM_WB_mdr),
@@ -125,7 +102,7 @@ stage_IF _stage_IF (
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
     .pc_plus2_out(stage_IF_pc_plus2),
-    .request_stall(stage_IF_request_stall),
+    .i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
     .instruction_memory_wishbone
@@ -138,8 +115,8 @@ lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
-    .reset(barrier_IF_ID_reset),
-    .stall(barrier_IF_ID_stall),
+    .reset(pipeline_control_out.barrier_IF_ID_reset),
+    .stall(pipeline_control_out.barrier_IF_ID_stall),
     .ir_in(stage_IF_ir),
     .pc_in(stage_IF_pc_plus2),
 
@@ -160,7 +137,7 @@ lc3b_word stage_ID_sr2;
 stage_ID _stage_ID (
     /* INPUTS */
     .clk,
-    .stall(stage_ID_stall),
+    .stall(pipeline_control_out.stage_ID_stall),
     .ir_in(barrier_IF_ID_ir),
     .regfile_dest_in(stage_WB_regfile_dest),
     .regfile_data_in(stage_WB_regfile_data),
@@ -182,8 +159,8 @@ lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
-    .reset(barrier_ID_EX_reset),
-    .stall(barrier_ID_EX_stall),
+    .reset(pipeline_control_out.barrier_ID_EX_reset),
+    .stall(pipeline_control_out.barrier_ID_EX_stall),
     .control_in(stage_ID_control),
     .ir_in(barrier_IF_ID_ir),
     .pc_in(barrier_IF_ID_pc),
@@ -208,7 +185,7 @@ lc3b_word stage_MEM_regfile_data;
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
-    .stall(stage_EX_stall),
+    .stall(pipeline_control_out.stage_EX_stall),
     .control_in(barrier_ID_EX_control),
     .ir_in(barrier_ID_EX_ir),
     .pc_in(barrier_ID_EX_pc),
@@ -235,8 +212,8 @@ lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
-    .reset(barrier_EX_MEM_reset),
-    .stall(barrier_EX_MEM_stall),
+    .reset(pipeline_control_out.barrier_EX_MEM_reset),
+    .stall(pipeline_control_out.barrier_EX_MEM_stall),
     .control_in(barrier_ID_EX_control),
     .alu_in(stage_EX_alu),
     .ir_in(barrier_ID_EX_ir),
@@ -262,7 +239,7 @@ lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
-    .stall(stage_MEM_stall),
+    .stall(pipeline_control_out.stage_MEM_stall),
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
@@ -273,7 +250,7 @@ stage_MEM _stage_MEM (
     /* OUTPUTS */
     .br_en_out(stage_MEM_br_en),
     .mdr_out(stage_MEM_mdr),
-    .request_stall(stage_MEM_request_stall),
+    .d_cache_pipeline_control_request,
     .regfile_data_out(stage_MEM_regfile_data),
 
     /* MEMORY INTERFACE */
@@ -291,8 +268,8 @@ lc3b_word barrier_MEM_WB_pc;
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
-    .reset(barrier_MEM_WB_reset),
-    .stall(barrier_MEM_WB_stall),
+    .reset(pipeline_control_out.barrier_MEM_WB_reset),
+    .stall(pipeline_control_out.barrier_MEM_WB_stall),
     .control_in(barrier_EX_MEM_control),
     .alu_in(barrier_EX_MEM_alu),
     .ir_in(barrier_EX_MEM_ir),
@@ -317,7 +294,7 @@ barrier_MEM_WB _barrier_MEM_WB (
 stage_WB _stage_WB (
     /* INPUTS */
     .clk,
-    .stall(stage_WB_stall),
+    .stall(pipeline_control_out.stage_WB_stall),
     .control_in(barrier_MEM_WB_control),
     .alu_in(barrier_MEM_WB_alu),
     .ir_in(barrier_MEM_WB_ir),

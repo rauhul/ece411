@@ -12,7 +12,7 @@ module stage_IF (
     /* OUTPUTS */
     output lc3b_word ir_out,
     output lc3b_word pc_plus2_out,
-    output logic request_stall,
+    output lc3b_pipeline_control_word i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
     wishbone.master instruction_memory_wishbone
@@ -39,7 +39,7 @@ register pc (
     /* INPUTS */
     .clk,
     .load(1'b1),
-    .stall(stall | request_stall),
+    .stall(stall | i_cache_pipeline_control_request.active),
     .in(pc_mux_out),
 
     /* OUTPUTS */
@@ -67,6 +67,21 @@ end
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
 
-assign request_stall = (instruction_memory_wishbone.CYC) & (~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY);
+/* i_cache_pipeline_control_request */
+assign i_cache_pipeline_control_request.active               = (instruction_memory_wishbone.CYC) & (~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY);
+assign i_cache_pipeline_control_request.exclusive            = 1;
+assign i_cache_pipeline_control_request.barrier_IF_ID_stall  = 1;
+assign i_cache_pipeline_control_request.barrier_ID_EX_stall  = 1;
+assign i_cache_pipeline_control_request.barrier_EX_MEM_stall = 1;
+assign i_cache_pipeline_control_request.barrier_MEM_WB_stall = 1;
+assign i_cache_pipeline_control_request.barrier_IF_ID_reset  = 0;
+assign i_cache_pipeline_control_request.barrier_ID_EX_reset  = 0;
+assign i_cache_pipeline_control_request.barrier_EX_MEM_reset = 0;
+assign i_cache_pipeline_control_request.barrier_MEM_WB_reset = 0;
+assign i_cache_pipeline_control_request.stage_IF_stall       = 0;
+assign i_cache_pipeline_control_request.stage_ID_stall       = 1;
+assign i_cache_pipeline_control_request.stage_EX_stall       = 1;
+assign i_cache_pipeline_control_request.stage_MEM_stall      = 1;
+assign i_cache_pipeline_control_request.stage_WB_stall       = 1;
 
 endmodule : stage_IF

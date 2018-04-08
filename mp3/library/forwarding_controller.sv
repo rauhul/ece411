@@ -14,54 +14,65 @@ module forwarding_controller (
     output lc3b_forward_mux_sel forward_B_mux_sel
 );
 
-// EX to EX forwarding
-logic stage_EX_to_stage_EX_sr1;
-logic stage_EX_to_stage_EX_sr2;
+// EX_MEM to EX forwarding
+logic barrier_EX_MEM_to_stage_EX_sr1;
+logic barrier_EX_MEM_to_stage_EX_sr2;
 
-// MEM to EX forwarding
-logic stage_MEM_to_stage_EX_sr1;
-logic stage_MEM_to_stage_EX_sr2;
+// MEM_WB to EX forwarding
+logic barrier_MEM_WB_to_stage_EX_sr1;
+logic barrier_MEM_WB_to_stage_EX_sr2;
 
 always_comb begin
     forward_A_mux_sel = lc3b_forward_mux_sel_pass;
     forward_B_mux_sel = lc3b_forward_mux_sel_pass;
 
-    // EX to EX forwarding
-    stage_EX_to_stage_EX_sr1 =
+    // EX_MEM to EX forwarding
+    barrier_EX_MEM_to_stage_EX_sr1 =
         barrier_EX_MEM_control.regfile_load &
         barrier_ID_EX_control.requires_sr1 &
         barrier_ID_EX_control.regfile_sr1 == barrier_EX_MEM_control.regfile_dest;
 
-    stage_EX_to_stage_EX_sr2 =
+    barrier_EX_MEM_to_stage_EX_sr2 =
         barrier_EX_MEM_control.regfile_load &
         barrier_ID_EX_control.requires_sr2 &
         barrier_ID_EX_control.regfile_sr2 == barrier_EX_MEM_control.regfile_dest;
 
-    if (stage_EX_to_stage_EX_sr1) begin
+    if (barrier_EX_MEM_to_stage_EX_sr1) begin
         forward_A_mux_sel = lc3b_forward_mux_sel_stage_MEM_regfile_data;
     end
 
-    if (stage_EX_to_stage_EX_sr2) begin
+    if (barrier_EX_MEM_to_stage_EX_sr2) begin
         forward_B_mux_sel = lc3b_forward_mux_sel_stage_MEM_regfile_data;
     end
 
-    // MEM to EX forwarding
-    stage_MEM_to_stage_EX_sr1 =
+    // MEM_WB to EX forwarding
+    barrier_MEM_WB_to_stage_EX_sr1 =
         barrier_MEM_WB_control.regfile_load &
         barrier_ID_EX_control.requires_sr1 &
         barrier_ID_EX_control.regfile_sr1 == barrier_MEM_WB_control.regfile_dest;
-    stage_MEM_to_stage_EX_sr2 =
+    barrier_MEM_WB_to_stage_EX_sr2 =
         barrier_MEM_WB_control.regfile_load &
         barrier_ID_EX_control.requires_sr2 &
         barrier_ID_EX_control.regfile_sr2 == barrier_MEM_WB_control.regfile_dest;
 
-    if (stage_MEM_to_stage_EX_sr1) begin
+    if (barrier_MEM_WB_to_stage_EX_sr1) begin
         forward_A_mux_sel = lc3b_forward_mux_sel_stage_WB_regfile_data;
     end
 
-    if (stage_MEM_to_stage_EX_sr2) begin
+    if (barrier_MEM_WB_to_stage_EX_sr2) begin
         forward_B_mux_sel = lc3b_forward_mux_sel_stage_WB_regfile_data;
     end
+
+    // // STALL upstream if EX_MEM is load
+    // barrier_EX_MEM_is_load =
+    //     barrier_EX_MEM_control.data_memory_access &
+    //    ~barrier_EX_MEM_control.data_memory_write_enable;
+
+    // if (barrier_EX_MEM_is_load & (barrier_EX_MEM_to_stage_EX_sr1 | barrier_EX_MEM_to_stage_EX_sr2)) begin
+
+    // end
+
+
 
     // case (barrier_ID_EX_opcode)
     //     /* ALU OPS */

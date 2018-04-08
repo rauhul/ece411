@@ -136,4 +136,29 @@ typedef enum bit [1:0] {
     lc3b_forward_mux_sel_stage_WB_regfile_data
 } lc3b_forward_mux_sel;
 
+typedef struct packed {
+    logic active,
+    logic exclusive,
+
+    /* BARRIER STALL */
+    logic barrier_IF_ID_stall,
+    logic barrier_ID_EX_stall,
+    logic barrier_EX_MEM_stall,
+    logic barrier_MEM_WB_stall,
+
+    /* BARRIER RESET */
+    logic barrier_IF_ID_reset,
+    logic barrier_ID_EX_reset,
+    logic barrier_EX_MEM_reset,
+    logic barrier_MEM_WB_reset,
+
+    /* STAGE STALL */
+    logic stage_IF_stall,
+    logic stage_ID_stall,
+    logic stage_EX_stall,
+    logic stage_MEM_stall,
+    logic stage_WB_stall
+
+} lc3b_pipeline_control_word;
+
 endpackage : lc3b_types
