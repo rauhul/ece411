@@ -131,10 +131,15 @@ typedef enum bit [3:0] {
 
 /* FOWARDING */
 typedef enum bit [1:0] {
-    lc3b_forward_mux_sel_pass,
-    lc3b_forward_mux_sel_stage_MEM_regfile_data,
-    lc3b_forward_mux_sel_stage_WB_regfile_data
-} lc3b_forward_mux_sel;
+    lc3b_forward_EX_mux_sel_pass,
+    lc3b_forward_EX_mux_sel_stage_MEM_regfile_data,
+    lc3b_forward_EX_mux_sel_stage_WB_regfile_data
+} lc3b_forward_EX_mux_sel;
+
+typedef enum bit {
+    lc3b_forward_ID_mux_sel_pass,
+    lc3b_forward_ID_mux_sel_stage_WB_regfile_data
+} lc3b_forward_ID_mux_sel;
 
 typedef struct packed {
     logic active;
@@ -151,6 +156,10 @@ typedef struct packed {
     logic barrier_ID_EX_reset;
     logic barrier_EX_MEM_reset;
     logic barrier_MEM_WB_reset;
+
+    /* BARRIER FORCE LOAD */
+    logic barrier_ID_EX_force_sr1_load;
+    logic barrier_ID_EX_force_sr2_load;
 
     /* STAGE STALL */
     logic stage_IF_stall;

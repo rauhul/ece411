@@ -5,6 +5,8 @@ module barrier_ID_EX (
     input clk,
     input reset,
     input stall,
+    input force_sr1_load,
+    input force_sr2_load,
     input lc3b_control_word control_in,
     input lc3b_word ir_in,
     input lc3b_word pc_in,
@@ -45,18 +47,31 @@ always_ff @(posedge clk) begin
             control = 0;
             ir      = 0;
             pc      = 0;
-            sr1     = 0;
-            sr2     = 0;
             valid   = 0;
         end else begin
             control = control_in;
             ir      = ir_in;
             pc      = pc_in;
-            sr1     = sr1_in;
-            sr2     = sr2_in;
             valid   = valid_in;
         end
     end
+
+    if (~stall | force_sr1_load) begin
+        if (reset) begin
+            sr1 = 0;
+        end else begin
+            sr1 = sr1_in;
+        end
+    end
+
+    if (~stall | force_sr2_load) begin
+        if (reset) begin
+            sr2 = 0;
+        end else begin
+            sr2 = sr2_in;
+        end
+    end
+
 end
 
 /* COMB */

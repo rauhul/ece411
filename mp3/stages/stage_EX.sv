@@ -11,8 +11,8 @@ module stage_EX (
     input lc3b_word sr2_in,
 
     // forwarding
-    input lc3b_forward_mux_sel forward_A_mux_sel,
-    input lc3b_forward_mux_sel forward_B_mux_sel,
+    input lc3b_forward_EX_mux_sel forward_EX_A_mux_sel,
+    input lc3b_forward_EX_mux_sel forward_EX_B_mux_sel,
     input lc3b_word stage_MEM_regfile_data,
     input lc3b_word stage_WB_regfile_data,
 
@@ -59,18 +59,18 @@ adder pc_adder (
 
 
 /* ALU */
-logic       [15:0] forward_A_mux_out;
-logic [2:0] [15:0] forward_A_mux_in;
-assign forward_A_mux_in[0] = sr1_in;
-assign forward_A_mux_in[1] = stage_MEM_regfile_data;
-assign forward_A_mux_in[2] = stage_WB_regfile_data;
+logic       [15:0] forward_EX_A_mux_out;
+logic [2:0] [15:0] forward_EX_A_mux_in;
+assign forward_EX_A_mux_in[0] = sr1_in;
+assign forward_EX_A_mux_in[1] = stage_MEM_regfile_data;
+assign forward_EX_A_mux_in[2] = stage_WB_regfile_data;
 mux #(3, 16) forward_A_mux (
     /* INPUTS */
-    .sel(forward_A_mux_sel),
-    .in(forward_A_mux_in),
+    .sel(forward_EX_A_mux_sel),
+    .in(forward_EX_A_mux_in),
 
     /* OUTPUTS */
-    .out(forward_A_mux_out)
+    .out(forward_EX_A_mux_out)
 );
 
 logic       [15:0] alu_mux_out;
@@ -89,25 +89,25 @@ mux #(5, 16) alu_mux (
     .out(alu_mux_out)
 );
 
-logic       [15:0] forward_B_mux_out;
-logic [2:0] [15:0] forward_B_mux_in;
-assign forward_B_mux_in[0] = alu_mux_out;
-assign forward_B_mux_in[1] = stage_MEM_regfile_data;
-assign forward_B_mux_in[2] = stage_WB_regfile_data;
+logic       [15:0] forward_EX_B_mux_out;
+logic [2:0] [15:0] forward_EX_B_mux_in;
+assign forward_EX_B_mux_in[0] = alu_mux_out;
+assign forward_EX_B_mux_in[1] = stage_MEM_regfile_data;
+assign forward_EX_B_mux_in[2] = stage_WB_regfile_data;
 mux #(3, 16) forward_B_mux (
     /* INPUTS */
-    .sel(forward_B_mux_sel),
-    .in(forward_B_mux_in),
+    .sel(forward_EX_B_mux_sel),
+    .in(forward_EX_B_mux_in),
 
     /* OUTPUTS */
-    .out(forward_B_mux_out)
+    .out(forward_EX_B_mux_out)
 );
 
 alu _alu (
     /* INPUTS */
     .aluop(control_in.alu_op),
-    .a(forward_A_mux_out),
-    .b(forward_B_mux_out),
+    .a(forward_EX_A_mux_out),
+    .b(forward_EX_B_mux_out),
 
     /* OUTPUTS */
     .f(alu_out)

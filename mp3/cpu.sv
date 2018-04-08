@@ -33,8 +33,10 @@ lc3b_word barrier_MEM_WB_ir;
 lc3b_control_word barrier_ID_EX_control;
 lc3b_control_word barrier_EX_MEM_control;
 lc3b_control_word barrier_MEM_WB_control;
-lc3b_forward_mux_sel forward_A_mux_sel;
-lc3b_forward_mux_sel forward_B_mux_sel;
+lc3b_forward_ID_mux_sel forward_ID_A_mux_sel;
+lc3b_forward_ID_mux_sel forward_ID_B_mux_sel;
+lc3b_forward_EX_mux_sel forward_EX_A_mux_sel;
+lc3b_forward_EX_mux_sel forward_EX_B_mux_sel;
 forwarding_controller _forwarding_controller (
     /* INPUTS */
     .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
@@ -45,8 +47,10 @@ forwarding_controller _forwarding_controller (
     .barrier_MEM_WB_control,
 
     /* OUTPUTS */
-    .forward_A_mux_sel,
-    .forward_B_mux_sel,
+    .forward_ID_A_mux_sel,
+    .forward_ID_B_mux_sel,
+    .forward_EX_A_mux_sel,
+    .forward_EX_B_mux_sel,
     .forwarding_controller_pipeline_control_request
 );
 
@@ -143,6 +147,9 @@ stage_ID _stage_ID (
     .regfile_dest_in(stage_WB_regfile_dest),
     .regfile_data_in(stage_WB_regfile_data),
     .regfile_load_in(stage_WB_regfile_load),
+    .forward_ID_A_mux_sel,
+    .forward_ID_B_mux_sel,
+    .stage_WB_regfile_data,
 
     /* OUTPUTS */
     .control_out(stage_ID_control),
@@ -162,6 +169,8 @@ barrier_ID_EX _barrier_ID_EX (
     .clk,
     .reset(pipeline_control_out.barrier_ID_EX_reset),
     .stall(pipeline_control_out.barrier_ID_EX_stall),
+    .force_sr1_load(pipeline_control_out.barrier_ID_EX_force_sr1_load),
+    .force_sr2_load(pipeline_control_out.barrier_ID_EX_force_sr2_load),
     .control_in(stage_ID_control),
     .ir_in(barrier_IF_ID_ir),
     .pc_in(barrier_IF_ID_pc),
@@ -192,8 +201,8 @@ stage_EX _stage_EX (
     .pc_in(barrier_ID_EX_pc),
     .sr1_in(barrier_ID_EX_sr1),
     .sr2_in(barrier_ID_EX_sr2),
-    .forward_A_mux_sel,
-    .forward_B_mux_sel,
+    .forward_EX_A_mux_sel,
+    .forward_EX_B_mux_sel,
     .stage_MEM_regfile_data,
     .stage_WB_regfile_data,
 

@@ -102,21 +102,23 @@ mem_access_controller _mem_access_controller (
 );
 
 /* d_cache_pipeline_control_request */
-assign d_cache_pipeline_control_request.active               = request_stall;
-assign d_cache_pipeline_control_request.exclusive            = 1;
-assign d_cache_pipeline_control_request.barrier_IF_ID_stall  = 1;
-assign d_cache_pipeline_control_request.barrier_ID_EX_stall  = 1;
-assign d_cache_pipeline_control_request.barrier_EX_MEM_stall = 1;
-assign d_cache_pipeline_control_request.barrier_MEM_WB_stall = 1;
-assign d_cache_pipeline_control_request.barrier_IF_ID_reset  = 0;
-assign d_cache_pipeline_control_request.barrier_ID_EX_reset  = 0;
-assign d_cache_pipeline_control_request.barrier_EX_MEM_reset = 0;
-assign d_cache_pipeline_control_request.barrier_MEM_WB_reset = 0;
-assign d_cache_pipeline_control_request.stage_IF_stall       = 1;
-assign d_cache_pipeline_control_request.stage_ID_stall       = 1;
-assign d_cache_pipeline_control_request.stage_EX_stall       = 1;
-assign d_cache_pipeline_control_request.stage_MEM_stall      = 0;
-assign d_cache_pipeline_control_request.stage_WB_stall       = 1;
+assign d_cache_pipeline_control_request.active                       = request_stall;
+assign d_cache_pipeline_control_request.exclusive                    = 1;
+assign d_cache_pipeline_control_request.barrier_IF_ID_stall          = 1;
+assign d_cache_pipeline_control_request.barrier_ID_EX_stall          = 1;
+assign d_cache_pipeline_control_request.barrier_EX_MEM_stall         = 1;
+assign d_cache_pipeline_control_request.barrier_MEM_WB_stall         = 1;
+assign d_cache_pipeline_control_request.barrier_IF_ID_reset          = 0;
+assign d_cache_pipeline_control_request.barrier_ID_EX_reset          = 0;
+assign d_cache_pipeline_control_request.barrier_EX_MEM_reset         = 0;
+assign d_cache_pipeline_control_request.barrier_MEM_WB_reset         = 0;
+assign d_cache_pipeline_control_request.barrier_ID_EX_force_sr1_load = 0;
+assign d_cache_pipeline_control_request.barrier_ID_EX_force_sr2_load = 0;
+assign d_cache_pipeline_control_request.stage_IF_stall               = 1;
+assign d_cache_pipeline_control_request.stage_ID_stall               = 1;
+assign d_cache_pipeline_control_request.stage_EX_stall               = 1;
+assign d_cache_pipeline_control_request.stage_MEM_stall              = 0;
+assign d_cache_pipeline_control_request.stage_WB_stall               = 1;
 
 logic [2:0] [15:0] data_memory_addr_mux_in;
 assign data_memory_addr_mux_in[0] = trapvect8;
