@@ -18,7 +18,6 @@ module branch_controller (
 `define opcode_changes_pc(opcode) \
 ( opcode == op_br || opcode == op_jmp || opcode == op_jsr || opcode == op_trap )
 
-assign branch_controller_pipeline_control_request.active               = 0;
 assign branch_controller_pipeline_control_request.exclusive            = 0;
 assign branch_controller_pipeline_control_request.barrier_IF_ID_stall  = 0;
 assign branch_controller_pipeline_control_request.barrier_ID_EX_stall  = 0;

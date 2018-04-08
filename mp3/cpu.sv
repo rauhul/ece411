@@ -9,6 +9,22 @@ module cpu (
 logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
+/* STALL LOGIC */
+lc3b_pipeline_control_word i_cache_pipeline_control_request;
+lc3b_pipeline_control_word d_cache_pipeline_control_request;
+lc3b_pipeline_control_word branch_controller_pipeline_control_request;
+lc3b_pipeline_control_word forwarding_controller_pipeline_control_request;
+lc3b_pipeline_control_word pipeline_control_out;
+stall_arbiter _stall_arbiter (
+    /* INPUTS */
+    .i_cache_pipeline_control_request,
+    .d_cache_pipeline_control_request,
+    .branch_controller_pipeline_control_request,
+    .forwarding_controller_pipeline_control_request,
+
+    /* OUTPUTS */
+    .pipeline_control_out
+);
 
 /* DATA FORWARDING LOGIC */
 lc3b_word barrier_ID_EX_ir;
@@ -24,29 +40,14 @@ forwarding_controller _forwarding_controller (
     .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
     .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
     .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
-    .barrier_ID_EX_control(barrier_ID_EX_control),
-    .barrier_EX_MEM_control(barrier_EX_MEM_control),
-    .barrier_MEM_WB_control(barrier_MEM_WB_control),
+    .barrier_ID_EX_control,
+    .barrier_EX_MEM_control,
+    .barrier_MEM_WB_control,
 
     /* OUTPUTS */
     .forward_A_mux_sel,
-    .forward_B_mux_sel
-);
-
-
-/* STALL LOGIC */
-lc3b_pipeline_control_word i_cache_pipeline_control_request;
-lc3b_pipeline_control_word d_cache_pipeline_control_request;
-lc3b_pipeline_control_word branch_controller_pipeline_control_request;
-lc3b_pipeline_control_word pipeline_control_out;
-stall_arbiter _stall_arbiter (
-    /* INPUTS */
-    .i_cache_pipeline_control_request,
-    .d_cache_pipeline_control_request,
-    .branch_controller_pipeline_control_request,
-
-    /* OUTPUTS */
-    .pipeline_control_out
+    .forward_B_mux_sel,
+    .forwarding_controller_pipeline_control_request
 );
 
 
