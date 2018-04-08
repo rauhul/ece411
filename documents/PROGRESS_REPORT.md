@@ -48,3 +48,15 @@ After adding the caches we tested each instruction again and then ran through th
 
 - Rauhul wrote the test cases, updated the pipeline for new instructions, implemented the caches, and tested everything
 - Kyung Jae worked on the data forwarding diagram and how it will into the pipeline for the next checkpoint
+
+## Checkpoint 3
+Mar 19, 2018 – Apr 8, 2018
+
+We updated the pipeline to detect and handle control, data, and structural hazards. We also refactored the cache design so the number of lines and associativity can be chosen during module instantiation. As a result the d_cache is been expanded to contain 8 cache lines with 4-way set associativity. Additionally, we have added a unified L2 cache with 8 cache lines with 8-way set associativity.
+
+We also refactored the way stalls and resets are propogated through the pipeline. We now use a (purely combinational) stall arbiter to take pipeline control requests from the various subcomponents that can modify the pipeline's execution and based on preassigned priority/exclusivity propgate those signals to the pipeline.
+
+During this checkpoint, we used all the tests from previous checkpoints as regression tests. We also identified the locations in the checkpoint 3 code, that would cause issues in checkpoint 2 pipeline and used them as small unit tests for our checkpoint 3 implementation.
+
+- Rauhul redesigned the caches for parameterized instantiation, implemented the control hazard detection, implemented data forwarding, redeisgned the pipeline control propogation, created the branch prediction/eviction write buffer/performance counters design diagrams, and tested everything
+- Kyung Jae started the data forwarding logic

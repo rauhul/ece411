@@ -17,3 +17,6 @@ paper design for data forwarding - Won Jae, Rauhul
 ## Checkpoint 2
 In checkpoint 3, we will add an L2 cache to our cache hierarchy. It will be mostly a copy of the L1 cache but with 8-way associativity and 256-bit lines. We will also implement data forwarding through the use of another module that interacts with our stall controller.
 
+## Checkpoint 3
+In checkpoint 4, we will debug the failures we see in the competition code. We will also change the branch_controller to make static predicitons instead of stalling when branch instructions are seen. Additionally, we will add an evicition write buffer and performance counters. We would also like to have a large suite of hazardous tests so we can rigorously test our pipeline.
+
