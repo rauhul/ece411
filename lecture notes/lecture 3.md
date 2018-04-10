@@ -313,11 +313,3 @@ E_a &= P_a * t_a \\
 $$
 
 processor A is 1.19 times more efficient than proccessor B
-
-
-
-
-
-
-
-

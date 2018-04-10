@@ -225,3 +225,4 @@ now change it to fully associative
 -   offset, bottom 6 bits, used to address bytes within the cache line
 -   no index bits
 -   tag[51:6], offset[5:0]
+-   

@@ -241,4 +241,3 @@ how much faster is a multi-cycle implementation than a single-cycle implementati
     -   $\text{multi-cycle TPI} = (4 * 0.1 + 1 * 0.9) * 10ns = 1.3 * 10ns = 13ns$
 -   multi-cycle is 27ns faster
     -   $\frac{40ns}{13ns} = 3.08$ times faster
-

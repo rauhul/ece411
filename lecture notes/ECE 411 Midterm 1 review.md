@@ -8,11 +8,15 @@ Yes calculator
 
 ## lecture 1
 
-role of computer archect
+role of computer architect
 
-exponentential increase of clock rate undertsand 3 reasons
+-   to make design trade-offs across HW/SW interface to satistfy performance, power, cost, and efficiency constraints
 
--   und
+exponentential increase of clock rate understand 3 reasons
+
+-   semiconductor technology improvements 
+-   deeper pipline
+-   circuit design techniques
 
 why it has stagnated
 
@@ -24,7 +28,27 @@ $P=CV^2f$
 understand dennard scaling
 
 -   why dennard scaling ended
+    -   cant increase frequency without large increase in leakage power
+    -   compute per unit increases by 2 but capacitance only decreases by $\frac{\sqrt{2}}{2}$
+    -   must decrease voltage to maintain constant power
 -   chip speed is porportional to capabillity
+-   classic dennard's scaling
+    -   every generation transistor linear dimension decreases by $\frac{\sqrt{2}}{2}$
+        -   compute per unit area increases by $\frac{2}{\sqrt{2}} * \frac{2}{\sqrt{2}} = \frac{4}{2} = 2$
+    -   every generation transistor clock frequency increases by $\sqrt{2}$
+    -   overall increase $2\sqrt{2}$
+    -   chip power would apparently increase $P = NCV^2f; f \text{ increases by }\sqrt{2};N \text{ increases by }2$
+    -   however since the transistors are also getting smaller voltage and capacitance decrease by $\frac{\sqrt{2}}{2}$
+    -   overall power remains constant
+
+$$
+\begin{align*}
+P &= NCV^2f \\
+&= 2 * \frac{\sqrt{2}}{2}* (\frac{\sqrt{2}}{2})^2*\sqrt{2} \\
+&= \frac{2*4}{8} \\
+&= 1
+\end{align*}
+$$
 
 ## lecture 2
 
@@ -158,5 +182,5 @@ bonus problem
 
 -   mp related
     -   implementing a given lc3b instruciton in verilog
--   HW1 related
-    -   should be able to do this problem is you did hw1
+-   hw1 related
+    -   should be able to do this problem is you did hw1w
