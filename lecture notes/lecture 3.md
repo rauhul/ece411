@@ -262,7 +262,7 @@ I\_peak is the peak current load
 P\_(0 -> 1) is the probabillity of the signal switching, also known as activity factor
 f is the switching frequency
 
-#####overall power and energy
+##### overall power and energy
 
 $$
 \begin{align*}
