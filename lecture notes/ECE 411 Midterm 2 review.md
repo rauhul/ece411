@@ -132,8 +132,6 @@ Generalized correlated branch predictor
 
 per address history scheme
 
-.
-
 ##### btb operaton
 
 branch target buffer

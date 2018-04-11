@@ -103,7 +103,7 @@ i1: lw r1, (r11)   ; a = array[i];
 i2: lw r2, (r12)   ; b = array[j];
 i3: lw r3, (r13)   ; c = array[k];
 i4: add r2, r2, r3 ; d = b + c;
-i5: bge r2, r9, i9 ; while (d<t) {
+i5: jge r2, r9, i9 ; while (d<t) {
 i6: addi r1,r1,1   ;     a++;
 i7: mul r3,r3,5    ;     c *= 5;
 i8: j i4           ;     d = b + c;
@@ -121,7 +121,7 @@ i2: lw r2, (r12)   ; b = array[j];
 i3: lw r3, (r13)   ; c = array[k];
 ; b2 -> b3 or b4
 i4: add r2, r2, r3 ; d = b + c;
-i5: bge r2, r9, i9 ; while (d<t) {
+i5: jge r2, r9, i9 ; while (d<t) {
 ; b3 -> b3
 i6: addi r1,r1,1   ;     a++;
 i7: mul r3,r3,5    ;     c *= 5;
@@ -139,7 +139,7 @@ i11: jr r31        ; array[j] = d;
 i1: lw r1, (r11) - i2: lw r2, (r12) - i3: lw r3, (r13)
 ; b2, ILP = 1
 i4: add r2, r2, r3
-i5: bge r2, r9, i9
+i5: jge r2, r9, i9
 ; b3, ILP = 3
 i6: addi r1,r1,1 - i7: mul r3,r3,5 - i8: j i4
 ; b4, ILP = 1.5
