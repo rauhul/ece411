@@ -10,6 +10,7 @@ module stage_MEM (
     input lc3b_word pc_in,
     input lc3b_word pcn_in,
     input lc3b_word sr2_in,
+    input lc3b_pipeline_control_word main_pipeline_control,
 
     /* OUTPUTS */
     output logic br_en_out,
@@ -83,6 +84,22 @@ register #(.width(1)) br_en (
     .out(br_en_out)
 );
 
+/* PERFORMANCE COUNTERS */
+logic        data_memory_access_cancel;
+logic [15:0] data_memory_data_out;
+performace_counters _performace_counters (
+    /* INPUTS */
+    .clk,
+    .data_memory_access(control_in.data_memory_access),
+    .data_memory_write_enable(control_in.data_memory_write_enable),
+    .data_memory_address(data_memory_addr_mux_out),
+    .main_pipeline_control,
+
+    /* OUTPUTS */
+    .data_memory_access_cancel,
+    .data_memory_data_out
+);
+
 /* MEMORY INTERFACE */
 logic request_stall;
 mem_access_controller _mem_access_controller (
@@ -102,7 +119,7 @@ mem_access_controller _mem_access_controller (
 );
 
 /* d_cache_pipeline_control_request */
-assign d_cache_pipeline_control_request.active                       = request_stall;
+assign d_cache_pipeline_control_request.active                       = request_stall & ~data_memory_access_cancel;
 assign d_cache_pipeline_control_request.exclusive                    = 1;
 assign d_cache_pipeline_control_request.barrier_IF_ID_stall          = 1;
 assign d_cache_pipeline_control_request.barrier_ID_EX_stall          = 1;
@@ -134,8 +151,8 @@ mux #(3, 16) data_memory_addr_mux (
 );
 
 assign data_memory_wishbone.ADR = data_memory_addr_mux_out[15:4];
-assign data_memory_wishbone.CYC = control_in.data_memory_access;
-assign data_memory_wishbone.STB = control_in.data_memory_access;
+assign data_memory_wishbone.CYC = control_in.data_memory_access & ~data_memory_access_cancel;
+assign data_memory_wishbone.STB = control_in.data_memory_access & ~data_memory_access_cancel;
 assign data_memory_wishbone.WE = data_memory_wishbone_WE;
 
 always_comb begin
@@ -165,10 +182,14 @@ always_comb begin
 
     /* data out */
     mdr_out = 0;
-    if (control_in.data_memory_word_align) begin
-        mdr_out = data_memory_wishbone.DAT_S[data_memory_addr_mux_out[3:1]*16 +: 16];
+    if (data_memory_access_cancel) begin
+        mdr_out = data_memory_data_out;
     end else begin
-        mdr_out[7:0] = data_memory_wishbone.DAT_S[data_memory_addr_mux_out[3:0]*8 +: 8];
+        if (control_in.data_memory_word_align) begin
+            mdr_out = data_memory_wishbone.DAT_S[data_memory_addr_mux_out[3:1]*16 +: 16];
+        end else begin
+            mdr_out[7:0] = data_memory_wishbone.DAT_S[data_memory_addr_mux_out[3:0]*8 +: 8];
+        end
     end
 end
 

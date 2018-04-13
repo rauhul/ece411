@@ -258,6 +258,7 @@ stage_MEM _stage_MEM (
     .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr2_in(barrier_EX_MEM_sr2),
+    .main_pipeline_control(pipeline_control_out),
 
     /* OUTPUTS */
     .br_en_out(stage_MEM_br_en),
