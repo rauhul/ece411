@@ -148,4 +148,4 @@ eviction_buffered_cache_controller #(
     .output_wishbone_WE(output_wishbone.WE)
 );
 
-endmodule : cache
+endmodule : eviction_buffered_cache

@@ -25,7 +25,6 @@ module eviction_buffered_cache_controller #(
     output logic tag_bypass_sel,
     output logic load,
     output logic load_lru,
-    output logic load_lru,
 
     /* controller->eviction_buffer */
     output logic eviction_buffer_load,
