@@ -4,7 +4,15 @@ module compound_cache (
     wishbone.slave data_memory_wishbone,
 
     /* MASTERS */
-    wishbone.master physical_memory_wishbone
+    wishbone.master physical_memory_wishbone,
+
+    /* debug */
+    output logic debug_i_cache_hit,
+    output logic debug_i_cache_miss,
+    output logic debug_d_cache_hit,
+    output logic debug_d_cache_miss,
+    output logic debug_l2_cache_hit,
+    output logic debug_l2_cache_miss
 );
 
 logic clk;
@@ -22,7 +30,11 @@ cache #(
     .input_wishbone(instruction_memory_wishbone),
 
     /* MASTERS */
-    .output_wishbone(i_cache_memory_wishbone)
+    .output_wishbone(i_cache_memory_wishbone),
+
+    /* debug */
+    .debug_cache_hit(debug_i_cache_hit),
+    .debug_cache_miss(debug_i_cache_miss)
 );
 
 cache #(
@@ -33,7 +45,11 @@ cache #(
     .input_wishbone(data_memory_wishbone),
 
     /* MASTERS */
-    .output_wishbone(d_cache_memory_wishbone)
+    .output_wishbone(d_cache_memory_wishbone),
+
+    /* debug */
+    .debug_cache_hit(debug_d_cache_hit),
+    .debug_cache_miss(debug_d_cache_miss)
 );
 
 cache_arbiter _cache_arbiter (
@@ -53,8 +69,11 @@ eviction_buffered_cache #(
     .input_wishbone(cache_arbiter_memory_wishbone),
 
     /* MASTERS */
-    .output_wishbone(physical_memory_wishbone)
+    .output_wishbone(physical_memory_wishbone),
+
+    /* debug */
+    .debug_cache_hit(debug_l2_cache_hit),
+    .debug_cache_miss(debug_l2_cache_miss)
 );
 
 endmodule : compound_cache
-

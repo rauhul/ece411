@@ -6,7 +6,19 @@ module performace_counters (
     input logic data_memory_access,
     input logic data_memory_write_enable,
     input logic [15:0] data_memory_address,
-    input lc3b_pipeline_control_word main_pipeline_control,
+
+    input logic debug_i_cache_hit,
+    input logic debug_i_cache_miss,
+    input logic debug_d_cache_hit,
+    input logic debug_d_cache_miss,
+    input logic debug_l2_cache_hit,
+    input logic debug_l2_cache_miss,
+
+    input logic debug_stage_IF_stall,
+    input logic debug_stage_ID_stall,
+    input logic debug_stage_EX_stall,
+    input logic debug_stage_MEM_stall,
+    input logic debug_stage_WB_stall,
 
     /* OUTPUTS */
     output logic data_memory_access_cancel,
@@ -57,31 +69,60 @@ always_ff @(posedge clk) begin
     /* BRANCH PREDICTIONS */
 
     /* CACHE ACCESSES */
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFEA))
+        i_cache_hits = 0;
+    else if (debug_i_cache_hit)
+        i_cache_hits += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFEC))
+        i_cache_misses = 0;
+    else if (debug_i_cache_miss)
+        i_cache_misses += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFEE))
+        d_cache_hits = 0;
+    else if (debug_d_cache_hit)
+        d_cache_hits += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF0))
+        d_cache_misses = 0;
+    else if (debug_d_cache_miss)
+        d_cache_misses += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF2))
+        l2_cache_hits = 0;
+    else if (debug_l2_cache_hit)
+        l2_cache_hits += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF4))
+        l2_cache_misses = 0;
+    else if (debug_l2_cache_miss)
+        l2_cache_misses += 1'b1;
 
     /* STAGE STALL */
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF6))
         stage_IF_stalls = 0;
-    else if (main_pipeline_control.stage_IF_stall)
+    else if (debug_stage_IF_stall)
         stage_IF_stalls += 1'b1;
 
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF8))
         stage_ID_stalls = 0;
-    else if (main_pipeline_control.stage_ID_stall)
+    else if (debug_stage_ID_stall)
         stage_ID_stalls += 1'b1;
 
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFA))
         stage_EX_stalls = 0;
-    else if (main_pipeline_control.stage_EX_stall)
+    else if (debug_stage_EX_stall)
         stage_EX_stalls += 1'b1;
 
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFC))
         stage_MEM_stalls = 0;
-    else if (main_pipeline_control.stage_MEM_stall)
+    else if (debug_stage_MEM_stall)
         stage_MEM_stalls += 1'b1;
 
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFE))
         stage_WB_stalls = 0;
-    else if (main_pipeline_control.stage_WB_stall)
+    else if (debug_stage_WB_stall)
         stage_WB_stalls += 1'b1;
 end
 

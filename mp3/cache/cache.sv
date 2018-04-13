@@ -6,7 +6,11 @@ module cache #(
     wishbone.slave input_wishbone,
 
     /* MASTERS */
-    wishbone.master output_wishbone
+    wishbone.master output_wishbone,
+
+    /* debug */
+    output logic debug_cache_hit,
+    output logic debug_cache_miss
 );
 
 logic clk;
@@ -96,7 +100,11 @@ cache_controller #(
     /* cache->output_wishbone */
     .output_wishbone_CYC(output_wishbone.CYC),
     .output_wishbone_STB(output_wishbone.STB),
-    .output_wishbone_WE(output_wishbone.WE)
+    .output_wishbone_WE(output_wishbone.WE),
+
+    /* debug */
+    .debug_cache_hit,
+    .debug_cache_miss
 );
 
 endmodule : cache

@@ -14,18 +14,18 @@ logic  [11:0] address;
 logic [127:0] evicted_data;
 
 initial begin
-    address        = 0;
-    evicted_data   = 0;
+    address      = 0;
+    evicted_data = 0;
 end
 
 always_ff @(posedge clk) begin
     if (load) begin
-        address        = address_in;
-        evicted_data   = evicted_data_in;
+        address      = address_in;
+        evicted_data = evicted_data_in;
     end
 end
 
-assign address_out        = address;
-assign evicted_data_out   = evicted_data;
+assign address_out      = address;
+assign evicted_data_out = evicted_data;
 
 endmodule : eviction_buffer

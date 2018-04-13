@@ -10,8 +10,19 @@ module stage_MEM (
     input lc3b_word pc_in,
     input lc3b_word pcn_in,
     input lc3b_word sr2_in,
-    input lc3b_pipeline_control_word main_pipeline_control,
 
+    input logic debug_i_cache_hit,
+    input logic debug_i_cache_miss,
+    input logic debug_d_cache_hit,
+    input logic debug_d_cache_miss,
+    input logic debug_l2_cache_hit,
+    input logic debug_l2_cache_miss,
+
+    input logic debug_stage_IF_stall,
+    input logic debug_stage_ID_stall,
+    input logic debug_stage_EX_stall,
+    input logic debug_stage_MEM_stall,
+    input logic debug_stage_WB_stall,
     /* OUTPUTS */
     output logic br_en_out,
     output lc3b_word mdr_out,
@@ -93,7 +104,19 @@ performace_counters _performace_counters (
     .data_memory_access(control_in.data_memory_access),
     .data_memory_write_enable(control_in.data_memory_write_enable),
     .data_memory_address(data_memory_addr_mux_out),
-    .main_pipeline_control,
+
+    .debug_i_cache_hit,
+    .debug_i_cache_miss,
+    .debug_d_cache_hit,
+    .debug_d_cache_miss,
+    .debug_l2_cache_hit,
+    .debug_l2_cache_miss,
+
+    .debug_stage_IF_stall,
+    .debug_stage_ID_stall,
+    .debug_stage_EX_stall,
+    .debug_stage_MEM_stall,
+    .debug_stage_WB_stall,
 
     /* OUTPUTS */
     .data_memory_access_cancel,

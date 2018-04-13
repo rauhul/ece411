@@ -33,7 +33,11 @@ module cache_controller #(
     /* cache->output_wishbone */
     output logic output_wishbone_CYC,
     output logic output_wishbone_STB,
-    output logic output_wishbone_WE
+    output logic output_wishbone_WE,
+
+    /* debug */
+    output logic debug_cache_hit,
+    output logic debug_cache_miss
 );
 
 enum int unsigned {
@@ -60,11 +64,16 @@ always_comb begin : state_actions
     output_wishbone_STB   = 0;
     output_wishbone_WE    = 0;
 
+    debug_cache_hit       = 0;
+    debug_cache_miss      = 0;
+
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
             if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
                 if (|hit) begin : _hit
+                    debug_cache_hit = 1;
+
                     // select correct way
                     cache_way_sel = 0;
 
@@ -90,6 +99,8 @@ always_comb begin : state_actions
                     output_wishbone_WE  = 0;
 
                 end else begin : miss
+                    debug_cache_miss = 1;
+
                     input_wishbone_ACK = 0;
                     input_wishbone_RTY = 1;
 

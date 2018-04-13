@@ -3,7 +3,15 @@ import lc3b_types::*;
 module cpu (
     /* MASTERS */
     wishbone.master instruction_memory_wishbone,
-    wishbone.master data_memory_wishbone
+    wishbone.master data_memory_wishbone,
+
+    /* debug */
+    input logic debug_i_cache_hit,
+    input logic debug_i_cache_miss,
+    input logic debug_d_cache_hit,
+    input logic debug_d_cache_miss,
+    input logic debug_l2_cache_hit,
+    input logic debug_l2_cache_miss
 );
 
 logic clk;
@@ -258,7 +266,19 @@ stage_MEM _stage_MEM (
     .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr2_in(barrier_EX_MEM_sr2),
-    .main_pipeline_control(pipeline_control_out),
+
+    .debug_i_cache_hit,
+    .debug_i_cache_miss,
+    .debug_d_cache_hit,
+    .debug_d_cache_miss,
+    .debug_l2_cache_hit,
+    .debug_l2_cache_miss,
+
+    .debug_stage_IF_stall(pipeline_control_out.stage_IF_stall),
+    .debug_stage_ID_stall(pipeline_control_out.stage_ID_stall),
+    .debug_stage_EX_stall(pipeline_control_out.stage_EX_stall),
+    .debug_stage_MEM_stall(pipeline_control_out.stage_MEM_stall),
+    .debug_stage_WB_stall(pipeline_control_out.stage_WB_stall),
 
     /* OUTPUTS */
     .br_en_out(stage_MEM_br_en),
