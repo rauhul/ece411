@@ -87,6 +87,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE library/ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/lc3b_types.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mem_access_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/mux.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/performace_counters.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/physical_memory.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/plus2.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/regfile.sv
