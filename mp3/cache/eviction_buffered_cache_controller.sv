@@ -87,7 +87,15 @@ always_comb begin : state_actions
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
-            if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
+            if (eviction_buffer_requires_flush == 1) begin
+                input_wishbone_ACK = 0;
+                input_wishbone_RTY = 1;
+
+                output_wishbone_CYC = 1;
+                output_wishbone_STB = 0;
+                output_wishbone_WE  = 0;
+
+            end else if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
                 if (|hit) begin : _hit
                     // select correct way
                     cache_way_sel = 0;
@@ -201,7 +209,9 @@ always_comb begin : next_state_logic
      * for transitioning between states */
     case(state)
         s_idle_hit: begin
-            if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
+            if (eviction_buffer_requires_flush == 1) begin
+                next_state = s_flush;
+            end else if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
                 if (~(|hit)) begin : miss
                     if (~output_wishbone_RTY) begin : downstream_ready
                         next_state = s_fetch;
@@ -216,13 +226,8 @@ always_comb begin : next_state_logic
         end
 
         s_fetch_2: begin
-            if (output_wishbone_ACK == 0) begin
-                if (eviction_buffer_requires_flush == 1) begin
-                    next_state = s_flush;
-                end else begin
-                    next_state = s_idle_hit;
-                end
-            end
+            if (output_wishbone_ACK == 0)
+                next_state = s_idle_hit;
         end
 
         s_flush: begin
