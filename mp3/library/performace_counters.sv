@@ -67,6 +67,15 @@ end
 
 always_ff @(posedge clk) begin
     /* BRANCH PREDICTIONS */
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFE6))
+        predictions_correct = 0;
+    else if (0)
+        predictions_correct += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFE8))
+        predictions_incorrect = 0;
+    else if (0)
+        predictions_incorrect += 1'b1;
 
     /* CACHE ACCESSES */
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFEA))
