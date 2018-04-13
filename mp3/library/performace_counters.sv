@@ -53,32 +53,36 @@ initial begin
     stage_WB_stalls       = 0;
 end
 
-
-task update_register (
-    input logic [15:0] register,
-    input logic [15:0] address,
-    input logic incrementer
-);
-
-if (data_memory_access & data_memory_write_enable & (data_memory_address == address))
-    register = 0;
-else if (incrementer)
-    register += 1;
-
-endtask : update_register
-
-
 always_ff @(posedge clk) begin
     /* BRANCH PREDICTIONS */
 
     /* CACHE ACCESSES */
 
     /* STAGE STALL */
-    update_register(stage_IF_stalls,  16'hFFF6, main_pipeline_control.stage_IF_stall);
-    update_register(stage_ID_stalls,  16'hFFF8, main_pipeline_control.stage_ID_stall);
-    update_register(stage_EX_stalls,  16'hFFFA, main_pipeline_control.stage_EX_stall);
-    update_register(stage_MEM_stalls, 16'hFFFC, main_pipeline_control.stage_MEM_stall);
-    update_register(stage_WB_stalls,  16'hFFFE, main_pipeline_control.stage_WB_stall);
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF6))
+        stage_IF_stalls = 0;
+    else if (main_pipeline_control.stage_IF_stall)
+        stage_IF_stalls += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFF8))
+        stage_ID_stalls = 0;
+    else if (main_pipeline_control.stage_ID_stall)
+        stage_ID_stalls += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFA))
+        stage_EX_stalls = 0;
+    else if (main_pipeline_control.stage_EX_stall)
+        stage_EX_stalls += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFC))
+        stage_MEM_stalls = 0;
+    else if (main_pipeline_control.stage_MEM_stall)
+        stage_MEM_stalls += 1'b1;
+
+    if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFFE))
+        stage_WB_stalls = 0;
+    else if (main_pipeline_control.stage_WB_stall)
+        stage_WB_stalls += 1'b1;
 end
 
 always_comb begin
@@ -110,6 +114,8 @@ always_comb begin
                 16'hFFFA : data_memory_data_out = stage_EX_stalls;
                 16'hFFFC : data_memory_data_out = stage_MEM_stalls;
                 16'hFFFE : data_memory_data_out = stage_WB_stalls;
+
+                default : ;
             endcase
         end
     end

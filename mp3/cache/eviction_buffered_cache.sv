@@ -27,9 +27,9 @@ logic output_data_source_sel;
 
 /* modules */
 logic         eviction_buffer_load;
-logic  [15:0] cache_datapath_address;
+logic  [11:0] cache_datapath_address;
 logic [127:0] cache_datapath_data;
-logic  [15:0] eviction_buffer_address;
+logic  [11:0] eviction_buffer_address;
 logic [127:0] eviction_buffer_evicted_data;
 eviction_buffer _eviction_buffer (
     /* INPUTS */
@@ -56,11 +56,11 @@ mux #(2, 128) output_wishbone_data_mux (
     .out(output_wishbone.DAT_M)
 );
 
-logic       [15:0] output_wishbone_address_mux_out;
-logic [1:0] [15:0] output_wishbone_address_mux_in;
+logic       [11:0] output_wishbone_address_mux_out;
+logic [1:0] [11:0] output_wishbone_address_mux_in;
 assign output_wishbone_address_mux_in[0] = cache_datapath_address;
 assign output_wishbone_address_mux_in[1] = eviction_buffer_address;
-mux #(2, 16) output_wishbone_address_mux (
+mux #(2, 12) output_wishbone_address_mux (
     /* INPUTS */
     .sel(output_data_source_sel),
     .in(output_wishbone_address_mux_in),

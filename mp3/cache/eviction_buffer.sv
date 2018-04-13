@@ -2,15 +2,15 @@ module eviction_buffer (
     /* INPUTS */
     input clk,
     input logic         load,
-    input logic  [15:0] address_in,
+    input logic  [11:0] address_in,
     input logic [127:0] evicted_data_in,
 
     /* OUTPUT */
-    output logic  [15:0] address_out,
+    output logic  [11:0] address_out,
     output logic [127:0] evicted_data_out
 );
 
-logic  [15:0] address;
+logic  [11:0] address;
 logic [127:0] evicted_data;
 
 initial begin
