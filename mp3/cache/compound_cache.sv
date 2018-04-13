@@ -45,7 +45,7 @@ cache_arbiter _cache_arbiter (
     .output_wishbone(cache_arbiter_memory_wishbone)
 );
 
-cache #(
+eviction_buffered_cache #(
     .NUM_LINES(8),
     .ASSOCIATIVITY(8)
 ) l2_cache (
