@@ -14,8 +14,8 @@ module performace_counters (
 );
 
 /* BRANCH PREDICTIONS */
-/* 16'hFFE6 */ logic [15:0] branch_predictions_correct;
-/* 16'hFFE8 */ logic [15:0] branch_predictions_incorrect;
+/* 16'hFFE6 */ logic [15:0] predictions_correct;
+/* 16'hFFE8 */ logic [15:0] predictions_incorrect;
 
 /* CACHE ACCESSES */
 /* 16'hFFEA */ logic [15:0] i_cache_hits;
@@ -57,7 +57,7 @@ end
 task update_register (
     input logic [15:0] register,
     input logic [15:0] address,
-    input logic incrementer,
+    input logic incrementer
 );
 
 if (data_memory_access & data_memory_write_enable & (data_memory_address == address))
@@ -85,16 +85,16 @@ always_comb begin
      data_memory_access_cancel = 0;
      data_memory_data_out      = 0;
 
-     if (data_memory_access): begin
-        if (16'hFFE6 <= data_memory_address): begin
+     if (data_memory_access) begin
+        if (16'hFFE6 <= data_memory_address) begin
             data_memory_access_cancel = 1;
         end
 
-        if (~data_memory_write_enable): begin
+        if (~data_memory_write_enable) begin
             case (data_memory_address)
                 /* BRANCH PREDICTIONS */
-                16'hFFE6 : data_memory_data_out = branch_predictions_correct;
-                16'hFFE8 : data_memory_data_out = branch_predictions_incorrect;
+                16'hFFE6 : data_memory_data_out = predictions_correct;
+                16'hFFE8 : data_memory_data_out = predictions_incorrect;
 
                 /* CACHE ACCESSES */
                 16'hFFEA : data_memory_data_out = i_cache_hits;
