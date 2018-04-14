@@ -11,6 +11,10 @@ module stage_MEM (
     input lc3b_word pcn_in,
     input lc3b_word sr2_in,
 
+    /* debug */
+    input logic debug_branch_prediction_correct,
+    input logic debug_branch_prediction_incorrect,
+
     input logic debug_i_cache_hit,
     input logic debug_i_cache_miss,
     input logic debug_d_cache_hit,
@@ -23,6 +27,7 @@ module stage_MEM (
     input logic debug_stage_EX_stall,
     input logic debug_stage_MEM_stall,
     input logic debug_stage_WB_stall,
+
     /* OUTPUTS */
     output logic br_en_out,
     output lc3b_word mdr_out,
@@ -92,6 +97,10 @@ performace_counters _performace_counters (
     .data_memory_access(control_in.data_memory_access),
     .data_memory_write_enable(control_in.data_memory_write_enable),
     .data_memory_address(data_memory_addr_mux_out),
+
+    /* debug */
+    .debug_branch_prediction_correct,
+    .debug_branch_prediction_incorrect,
 
     .debug_i_cache_hit,
     .debug_i_cache_miss,

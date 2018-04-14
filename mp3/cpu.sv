@@ -35,6 +35,8 @@ logic                       branch_predictor_prediction;
 lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
 lc3b_word                   branch_controller_pc;
 lc3b_word                   branch_controller_pc_plus2;
+logic                       debug_branch_prediction_correct;
+logic                       debug_branch_prediction_incorrect;
 
 /* STAGE_IF */
 lc3b_word                   stage_IF_ir;
@@ -150,7 +152,11 @@ branch_controller _branch_controller (
     /* OUTPUTS */
     .pc_out(branch_controller_pc),
     .pc_plus2_out(branch_controller_pc_plus2),
-    .branch_controller_pipeline_control_request
+    .branch_controller_pipeline_control_request,
+
+    /* debug */
+    .debug_branch_prediction_correct,
+    .debug_branch_prediction_incorrect
 );
 
 stage_IF _stage_IF (
@@ -276,6 +282,10 @@ stage_MEM _stage_MEM (
     .pc_in(barrier_EX_MEM_pc),
     .pcn_in(barrier_EX_MEM_pcn),
     .sr2_in(barrier_EX_MEM_sr2),
+
+    /* debug */
+    .debug_branch_prediction_correct,
+    .debug_branch_prediction_incorrect,
 
     .debug_i_cache_hit,
     .debug_i_cache_miss,

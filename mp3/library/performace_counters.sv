@@ -7,6 +7,10 @@ module performace_counters (
     input logic data_memory_write_enable,
     input logic [15:0] data_memory_address,
 
+    /* debug */
+    input logic debug_branch_prediction_correct,
+    input logic debug_branch_prediction_incorrect,
+
     input logic debug_i_cache_hit,
     input logic debug_i_cache_miss,
     input logic debug_d_cache_hit,
@@ -26,8 +30,8 @@ module performace_counters (
 );
 
 /* BRANCH PREDICTIONS */
-/* 16'hFFE6 */ logic [15:0] predictions_correct;
-/* 16'hFFE8 */ logic [15:0] predictions_incorrect;
+/* 16'hFFE6 */ logic [15:0] branch_predictions_correct;
+/* 16'hFFE8 */ logic [15:0] branch_predictions_incorrect;
 
 /* CACHE ACCESSES */
 /* 16'hFFEA */ logic [15:0] i_cache_hits;
@@ -46,8 +50,8 @@ module performace_counters (
 
 initial begin
     /* BRANCH PREDICTIONS */
-    predictions_correct   = 0;
-    predictions_incorrect = 0;
+    branch_predictions_correct   = 0;
+    branch_predictions_incorrect = 0;
 
     /* CACHE ACCESSES */
     i_cache_hits          = 0;
@@ -68,14 +72,14 @@ end
 always_ff @(posedge clk) begin
     /* BRANCH PREDICTIONS */
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFE6))
-        predictions_correct = 0;
-    else if (0)
-        predictions_correct += 1'b1;
+        branch_predictions_correct = 0;
+    else if (debug_branch_prediction_correct)
+        branch_predictions_correct += 1'b1;
 
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFE8))
-        predictions_incorrect = 0;
-    else if (0)
-        predictions_incorrect += 1'b1;
+        branch_predictions_incorrect = 0;
+    else if (debug_branch_prediction_incorrect)
+        branch_predictions_incorrect += 1'b1;
 
     /* CACHE ACCESSES */
     if (data_memory_access & data_memory_write_enable & (data_memory_address == 16'hFFEA))
@@ -147,8 +151,8 @@ always_comb begin
         if (~data_memory_write_enable) begin
             case (data_memory_address)
                 /* BRANCH PREDICTIONS */
-                16'hFFE6 : data_memory_data_out = predictions_correct;
-                16'hFFE8 : data_memory_data_out = predictions_incorrect;
+                16'hFFE6 : data_memory_data_out = branch_predictions_correct;
+                16'hFFE8 : data_memory_data_out = branch_predictions_incorrect;
 
                 /* CACHE ACCESSES */
                 16'hFFEA : data_memory_data_out = i_cache_hits;

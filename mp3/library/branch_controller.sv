@@ -23,7 +23,11 @@ module branch_controller (
     /* OUTPUTS */
     output lc3b_word pc_out,
     output lc3b_word pc_plus2_out,
-    output lc3b_pipeline_control_word branch_controller_pipeline_control_request
+    output lc3b_pipeline_control_word branch_controller_pipeline_control_request,
+
+    /* debug */
+    output logic debug_branch_prediction_correct,
+    output logic debug_branch_prediction_incorrect
 );
 
 lc3b_pc_mux_sel pc_mux_sel;
@@ -70,10 +74,17 @@ always_comb begin
     branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 0;
     branch_controller_pipeline_control_request.barrier_MEM_WB_reset = 0;
 
+    debug_branch_prediction_correct   = 0;
+    debug_branch_prediction_incorrect = 0;
+
     pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
     if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
-        if (branch_prediction != stage_MEM_br_en) begin
+        if (branch_prediction == stage_MEM_br_en) begin
+            debug_branch_prediction_correct = 1;
+        end else begin
+            debug_branch_prediction_incorrect = 1;
+
             pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
 
             branch_controller_pipeline_control_request.active               = 1;
