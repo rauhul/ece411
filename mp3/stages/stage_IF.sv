@@ -4,35 +4,15 @@ module stage_IF (
     /* INPUTS */
     input clk,
     input stall,
-    input lc3b_pc_mux_sel pc_mux_sel,
-    input lc3b_word alu_in,
-    input lc3b_word mdr_in,
-    input lc3b_word pcn_in,
+    input lc3b_word pc_in,
 
     /* OUTPUTS */
     output lc3b_word ir_out,
-    output lc3b_word pc_plus2_out,
+    output lc3b_word pc_out,
     output lc3b_pipeline_control_word i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
     wishbone.master instruction_memory_wishbone
-);
-
-lc3b_word pc_out;
-lc3b_word pc_mux_out;
-
-logic [3:0] [15:0] pc_mux_in;
-assign pc_mux_in[0] = pc_plus2_out;
-assign pc_mux_in[1] = alu_in;
-assign pc_mux_in[2] = pcn_in;
-assign pc_mux_in[3] = mdr_in;
-mux #(4, 16) pc_mux (
-    /* INPUTS */
-    .sel(pc_mux_sel),
-    .in(pc_mux_in),
-
-    /* OUTPUTS */
-    .out(pc_mux_out)
 );
 
 register pc (
@@ -40,18 +20,10 @@ register pc (
     .clk,
     .load(1'b1),
     .stall(stall | i_cache_pipeline_control_request.active),
-    .in(pc_mux_out),
+    .in(pc_in),
 
     /* OUTPUTS */
     .out(pc_out)
-);
-
-plus2 pc_plus2 (
-    /* INPUTS */
-    .in(pc_out),
-
-    /* OUTPUTS */
-    .out(pc_plus2_out)
 );
 
 assign instruction_memory_wishbone.ADR   = pc_out[15:4];

@@ -17,12 +17,82 @@ module cpu (
 logic clk;
 assign clk = instruction_memory_wishbone.CLK;
 
-/* STALL LOGIC */
-lc3b_pipeline_control_word i_cache_pipeline_control_request;
-lc3b_pipeline_control_word d_cache_pipeline_control_request;
-lc3b_pipeline_control_word branch_controller_pipeline_control_request;
-lc3b_pipeline_control_word forwarding_controller_pipeline_control_request;
-lc3b_pipeline_control_word pipeline_control_out;
+/** CONNECTIONS **/
+/* STALL_ARBITER */
+lc3b_pipeline_control_word  pipeline_control_out;
+
+/* FORWARDING_CONTROLLER */
+lc3b_forward_ID_mux_sel     forward_ID_A_mux_sel;
+lc3b_forward_ID_mux_sel     forward_ID_B_mux_sel;
+lc3b_forward_EX_mux_sel     forward_EX_A_mux_sel;
+lc3b_forward_EX_mux_sel     forward_EX_B_mux_sel;
+lc3b_pipeline_control_word  forwarding_controller_pipeline_control_request;
+
+/* BRANCH_PREDICTOR */
+logic                       branch_predictor_prediction;
+
+/* BRANCH_CONTROLLER */
+lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
+
+/* STAGE_IF */
+lc3b_word                   stage_IF_ir;
+lc3b_word                   stage_IF_pc;
+lc3b_pipeline_control_word  i_cache_pipeline_control_request;
+
+/* BARRIER_IF_ID */
+lc3b_word                   barrier_IF_ID_ir;
+lc3b_word                   barrier_IF_ID_pc;
+logic                       barrier_IF_ID_valid;
+
+/* STAGE_ID */
+lc3b_control_word           stage_ID_control;
+lc3b_word                   stage_ID_sr1;
+lc3b_word                   stage_ID_sr2;
+
+/* BARRIER_ID_EX */
+lc3b_control_word           barrier_ID_EX_control;
+lc3b_word                   barrier_ID_EX_ir;
+lc3b_word                   barrier_ID_EX_pc;
+lc3b_word                   barrier_ID_EX_sr1;
+lc3b_word                   barrier_ID_EX_sr2;
+logic                       barrier_ID_EX_valid;
+
+/* STAGE_EX */
+lc3b_word                   stage_EX_alu;
+lc3b_word                   stage_EX_pcn;
+lc3b_word                   stage_EX_sr2;
+
+/* BARRIER_EX_MEM */
+lc3b_control_word           barrier_EX_MEM_control;
+lc3b_word                   barrier_EX_MEM_alu;
+lc3b_word                   barrier_EX_MEM_ir;
+lc3b_word                   barrier_EX_MEM_pc;
+lc3b_word                   barrier_EX_MEM_pcn;
+lc3b_word                   barrier_EX_MEM_sr2;
+logic                       barrier_EX_MEM_valid;
+
+/* STAGE_MEM */
+logic                       stage_MEM_br_en;
+lc3b_word                   stage_MEM_mdr;
+lc3b_word                   stage_MEM_regfile_data;
+lc3b_pipeline_control_word  d_cache_pipeline_control_request;
+
+/* BARRIER_MEM_WB */
+lc3b_control_word           barrier_MEM_WB_control;
+lc3b_word                   barrier_MEM_WB_alu;
+lc3b_word                   barrier_MEM_WB_ir;
+lc3b_word                   barrier_MEM_WB_mdr;
+lc3b_word                   barrier_MEM_WB_pc;
+lc3b_word                   barrier_MEM_WB_pcn;
+logic                       barrier_MEM_WB_valid;
+
+/* STAGE_WB */
+lc3b_reg                    stage_WB_regfile_dest;
+lc3b_word                   stage_WB_regfile_data;
+logic                       stage_WB_regfile_load;
+
+
+/** MODULES **/
 stall_arbiter _stall_arbiter (
     /* INPUTS */
     .i_cache_pipeline_control_request,
@@ -34,17 +104,6 @@ stall_arbiter _stall_arbiter (
     .pipeline_control_out
 );
 
-/* DATA FORWARDING LOGIC */
-lc3b_word barrier_ID_EX_ir;
-lc3b_word barrier_EX_MEM_ir;
-lc3b_word barrier_MEM_WB_ir;
-lc3b_control_word barrier_ID_EX_control;
-lc3b_control_word barrier_EX_MEM_control;
-lc3b_control_word barrier_MEM_WB_control;
-lc3b_forward_ID_mux_sel forward_ID_A_mux_sel;
-lc3b_forward_ID_mux_sel forward_ID_B_mux_sel;
-lc3b_forward_EX_mux_sel forward_EX_A_mux_sel;
-lc3b_forward_EX_mux_sel forward_EX_B_mux_sel;
 forwarding_controller _forwarding_controller (
     /* INPUTS */
     .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
@@ -62,15 +121,21 @@ forwarding_controller _forwarding_controller (
     .forwarding_controller_pipeline_control_request
 );
 
+branch_predictor _branch_predictor (
+    /* OUTPUTS */
+    .prediction(branch_predictor_prediction)
+);
 
-/* BRANCH LOGIC */
-logic barrier_IF_ID_valid;
-logic barrier_ID_EX_valid;
-logic barrier_EX_MEM_valid;
-logic barrier_MEM_WB_valid;
-lc3b_word barrier_IF_ID_ir;
 branch_controller _branch_controller (
     /* INPUTS */
+    .clk,
+    .branch_prediction(branch_predictor_prediction),
+
+    .pc_in(stage_IF_pc),
+    .alu_in(barrier_MEM_WB_alu),
+    .mdr_in(barrier_MEM_WB_mdr),
+    .pcn_in(barrier_MEM_WB_pcn),
+
     .barrier_IF_ID_valid,
     .barrier_ID_EX_valid,
     .barrier_EX_MEM_valid,
@@ -80,51 +145,30 @@ branch_controller _branch_controller (
     .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
     .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
 
+    .stage_MEM_br_en,
+    .barrier_MEM_WB_control,
+
     /* OUTPUTS */
-    .branch_controller_pipeline_control_request
+    .pc_out(branch_controller_pc),
+    .pc_plus2_out(branch_controller_pc_plus2),
+    .branch_controller_pipeline_control_request(branch_controller_pipeline_control_request)
 );
 
-
-/* BRANCH LOGIC */
-logic stage_MEM_br_en;
-
-lc3b_pc_mux_sel stage_IF_pc_mux_sel;
-always_comb begin
-    stage_IF_pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
-    if (barrier_MEM_WB_control.conditional_branch & ~stage_MEM_br_en) begin
-        stage_IF_pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
-    end
-end
-
-
-/* STAGE IF */
-lc3b_word barrier_MEM_WB_alu;
-lc3b_word barrier_MEM_WB_mdr;
-lc3b_word barrier_MEM_WB_pcn;
-lc3b_word stage_IF_ir;
-lc3b_word stage_IF_pc_plus2;
 stage_IF _stage_IF (
     /* INPUTS */
     .clk,
     .stall(pipeline_control_out.stage_IF_stall),
-    .pc_mux_sel(stage_IF_pc_mux_sel),
-    .alu_in(barrier_MEM_WB_alu),
-    .mdr_in(barrier_MEM_WB_mdr),
-    .pcn_in(barrier_MEM_WB_pcn),
+    .pc_in(pc_in),
 
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
-    .pc_plus2_out(stage_IF_pc_plus2),
+    .pc_out(stage_IF_pc),
     .i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
     .instruction_memory_wishbone
 );
 
-
-/* BARRIER IF <-> ID */
-// barrier_IF_ID_ir is defined above branch_controller
-lc3b_word barrier_IF_ID_pc;
 barrier_IF_ID _barrier_IF_ID (
     /* INPUTS */
     .clk,
@@ -139,14 +183,6 @@ barrier_IF_ID _barrier_IF_ID (
     .valid_out(barrier_IF_ID_valid)
 );
 
-
-/* STAGE ID */
-lc3b_reg stage_WB_regfile_dest;
-lc3b_word stage_WB_regfile_data;
-logic stage_WB_regfile_load;
-lc3b_control_word stage_ID_control;
-lc3b_word stage_ID_sr1;
-lc3b_word stage_ID_sr2;
 stage_ID _stage_ID (
     /* INPUTS */
     .clk,
@@ -165,13 +201,6 @@ stage_ID _stage_ID (
     .sr2_out(stage_ID_sr2)
 );
 
-
-/* BARRIER ID <-> EX */
-// barrier_ID_EX_control is defined above forwarding_controller
-// barrier_ID_EX_ir is defined above forwarding_controller
-lc3b_word barrier_ID_EX_pc;
-lc3b_word barrier_ID_EX_sr1;
-lc3b_word barrier_ID_EX_sr2;
 barrier_ID_EX _barrier_ID_EX (
     /* INPUTS */
     .clk,
@@ -195,12 +224,6 @@ barrier_ID_EX _barrier_ID_EX (
     .valid_out(barrier_ID_EX_valid)
 );
 
-
-/* STAGE EX */
-lc3b_word stage_EX_alu;
-lc3b_word stage_EX_pcn;
-lc3b_word stage_EX_sr2;
-lc3b_word stage_MEM_regfile_data;
 stage_EX _stage_EX (
     /* INPUTS */
     .clk,
@@ -221,14 +244,6 @@ stage_EX _stage_EX (
     .sr2_out(stage_EX_sr2)
 );
 
-
-/* BARRIER EX <-> MEM */
-// barrier_EX_MEM_control is defined above forwarding_controller
-lc3b_word barrier_EX_MEM_alu;
-// barrier_EX_MEM_ir is defined above forwarding_controller
-lc3b_word barrier_EX_MEM_pc;
-lc3b_word barrier_EX_MEM_pcn;
-lc3b_word barrier_EX_MEM_sr2;
 barrier_EX_MEM _barrier_EX_MEM (
     /* INPUTS */
     .clk,
@@ -252,10 +267,6 @@ barrier_EX_MEM _barrier_EX_MEM (
     .valid_out(barrier_EX_MEM_valid)
 );
 
-
-/* STAGE MEM */
-// stage_MEM_br_en is defined above branch_logic
-lc3b_word stage_MEM_mdr;
 stage_MEM _stage_MEM (
     /* INPUTS */
     .clk,
@@ -290,14 +301,6 @@ stage_MEM _stage_MEM (
     .data_memory_wishbone
 );
 
-
-/* BARRIER MEM <-> WB */
-// barrier_MEM_WB_control is defined above forwarding_controller
-// barrier_MEM_WB_alu is defined above stage_IF
-// barrier_MEM_WB_ir is defined above forwarding_controller
-// barrier_MEM_WB_mdr is defined above stage_IF
-lc3b_word barrier_MEM_WB_pc;
-// barrier_MEM_WB_pcn is defined above stage_IF
 barrier_MEM_WB _barrier_MEM_WB (
     /* INPUTS */
     .clk,
@@ -321,9 +324,6 @@ barrier_MEM_WB _barrier_MEM_WB (
     .valid_out(barrier_MEM_WB_valid)
 );
 
-
-/* STAGE WB */
-// stage_WB_regfile_* are defined above stage_ID
 stage_WB _stage_WB (
     /* INPUTS */
     .clk,
