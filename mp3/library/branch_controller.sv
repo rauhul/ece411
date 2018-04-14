@@ -24,8 +24,8 @@ module branch_controller (
     input lc3b_control_word barrier_MEM_WB_control,
 
     /* OUTPUTS */
-    output logic pc_out,
-    output logic pc_plus2_out,
+    output lc3b_word pc_out,
+    output lc3b_word pc_plus2_out,
     output lc3b_pipeline_control_word branch_controller_pipeline_control_request
 );
 

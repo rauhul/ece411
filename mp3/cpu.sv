@@ -152,7 +152,7 @@ branch_controller _branch_controller (
     /* OUTPUTS */
     .pc_out(branch_controller_pc),
     .pc_plus2_out(branch_controller_pc_plus2),
-    .branch_controller_pipeline_control_request(branch_controller_pipeline_control_request)
+    .branch_controller_pipeline_control_request
 );
 
 stage_IF _stage_IF (
