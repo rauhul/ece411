@@ -22,7 +22,6 @@ assign   r7   = 3'b111;
 
 always_comb begin
     /* IF */
-    control_out.conditional_branch = 0;
     control_out.pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
     /* ID */
@@ -329,7 +328,6 @@ always_comb begin
         /* PC CHANGING OPS */
         op_br: begin
             /* IF */
-            control_out.conditional_branch = 1; // conditional_branch
             control_out.pc_mux_sel = lc3b_pc_mux_sel_pcn;
 
             /* ID */
@@ -345,7 +343,6 @@ always_comb begin
 
         op_jmp: begin
             /* IF */
-            control_out.conditional_branch = 0;
             control_out.pc_mux_sel = lc3b_pc_mux_sel_alu;
 
             /* ID */
@@ -362,7 +359,6 @@ always_comb begin
 
         op_jsr: begin
             /* IF */
-            control_out.conditional_branch = 0;
             if (ir_in[11] == 0)
                 control_out.pc_mux_sel = lc3b_pc_mux_sel_alu;
             else
@@ -386,7 +382,6 @@ always_comb begin
 
         op_trap: begin
             /* IF */
-            control_out.conditional_branch = 0;
             control_out.pc_mux_sel = lc3b_pc_mux_sel_mdr;
 
             /* ID */

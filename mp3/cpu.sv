@@ -35,6 +35,7 @@ logic                       branch_predictor_prediction;
 lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
 lc3b_word                   branch_controller_pc;
 lc3b_word                   branch_controller_pc_plus2;
+
 /* STAGE_IF */
 lc3b_word                   stage_IF_ir;
 lc3b_word                   stage_IF_pc;
@@ -92,7 +93,6 @@ lc3b_reg                    stage_WB_regfile_dest;
 lc3b_word                   stage_WB_regfile_data;
 logic                       stage_WB_regfile_load;
 
-
 /** MODULES **/
 stall_arbiter _stall_arbiter (
     /* INPUTS */
@@ -132,22 +132,20 @@ branch_controller _branch_controller (
     .clk,
     .branch_prediction(branch_predictor_prediction),
 
-    .pc_in(stage_IF_pc),
-    .alu_in(barrier_MEM_WB_alu),
-    .mdr_in(barrier_MEM_WB_mdr),
-    .pcn_in(barrier_MEM_WB_pcn),
+    .stage_IF_pc,
 
-    .barrier_IF_ID_valid,
-    .barrier_ID_EX_valid,
-    .barrier_EX_MEM_valid,
-    .barrier_MEM_WB_valid,
-    .barrier_IF_ID_opcode(lc3b_opcode'(barrier_IF_ID_ir[15:12])),
-    .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
+    .barrier_EX_MEM_alu,
+    .barrier_EX_MEM_pcn,
+    .barrier_EX_MEM_control,
     .barrier_EX_MEM_opcode(lc3b_opcode'(barrier_EX_MEM_ir[15:12])),
-    .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
+    .barrier_EX_MEM_valid,
 
     .stage_MEM_br_en,
+
+    .barrier_MEM_WB_mdr,
     .barrier_MEM_WB_control,
+    .barrier_MEM_WB_opcode(lc3b_opcode'(barrier_MEM_WB_ir[15:12])),
+    .barrier_MEM_WB_valid,
 
     /* OUTPUTS */
     .pc_out(branch_controller_pc),
@@ -159,7 +157,7 @@ stage_IF _stage_IF (
     /* INPUTS */
     .clk,
     .stall(pipeline_control_out.stage_IF_stall),
-    .pc_in(pc_in),
+    .pc_in(branch_controller_pc),
 
     /* OUTPUTS */
     .ir_out(stage_IF_ir),

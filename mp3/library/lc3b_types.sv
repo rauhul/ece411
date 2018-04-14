@@ -76,7 +76,6 @@ typedef enum bit [1:0] {
 /* CONTROL WORD */
 typedef struct packed {
     /* IF */
-    logic conditional_branch;
     lc3b_pc_mux_sel pc_mux_sel;
 
     /* ID */
