@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Settings
-DEFAULT_TARGET=$HOME/ece411/mp3.3/mp3/simulation/modelsim/memory.lst
-ASSEMBLER=$HOME/ece411/mp3.3/bin/LC3bAssembler
+DEFAULT_TARGET=$HOME/ece411_team_3/mp3/simulation/modelsim/memory.lst
+ASSEMBLER=$HOME/ece411_team_3/bin/LC3bAssembler
 ADDRESSABILITY=16
 
 # Command line parameters
@@ -77,3 +77,4 @@ fi
 } > "$TARGET_FILE"
 
 echo "Assembled $ASM_FILE and wrote memory contents to $TARGET_FILE"
+
