@@ -79,6 +79,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/branch_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/branch_predictor.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/control_rom.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/demux.sv

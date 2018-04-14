@@ -33,7 +33,8 @@ logic                       branch_predictor_prediction;
 
 /* BRANCH_CONTROLLER */
 lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
-
+lc3b_word                   branch_controller_pc;
+lc3b_word                   branch_controller_pc_plus2;
 /* STAGE_IF */
 lc3b_word                   stage_IF_ir;
 lc3b_word                   stage_IF_pc;
@@ -175,7 +176,7 @@ barrier_IF_ID _barrier_IF_ID (
     .reset(pipeline_control_out.barrier_IF_ID_reset),
     .stall(pipeline_control_out.barrier_IF_ID_stall),
     .ir_in(stage_IF_ir),
-    .pc_in(stage_IF_pc_plus2),
+    .pc_in(branch_controller_pc_plus2),
 
     /* OUTPUTS */
     .ir_out(barrier_IF_ID_ir),

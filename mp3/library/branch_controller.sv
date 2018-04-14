@@ -56,7 +56,7 @@ mux #(4, 16) pc_mux (
     .in(pc_mux_in),
 
     /* OUTPUTS */
-    .out(pc_mux_out)
+    .out(pc_out)
 );
 
 
