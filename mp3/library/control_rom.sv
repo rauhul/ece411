@@ -38,7 +38,6 @@ always_comb begin
     /* MEM */
     control_out.cc_load = 0;
     control_out.cc_gen_mux_sel = lc3b_cc_gen_mux_sel_alu;
-    control_out.br_en_load = 0;
     control_out.data_memory_access = 0;
     control_out.data_memory_write_enable = 0;
     control_out.data_memory_addr_mux_sel = lc3b_data_memory_addr_mux_sel_alu;
@@ -336,7 +335,6 @@ always_comb begin
             control_out.pc_adder_mux_sel = lc3b_pc_adder_mux_sel_offset9;
 
             /* MEM */
-            control_out.br_en_load = 1; // load conditional_branch enable
 
             /* WB */
         end

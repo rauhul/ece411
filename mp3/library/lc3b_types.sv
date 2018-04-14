@@ -92,7 +92,6 @@ typedef struct packed {
     /* MEM */
     logic cc_load;
     lc3b_cc_gen_mux_sel cc_gen_mux_sel;
-    logic br_en_load;
     logic data_memory_access;
     logic data_memory_write_enable;
     lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;

@@ -47,8 +47,7 @@ logic data_memory_wishbone_WE;
 lc3b_word trapvect8;
 assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
-logic br_en_in;
-assign br_en_in = |(cc_out & ir_in[11:9]);
+assign br_en_out = |(cc_out & ir_in[11:9]);
 
 /* CC */
 logic [3:0] [15:0] cc_gen_mux_in;
@@ -82,17 +81,6 @@ register #(.width(3)) cc (
 
     /* OUTPUTS */
     .out(cc_out)
-);
-
-register #(.width(1)) br_en (
-    /* INPUTS */
-    .clk,
-    .load(control_in.br_en_load),
-    .stall,
-    .in(br_en_in),
-
-    /* OUTPUTS */
-    .out(br_en_out)
 );
 
 /* PERFORMANCE COUNTERS */
