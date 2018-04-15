@@ -32,16 +32,17 @@ SEGMENT CodeSegment:
     NOP
 
     ; LOAD BASE ADDRESS OF THE PERFORMANCE COUNTERS
-    LDR R0, R0, performance_counters_base_ptr
+    LEA R0, performance_counters_base_ptr
+    LDR R0, R0, 0
 
     ; TEST LOAD VALUE FROM PERFORMANCE COUNTERS
     LDR R1, R0, 0
-    LDR R2, R0, 2
-    LDR R3, R0, 4
-    LDR R4, R0, 6
-    LDR R5, R0, 8
-    LDR R6, R0, 10
-    LDR R7, R0, 12
+    LDR R2, R0, 1
+    LDR R3, R0, 2
+    LDR R4, R0, 3
+    LDR R5, R0, 4
+    LDR R6, R0, 5
+    LDR R7, R0, 6
 
     ; TEST FAILED PREDICTION DOESN'T CORRUPT DATA (PREDICT NOT TAKEN)
     BRnzp skip
@@ -56,12 +57,12 @@ skip:
 
     ; TEST RESET PERFORMANCE COUNTERS ON STORE
     STR R1, R0, 0
-    STR R2, R0, 2
-    STR R3, R0, 4
-    STR R4, R0, 6
-    STR R5, R0, 8
-    STR R6, R0, 10
-    STR R7, R0, 12
+    STR R2, R0, 1
+    STR R3, R0, 2
+    STR R4, R0, 3
+    STR R5, R0, 4
+    STR R6, R0, 5
+    STR R7, R0, 6
 
 no_skip:
     ; DONE
