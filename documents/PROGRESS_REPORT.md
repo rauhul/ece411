@@ -60,3 +60,16 @@ During this checkpoint, we used all the tests from previous checkpoints as regre
 
 - Rauhul redesigned the caches for parameterized instantiation, implemented the control hazard detection, implemented data forwarding, redeisgned the pipeline control propogation, created the branch prediction/eviction write buffer/performance counters design diagrams, and tested everything
 - Kyung Jae started the data forwarding logic
+
+## Checkpoint 4
+Mar 9, 2018 – Apr 15, 2018
+
+This week we added 3 features to our pipeline, a set of software-visible performance counters, an eviction write buffer and static branch prediction.
+
+We added the performance counters to our stage_MEM, so that they can intercept reads and writes to the memory addresses assigned to each counter. Each counter is accessible through its assigned memory address and can be read via a load instruction and reset via a store instruction.
+
+We added an eviction write buffer to our L2 cache, which allows new cache data to be read into the cache before the writeback occurs. We also cache miss and hit signals coming from all the caches, these signals are consumed by the performance counters.
+
+Lastly we refactored the branch_controller to take a prediction from the branch_predictor and handle correct and incorrect predictions. Additionally it reports whether or not the prediction was correct, these signals are consumed by the performance counters.
+
+- Rauhul implemented the performance counters, eviction write buffer, static branch prediction, wrote the testcode and tested the design.

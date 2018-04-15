@@ -20,3 +20,5 @@ In checkpoint 3, we will add an L2 cache to our cache hierarchy. It will be most
 ## Checkpoint 3
 In checkpoint 4, we will debug the failures we see in the competition code. We will also change the branch_controller to make static predicitons instead of stalling when branch instructions are seen. Additionally, we will add an evicition write buffer and performance counters. We would also like to have a large suite of hazardous tests so we can rigorously test our pipeline.
 
+## Checkpoint 4
+In checkpoint 5, we will debug potential issues with a WAW hazard detection in the pipeline. We will also implement a form of dynamic branch prediction as well. Additionally, we will implement cacheline_prefetching for the i_cache to dramatically reduce stalls in the pipeline.
