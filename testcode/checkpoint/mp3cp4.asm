@@ -31,10 +31,8 @@ SEGMENT CodeSegment:
     NOP
     NOP
 
-    ; LOAD BASE ADDRESS OF THE PERFORMANCE COUNTERS (0xFFE6 = -26)
-    ADD R0, R0, 0
-    ADD R0, R0, -13
-    ADD R0, R0, -13
+    ; LOAD BASE ADDRESS OF THE PERFORMANCE COUNTERS
+    LDR R0, R0, performance_counters_base_ptr
 
     ; TEST LOAD VALUE FROM PERFORMANCE COUNTERS
     LDR R1, R0, 0
@@ -81,3 +79,6 @@ done:
     AND R5, R0, R5
     AND R6, R0, R6
     AND R7, R0, R7
+
+performance_counters_base_ptr:
+DATA2 0xFFE6
