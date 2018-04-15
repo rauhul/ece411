@@ -45,13 +45,10 @@ SEGMENT CodeSegment:
 
     ; TEST FAILED PREDICTION DOESN'T CORRUPT DATA (PREDICT NOT TAKEN)
     BRnzp skip
-    AND R1, R0, R1
-    AND R2, R0, R2
-    AND R3, R0, R3
-    AND R4, R0, R4
-    AND R5, R0, R5
-    AND R6, R0, R6
-    AND R7, R0, R7
+    AND R1, R1, 0
+    AND R2, R2, 0
+    AND R3, R3, 0
+    AND R4, R4, 0
 
 skip:
     ; TEST CORRECT PREDICTION DOESN'T TAKE BRANCH
@@ -76,9 +73,6 @@ done:
     AND R2, R0, R2
     AND R3, R0, R3
     AND R4, R0, R4
-    AND R5, R0, R5
-    AND R6, R0, R6
-    AND R7, R0, R7
 
 performance_counters_base_ptr:
-DATA2 0xFFE6
+DATA2 4xFFE6
