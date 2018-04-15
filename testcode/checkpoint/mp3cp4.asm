@@ -50,6 +50,9 @@ SEGMENT CodeSegment:
     AND R2, R2, 0
     AND R3, R3, 0
     AND R4, R4, 0
+    AND R5, R5, 0
+    AND R6, R6, 0
+    AND R7, R7, 0
 
 skip:
     ; TEST CORRECT PREDICTION DOESN'T TAKE BRANCH
@@ -70,10 +73,13 @@ no_skip:
 done:
     BRnzp done
     ; TEST REGISTERS NEVER CLEARED
-    AND R1, R0, R1
-    AND R2, R0, R2
-    AND R3, R0, R3
-    AND R4, R0, R4
+    AND R1, R1, 0
+    AND R2, R2, 0
+    AND R3, R3, 0
+    AND R4, R4, 0
+    AND R5, R5, 0
+    AND R6, R6, 0
+    AND R7, R7, 0
 
 performance_counters_base_ptr:
 DATA2 4xFFE6
