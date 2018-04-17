@@ -23,7 +23,7 @@ TESTCODE_DIR=$HOME/ece411_team_3/testcode
 #See line :183
 #If regfile not found comment out 184 and uncomment 183 and the following line
 REG_FILE={/mp3_tb/dut/_cpu/_stage_ID/_regfile/data}
-RUN_TIME=80us
+RUN_TIME=20.0ms
 
 #Other debug signals
 #signals can be prefixed with -radix
