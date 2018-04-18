@@ -70,26 +70,27 @@ always_comb begin : state_actions
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
+
+            // set input data source to input_wishbone_DAT_M
+            input_data_source_sel = 0;
+
+            // select correct way
+            cache_way_sel = 0;
+
+            for (int i = 0; i < ASSOCIATIVITY; i++) begin
+                if (hit[i]) begin
+                    cache_way_sel = i[$clog2(ASSOCIATIVITY)-1:0];
+                end
+            end
+
             if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
                 if (|hit) begin : _hit
                     debug_cache_hit = 1;
 
-                    // select correct way
-                    cache_way_sel = 0;
-
-                    for (int i = 0; i < ASSOCIATIVITY; i++) begin
-                        if (hit[i]) begin
-                            cache_way_sel = i[$clog2(ASSOCIATIVITY)-1:0];
-                        end
-                    end
-
                     // update lru bit
                     load_lru = 1;
-                    // set input data source to input_wishbone_DAT_M
-                    input_data_source_sel = 0;
                     // load if cpu_write
                     load = input_wishbone_WE;
-
 
                     input_wishbone_ACK = 1;
                     input_wishbone_RTY = 0;
