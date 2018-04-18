@@ -38,55 +38,54 @@ module stage_MEM (
     wishbone.master data_memory_wishbone
 );
 
-lc3b_cc cc_out;
-lc3b_cc cc_gen_out;
-lc3b_word cc_gen_mux_out;
-
-logic internal_MDR_load;
+logic     internal_MDR_load;
 lc3b_word internal_mdr_out;
 
 lc3b_data_memory_addr_mux_sel data_memory_addr_mux_sel;
-lc3b_word data_memory_addr_mux_out;
-logic data_memory_wishbone_WE;
+lc3b_word                     data_memory_addr_mux_out;
+logic                         data_memory_wishbone_WE;
 
 lc3b_word trapvect8;
-assign trapvect8 = $unsigned({ir_in[7:0], 1'b0});
-
-assign br_en_out = |(cc_out & ir_in[11:9]);
+assign    trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
 /* CC */
-logic [3:0] [15:0] cc_gen_mux_in;
-assign cc_gen_mux_in[0] = pcn_in;
-assign cc_gen_mux_in[1] = alu_in;
-assign cc_gen_mux_in[2] = mdr_out;
-assign cc_gen_mux_in[3] = sr2_in;
-mux #(4, 16) cc_gen_mux (
+logic       [15:0] cc_input_mux_out;
+logic [3:0] [15:0] cc_input_mux_in;
+assign cc_input_mux_in[0] = pcn_in;
+assign cc_input_mux_in[1] = alu_in;
+assign cc_input_mux_in[2] = mdr_out;
+assign cc_input_mux_in[3] = sr2_in;
+mux #(4, 16) cc_input_mux (
     /* INPUTS */
     .sel(control_in.cc_gen_mux_sel),
-    .in(cc_gen_mux_in),
+    .in(cc_input_mux_in),
 
     /* OUTPUTS */
-    .out(cc_gen_mux_out)
+    .out(cc_input_mux_out)
 );
 
-gencc cc_gen (
-    /* INPUTS */
-    .in(cc_gen_mux_out),
-
-    /* OUTPUTS */
-    .out(cc_gen_out)
-);
-
-register #(.width(3)) cc (
+lc3b_word cc_input_out;
+register #(.width(16)) cc_input (
     /* INPUTS */
     .clk,
     .load(control_in.cc_load),
     .stall,
-    .in(cc_gen_out),
+    .in(cc_input_mux_out),
+
+    /* OUTPUTS */
+    .out(cc_input_out)
+);
+
+lc3b_cc cc_out;
+gencc cc_gen (
+    /* INPUTS */
+    .in(cc_input_out),
 
     /* OUTPUTS */
     .out(cc_out)
 );
+
+assign br_en_out = |(cc_out & ir_in[11:9]);
 
 /* PERFORMANCE COUNTERS */
 logic        data_memory_access_cancel;
