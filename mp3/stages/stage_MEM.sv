@@ -49,8 +49,8 @@ lc3b_word trapvect8;
 assign    trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
 /* CC */
-lc3b_cc_gen_mux_sel cc_input_mux_sel;
-register #(1) cc_sel (
+logic [1:0] cc_input_mux_sel;
+register #(2) cc_sel (
     /* INPUTS */
     .clk,
     .load(control_in.cc_load),

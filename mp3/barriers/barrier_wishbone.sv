@@ -5,7 +5,7 @@ module barrier_wishbone (
     wishbone.slave input_wishbone,
 
     /* MASTERS */
-    wishbone.master output_wishbone,
+    wishbone.master output_wishbone
 );
 
 barrier_wishbone_master _barrier_wishbone_master (
