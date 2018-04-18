@@ -84,7 +84,7 @@ barrier_wishbone _barrier_wishbone (
     .input_wishbone(l2_cache_memory_wishbone),
 
     /* MASTERS */
-    .output_wishbone(physical_memory_wishbone),
+    .output_wishbone(physical_memory_wishbone)
 );
 
 endmodule : compound_cache
