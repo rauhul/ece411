@@ -117,7 +117,6 @@ cache_way #(
 
     /* OUTPUTS */
     .data_out(output_data_mux_in),
-    .tag_out(tag_mux_in),
     .hit_out(hit)
 );
 

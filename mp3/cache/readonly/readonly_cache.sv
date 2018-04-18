@@ -42,7 +42,6 @@ readonly_cache_datapath #(
     /* input_wishbone->cache */
     .input_wishbone_ADR(input_wishbone.ADR),
     .input_wishbone_SEL(input_wishbone.SEL),
-    .input_wishbone_DAT_M(input_wishbone.DAT_M),
 
     /* output_wishbone->cache */
     .output_wishbone_DAT_S(output_wishbone.DAT_S),
@@ -74,7 +73,6 @@ readonly_cache_controller #(
     /* input_wishbone->cache */
     .input_wishbone_CYC(input_wishbone.CYC),
     .input_wishbone_STB(input_wishbone.STB),
-    .input_wishbone_WE(input_wishbone.WE),
 
     /* output_wishbone->cache */
     .output_wishbone_ACK(output_wishbone.ACK),
