@@ -49,37 +49,77 @@ lc3b_word trapvect8;
 assign    trapvect8 = $unsigned({ir_in[7:0], 1'b0});
 
 /* CC */
-logic       [15:0] cc_input_mux_out;
+lc3b_cc_gen_mux_sel cc_input_mux_sel;
+register #(1) cc_sel (
+    /* INPUTS */
+    .clk,
+    .load(control_in.cc_load),
+    .stall,
+    .in(control_in.cc_gen_mux_sel),
+
+    /* OUTPUTS */
+    .out(cc_input_mux_sel)
+);
+
 logic [3:0] [15:0] cc_input_mux_in;
-assign cc_input_mux_in[0] = pcn_in;
-assign cc_input_mux_in[1] = alu_in;
-assign cc_input_mux_in[2] = mdr_out;
-assign cc_input_mux_in[3] = sr2_in;
+register #(16) cc_pcn (
+    /* INPUTS */
+    .clk,
+    .load(control_in.cc_load),
+    .stall,
+    .in(pcn_in),
+
+    /* OUTPUTS */
+    .out(cc_input_mux_in[0])
+);
+
+register #(16) cc_alu (
+    /* INPUTS */
+    .clk,
+    .load(control_in.cc_load),
+    .stall,
+    .in(alu_in),
+
+    /* OUTPUTS */
+    .out(cc_input_mux_in[1])
+);
+
+register #(16) cc_mdr (
+    /* INPUTS */
+    .clk,
+    .load(control_in.cc_load),
+    .stall,
+    .in(mdr_out),
+
+    /* OUTPUTS */
+    .out(cc_input_mux_in[2])
+);
+
+register #(16) cc_sr2 (
+    /* INPUTS */
+    .clk,
+    .load(control_in.cc_load),
+    .stall,
+    .in(sr2_in),
+
+    /* OUTPUTS */
+    .out(cc_input_mux_in[3])
+);
+
+logic [15:0] cc_input_mux_out;
 mux #(4, 16) cc_input_mux (
     /* INPUTS */
-    .sel(control_in.cc_gen_mux_sel),
+    .sel(cc_input_mux_sel),
     .in(cc_input_mux_in),
 
     /* OUTPUTS */
     .out(cc_input_mux_out)
 );
 
-lc3b_word cc_input_out;
-register #(.width(16)) cc_input (
-    /* INPUTS */
-    .clk,
-    .load(control_in.cc_load),
-    .stall,
-    .in(cc_input_mux_out),
-
-    /* OUTPUTS */
-    .out(cc_input_out)
-);
-
 lc3b_cc cc_out;
 gencc cc_gen (
     /* INPUTS */
-    .in(cc_input_out),
+    .in(cc_input_mux_out),
 
     /* OUTPUTS */
     .out(cc_out)
