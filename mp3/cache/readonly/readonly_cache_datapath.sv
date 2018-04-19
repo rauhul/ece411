@@ -24,7 +24,6 @@ module readonly_cache_datapath #(
     /* OUTPUTS */
     /* datapath->controller */
     output logic [ASSOCIATIVITY-1:0] hit,
-    output logic dirty,
     output logic [$clog2(ASSOCIATIVITY)-1:0] lru,
 
     /* cache_datapath->CPU */
@@ -126,7 +125,6 @@ readonly_cache_way #(
     /* INPUTS */
     .clk,
     .load(load_demux_out),
-    .load_type(input_data_source_sel),
     .byte_sel(input_byte_sel_mux_out),
     .tag_in,
     .index_in(index),

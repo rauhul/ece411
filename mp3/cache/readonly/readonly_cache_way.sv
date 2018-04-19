@@ -12,7 +12,6 @@ module readonly_cache_way #(
     input logic [WIDTH-1:0] data_in,
 
     /* OUTPUTS */
-    output logic [12-$clog2(NUM_LINES)-1:0] tag_out,
     output logic [WIDTH-1:0] data_out,
     output logic hit_out
 );
@@ -23,6 +22,7 @@ localparam integer TAG_WIDTH = 12-INDEX_WIDTH;
 logic [NUM_LINES-1:0] [WIDTH-1:0]     data;
 logic [NUM_LINES-1:0] [TAG_WIDTH-1:0] tag;
 logic [NUM_LINES-1:0]                 valid;
+logic [12-$clog2(NUM_LINES)-1:0]      tag_out;
 
 assign data_out =  data[index_in];
 assign tag_out  =   tag[index_in];
