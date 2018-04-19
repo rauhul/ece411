@@ -22,6 +22,7 @@ module readonly_cache_controller #(
     output logic input_data_source_sel,
     output logic load,
     output logic load_lru,
+    output logic input_wishbone_DAT_S_x,
 
     /* cache->input_wishbone */
     output logic input_wishbone_ACK,
@@ -48,10 +49,11 @@ assign output_wishbone_WE = 0;
 
 always_comb begin : state_actions
     /* Default output assignments */
-    cache_way_sel         = 0;
-    input_data_source_sel = 0;
-    load                  = 0;
-    load_lru              = 0;
+    cache_way_sel          = 0;
+    input_data_source_sel  = 0;
+    load                   = 0;
+    load_lru               = 0;
+    input_wishbone_DAT_S_x = 1;
 
     input_wishbone_ACK    = 0;
     input_wishbone_RTY    = 1;
@@ -65,6 +67,7 @@ always_comb begin : state_actions
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
+            input_wishbone_DAT_S_x = 0;
 
             // set input data source to input_wishbone_DAT_M
             input_data_source_sel = 0;

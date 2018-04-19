@@ -32,9 +32,10 @@ module branch_controller (
     output logic debug_branch_prediction_incorrect
 );
 
-
 lc3b_word branch_address;
-assign branch_address = stage_IF_pc + 2 + $signed({stage_IF_ir[ 8:0], 1'b0});
+lc3b_word offset9;
+assign offset9 = $signed({stage_IF_ir[8:0], 1'b0});
+assign branch_address = pc_plus2_out + offset9;
 
 lc3b_opcode stage_IF_opcode;
 assign stage_IF_opcode = lc3b_opcode'(stage_IF_ir[15:12]);

@@ -69,6 +69,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
