@@ -34,7 +34,7 @@ module branch_controller (
 
 
 lc3b_word branch_address;
-assign branch_address = stage_IF_pc + stage_IF_ir[8:0];
+assign branch_address = stage_IF_pc + 2 + $signed({stage_IF_ir[ 8:0], 1'b0});
 
 lc3b_opcode stage_IF_opcode;
 assign stage_IF_opcode = lc3b_opcode'(stage_IF_ir[15:12]);
