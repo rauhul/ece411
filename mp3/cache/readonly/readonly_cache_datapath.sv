@@ -100,7 +100,7 @@ mux #(
 logic       [WIDTH-1:0] output_data_x_mux_out;
 logic [1:0] [WIDTH-1:0] output_data_x_mux_in;
 assign output_data_x_mux_in[0] = output_data_mux_out;
-assign output_data_x_mux_in[1] = WIDTH'bx;
+assign output_data_x_mux_in[1] = 'x;
 mux #(
     2,
     WIDTH
