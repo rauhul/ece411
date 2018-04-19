@@ -5,7 +5,10 @@ module branch_controller (
     input logic clk,
     input logic branch_prediction,
 
+    input lc3b_word         stage_IF_ir,
     input lc3b_word         stage_IF_pc,
+    input lc3b_opcode       stage_IF_opcode,
+    input logic             stage_IF_valid,
 
     input lc3b_word         barrier_EX_MEM_alu,
     input lc3b_word         barrier_EX_MEM_pcn,
@@ -30,22 +33,46 @@ module branch_controller (
     output logic debug_branch_prediction_incorrect
 );
 
-lc3b_pc_mux_sel pc_mux_sel;
 
-plus2 pc_plus2 (
+lc3b_word branch_address;
+assign branch_address = stage_IF_pc + stage_IF_ir[8:0];
+
+lc3b_opcode stage_IF_opcode;
+assign stage_IF_opcode = lc3b_opcode'(stage_IF_ir[15:12]);
+
+assign pc_plus2_out = stage_IF_pc + 2;
+
+logic [15:0] mispredict_address_in;
+logic        prediction_in;
+logic        load_prediction;
+logic        update_predictions;
+logic        correct_prediction;
+logic [15:0] mispredict_address_out;
+logic        prediction_out;
+branch_waterfall_queue _branch_waterfall_queue (
     /* INPUTS */
-    .in(stage_IF_pc),
+    .clk,
+    .mispredict_address_in,
+    .prediction_in,
+    .load_prediction,
+    .update_predictions,
+    .correct_prediction,
 
     /* OUTPUTS */
-    .out(pc_plus2_out)
+    .mispredict_address_out,
+    .prediction_out
 );
 
-logic [3:0] [15:0] pc_mux_in;
+lc3b_pc_mux_sel pc_mux_sel;
+logic [5:0] [15:0] pc_mux_in;
 assign pc_mux_in[0] = pc_plus2_out;
 assign pc_mux_in[1] = barrier_EX_MEM_alu;
 assign pc_mux_in[2] = barrier_EX_MEM_pcn;
 assign pc_mux_in[3] = barrier_MEM_WB_mdr;
-mux #(4, 16) pc_mux (
+assign pc_mux_in[4] = branch_address;
+assign pc_mux_in[5] = mispredict_address_out;
+
+mux #(6, 16) pc_mux (
     /* INPUTS */
     .sel(pc_mux_sel),
     .in(pc_mux_in),
@@ -79,21 +106,48 @@ always_comb begin
 
     pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
+
+    mispredict_address_in = 0;
+    prediction_in         = 0;
+    load_prediction       = 0;
+    update_predictions    = 0;
+    correct_prediction    = 0;
+
+    /* br */
+    if (stage_IF_valid && stage_IF_opcode == op_br) begin
+        prediction_in = branch_prediction;
+        if (branch_prediction) begin
+            mispredict_address_in = pc_plus2_out;
+            pc_mux_sel = lc3b_pc_mux_sel_branch_address;
+        end else begin
+            mispredict_address_in = branch_address;
+            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+        end
+
+        load_prediction = 1;
+    end
+
     if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
-        if (branch_prediction == stage_MEM_br_en) begin
+        if (prediction_out == stage_MEM_br_en) begin
             debug_branch_prediction_correct = 1;
+            correct_prediction = 1;
+            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+
         end else begin
             debug_branch_prediction_incorrect = 1;
-
-            pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
+            correct_prediction = 0;
+            pc_mux_sel = lc3b_pc_mux_sel_mispredict_address;
 
             branch_controller_pipeline_control_request.active               = 1;
             branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
             branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
             branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
         end
+
+        update_predictions = 1;
     end
 
+    /* jmp */
     if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jmp) begin
         pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
 
@@ -103,6 +157,7 @@ always_comb begin
         branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
     end
 
+    /* jsr */
     if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jsr) begin
         pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
 
@@ -112,6 +167,7 @@ always_comb begin
         branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
     end
 
+    /* trap */
     if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_trap) begin
         branch_controller_pipeline_control_request.active               = 1;
         branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
@@ -119,7 +175,7 @@ always_comb begin
         branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
     end
 
-
+    /* trap */
     if (barrier_MEM_WB_valid && barrier_MEM_WB_opcode == op_trap) begin
         pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
 

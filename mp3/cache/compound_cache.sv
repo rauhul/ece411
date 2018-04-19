@@ -88,7 +88,7 @@ eviction_buffered_cache #(
     .debug_cache_miss(debug_l2_cache_miss)
 );
 
-barrier_wishbone _barrier_wishbone (
+barrier_wishbone _barrier_wishbone_2 (
     .clk,
 
     /* SLAVES */
