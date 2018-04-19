@@ -7,7 +7,6 @@ module branch_controller (
 
     input lc3b_word         stage_IF_ir,
     input lc3b_word         stage_IF_pc,
-    input lc3b_opcode       stage_IF_opcode,
     input logic             stage_IF_valid,
 
     input lc3b_word         barrier_EX_MEM_alu,

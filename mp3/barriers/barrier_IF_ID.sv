@@ -7,15 +7,13 @@ module barrier_IF_ID (
     input stall,
     input lc3b_word ir_in,
     input lc3b_word pc_in,
+    input logic valid_in,
 
     /* OUTPUTS */
     output lc3b_word ir_out,
     output lc3b_word pc_out,
     output logic valid_out
 );
-
-`define instruction_is_not_NOP(instruction) \
-(|instruction)
 
 lc3b_word ir;
 lc3b_word pc;
@@ -38,7 +36,7 @@ always_ff @(posedge clk) begin
         end else begin
             ir    = ir_in;
             pc    = pc_in;
-            valid = `instruction_is_not_NOP(ir_in);
+            valid = valid_in;
         end
     end
 end
