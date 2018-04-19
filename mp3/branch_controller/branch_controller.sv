@@ -3,6 +3,7 @@ import lc3b_types::*;
 module branch_controller (
     /* INPUTS */
     input logic clk,
+    input logic stall,
     input logic branch_prediction,
 
     input lc3b_word         stage_IF_ir,
@@ -52,6 +53,7 @@ logic        prediction_out;
 branch_waterfall_queue _branch_waterfall_queue (
     /* INPUTS */
     .clk,
+    .stall,
     .mispredict_address_in,
     .prediction_in,
     .load_prediction,

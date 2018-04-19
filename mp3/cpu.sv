@@ -133,6 +133,7 @@ branch_predictor _branch_predictor (
 branch_controller _branch_controller (
     /* INPUTS */
     .clk,
+    .stall(pipeline_control_out.stage_IF_stall | i_cache_pipeline_control_request.active),
     .branch_prediction(branch_predictor_prediction),
 
     .stage_IF_ir,
