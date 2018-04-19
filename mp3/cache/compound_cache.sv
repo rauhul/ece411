@@ -21,6 +21,7 @@ assign clk = physical_memory_wishbone.CLK;
 wishbone i_cache_memory_wishbone(clk);
 wishbone d_cache_memory_wishbone(clk);
 wishbone cache_arbiter_memory_wishbone(clk);
+wishbone _cache_arbiter_memory_wishbone(clk);
 wishbone l2_cache_memory_wishbone(clk);
 
 readonly_cache #(
@@ -62,12 +63,22 @@ cache_arbiter _cache_arbiter (
     .output_wishbone(cache_arbiter_memory_wishbone)
 );
 
+barrier_wishbone _barrier_wishbone (
+    .clk,
+
+    /* SLAVES */
+    .input_wishbone(cache_arbiter_memory_wishbone),
+
+    /* MASTERS */
+    .output_wishbone(_cache_arbiter_memory_wishbone)
+);
+
 eviction_buffered_cache #(
     .NUM_LINES(8),
     .ASSOCIATIVITY(4)
 ) l2_cache (
     /* SLAVES */
-    .input_wishbone(cache_arbiter_memory_wishbone),
+    .input_wishbone(_cache_arbiter_memory_wishbone),
 
     /* MASTERS */
     .output_wishbone(l2_cache_memory_wishbone),
