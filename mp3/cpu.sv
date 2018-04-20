@@ -28,9 +28,6 @@ lc3b_forward_EX_mux_sel     forward_EX_A_mux_sel;
 lc3b_forward_EX_mux_sel     forward_EX_B_mux_sel;
 lc3b_pipeline_control_word  forwarding_controller_pipeline_control_request;
 
-/* BRANCH_PREDICTOR */
-logic                       branch_predictor_prediction;
-
 /* BRANCH_CONTROLLER */
 lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
 lc3b_word                   branch_controller_pc;
@@ -123,11 +120,6 @@ forwarding_controller _forwarding_controller (
     .forward_EX_A_mux_sel,
     .forward_EX_B_mux_sel,
     .forwarding_controller_pipeline_control_request
-);
-
-branch_predictor _branch_predictor (
-    /* OUTPUTS */
-    .prediction(branch_predictor_prediction)
 );
 
 branch_controller _branch_controller (
