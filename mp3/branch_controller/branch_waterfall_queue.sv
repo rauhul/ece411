@@ -5,14 +5,14 @@ module branch_waterfall_queue (
 
     input logic [15:0] mispredict_address_in,
     input logic prediction_in,
+    input logic load,
 
-    input logic load_prediction,
-    input logic update_predictions,
-    input logic correct_prediction,
+    input logic update,
+    input logic correct,
 
     /* OUTPUTS */
-    output logic [15:0] mispredict_address_out,
-    output logic prediction_out
+    output logic [15:0] mispredict_address,
+    output logic prediction
 );
 
 localparam integer QUEUE_SIZE = 3;
@@ -35,12 +35,12 @@ end
 
 assign queue_top_ptr_up1 = queue_top_ptr + 1;
 assign queue_top_ptr_dn1 = queue_top_ptr - 1;
-assign mispredict_address_out = mispredict_address_queue[0];
-assign prediction_out         = prediction_queue[0];
+assign mispredict_address = mispredict_address_queue[0];
+assign prediction         = prediction_queue[0];
 
 always_ff @(posedge clk) begin
     if (~stall) begin
-        if (update_predictions & ~correct_prediction) begin
+        if (update & ~correct) begin
             for (int i = 0; i < QUEUE_SIZE; i++) begin
                 mispredict_address_queue[i] = 0;
                 prediction_queue[i] = 0;
@@ -48,7 +48,7 @@ always_ff @(posedge clk) begin
 
             queue_top_ptr = 0;
 
-        end else if (update_predictions & correct_prediction & load_prediction) begin
+        end else if (update & correct & load) begin
             for (int i = 0; i < QUEUE_SIZE - 1; i++) begin
                 if (queue_top_ptr_dn1 == i) begin
                     mispredict_address_queue[i] = mispredict_address_in;
@@ -69,7 +69,7 @@ always_ff @(posedge clk) begin
 
             queue_top_ptr = queue_top_ptr;
 
-        end else if (update_predictions & correct_prediction) begin
+        end else if (update & correct) begin
 
             for (int i = 0; i < QUEUE_SIZE - 1; i++) begin
                 mispredict_address_queue[i] = mispredict_address_queue[i + 1];
@@ -80,7 +80,7 @@ always_ff @(posedge clk) begin
 
             queue_top_ptr = queue_top_ptr_dn1;
 
-        end else if (load_prediction) begin
+        end else if (load) begin
             mispredict_address_queue[queue_top_ptr] = mispredict_address_in;
             prediction_queue[queue_top_ptr]         = prediction_in;
 
