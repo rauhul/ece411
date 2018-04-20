@@ -12,83 +12,73 @@ module branch_predictor (
     output logic prediction
 );
 
-assign prediction = 0;
+enum int unsigned {
+    /* List of states */
+    s_taken_2,
+    s_taken,
+    s_ntaken,
+    s_ntaken_2
+} state, next_state;
 
-// enum int unsigned {
-//     /* List of states */
-//     s_taken_2,
-//     s_taken,
-//     s_ntaken,
-//     s_ntaken_2
-// } state, next_state;
+always_comb begin : state_actions
+    /* Default output assignments */
+    prediction = 'x;
 
-// always_comb begin : state_actions
-//     /* Default output assignments */
-//     prediction = 'x;
+    /* Actions for each state */
+     case(state)
+        s_taken_2:  prediction = 1;
+        s_taken:    prediction = 1;
+        s_ntaken:   prediction = 0;
+        s_ntaken_2: prediction = 0;
+    endcase
+end
 
-//     /* Actions for each state */
-//      case(state)
-//         s_taken_2:  prediction = 1;
-//         s_taken:    prediction = 1;
-//         s_ntaken:   prediction = 0;
-//         s_ntaken_2: prediction = 0;
-//     endcase
-// end
+always_comb begin : next_state_logic
+    /* Default next state assignment */
+    next_state = state;
 
-// always_comb begin : next_state_logic
-//     /* Default next state assignment */
-//     next_state = state;
+    /* Next state information and conditions (if any)
+     * for transitioning between states */
+    case(state)
+        s_taken_2: begin
+            if (update_value) begin
+                next_state = s_taken_2;
+            end else begin
+                next_state = s_taken;
+            end
+        end
 
-//     /* Next state information and conditions (if any)
-//      * for transitioning between states */
-//     case(state)
-//         s_taken_2: begin
-//             if (update) begin
-//                 if (update_value) begin
-//                     next_state = s_taken_2;
-//                 end else begin
-//                     next_state = s_taken;
-//                 end
-//             end
-//         end
+        s_taken: begin
+            if (update_value) begin
+                next_state = s_taken_2;
+            end else begin
+                next_state = s_ntaken;
+            end
+        end
 
-//         s_taken: begin
-//             if (update) begin
-//                 if (update_value) begin
-//                     next_state = s_taken_2;
-//                 end else begin
-//                     next_state = s_ntaken;
-//                 end
-//             end
-//         end
+        s_ntaken: begin
+            if (update_value) begin
+                next_state = s_taken;
+            end else begin
+                next_state = s_ntaken_2;
+            end
+        end
 
-//         s_ntaken: begin
-//             if (update) begin
-//                 if (update_value) begin
-//                     next_state = s_taken;
-//                 end else begin
-//                     next_state = s_ntaken_2;
-//                 end
-//             end
-//         end
+        s_ntaken_2: begin
+            if (update_value) begin
+                next_state = s_ntaken;
+            end else begin
+                next_state = s_ntaken_2;
+            end
+        end
+    endcase // state
+end
 
-//         s_ntaken_2: begin
-//             if (update) begin
-//                 if (update_value) begin
-//                     next_state = s_ntaken;
-//                 end else begin
-//                     next_state = s_ntaken_2;
-//                 end
-//             end
-//         end
-//     endcase // state
-// end
-
-// always_ff @(posedge clk) begin: next_state_assignment
-//     /* Assignment of next state on clock edge */
-//     if (~stall) begin
-//         state <= next_state;
-//     end
-// end
+always_ff @(posedge clk) begin: next_state_assignment
+    /* Assignment of next state on clock edge */
+    if (update && ~stall) begin
+        state <= next_state;
+    end
+end
 
 endmodule : branch_predictor
