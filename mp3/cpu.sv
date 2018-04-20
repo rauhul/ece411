@@ -140,6 +140,12 @@ branch_controller _branch_controller (
     .stage_IF_pc,
     .stage_IF_valid,
 
+    .barrier_IF_ID_opcode(lc3b_opcode'(barrier_IF_ID_ir[15:12])),
+    .barrier_IF_ID_valid,
+
+    .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
+    .barrier_ID_EX_valid,
+
     .barrier_EX_MEM_alu,
     .barrier_EX_MEM_pcn,
     .barrier_EX_MEM_control,

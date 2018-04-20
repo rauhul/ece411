@@ -228,26 +228,26 @@ always_comb begin
 
             load_prediction = 1;
         end
+    end
 
-        if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
-            if (prediction_out == stage_MEM_br_en) begin
-                debug_branch_prediction_correct = 1;
-                correct_prediction = 1;
-                pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+    if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
+        if (prediction_out == stage_MEM_br_en) begin
+            debug_branch_prediction_correct = 1;
+            correct_prediction = 1;
+            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
-            end else begin
-                debug_branch_prediction_incorrect = 1;
-                correct_prediction = 0;
-                pc_mux_sel = lc3b_pc_mux_sel_mispredict_address;
+        end else begin
+            debug_branch_prediction_incorrect = 1;
+            correct_prediction = 0;
+            pc_mux_sel = lc3b_pc_mux_sel_mispredict_address;
 
-                branch_controller_pipeline_control_request.active               = 1;
-                branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
-                branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
-                branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
-            end
-
-            update_predictions = 1;
+            branch_controller_pipeline_control_request.active               = 1;
+            branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+            branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+            branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
         end
+
+        update_predictions = 1;
     end
 end
 
