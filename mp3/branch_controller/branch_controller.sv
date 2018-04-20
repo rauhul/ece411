@@ -2,13 +2,19 @@ import lc3b_types::*;
 
 module branch_controller (
     /* INPUTS */
-    input logic clk,
-    input logic stall,
-    input logic branch_prediction,
+    input logic             clk,
+    input logic             stall,
+    input logic             branch_prediction,
 
     input lc3b_word         stage_IF_ir,
     input lc3b_word         stage_IF_pc,
     input logic             stage_IF_valid,
+
+    input lc3b_opcode       barrier_IF_ID_opcode,
+    input logic             barrier_IF_ID_valid,
+
+    input lc3b_opcode       barrier_ID_EX_opcode,
+    input logic             barrier_ID_EX_valid,
 
     input lc3b_word         barrier_EX_MEM_alu,
     input lc3b_word         barrier_EX_MEM_pcn,
@@ -24,8 +30,8 @@ module branch_controller (
     input logic             barrier_MEM_WB_valid,
 
     /* OUTPUTS */
-    output lc3b_word pc_out,
-    output lc3b_word pc_plus2_out,
+    output lc3b_word        pc_out,
+    output lc3b_word        pc_plus2_out,
     output lc3b_pipeline_control_word branch_controller_pipeline_control_request,
 
     /* debug */
@@ -42,6 +48,9 @@ lc3b_opcode stage_IF_opcode;
 assign stage_IF_opcode = lc3b_opcode'(stage_IF_ir[15:12]);
 
 assign pc_plus2_out = stage_IF_pc + 2;
+
+
+logic ignore_branch_if_next;
 
 logic [15:0] mispredict_address_in;
 logic        prediction_in;
@@ -108,6 +117,7 @@ always_comb begin
 
     pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
+    ignore_branch_if_next = 0;
 
     mispredict_address_in = 0;
     prediction_in         = 0;
@@ -115,77 +125,129 @@ always_comb begin
     update_predictions    = 0;
     correct_prediction    = 0;
 
-    /* br */
-    if (stage_IF_valid && stage_IF_opcode == op_br) begin
-        prediction_in = branch_prediction;
-        if (branch_prediction) begin
-            mispredict_address_in = pc_plus2_out;
-            pc_mux_sel = lc3b_pc_mux_sel_branch_address;
-        end else begin
-            mispredict_address_in = branch_address;
-            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+    // /* jmp */
+    // if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jmp) begin
+    //     pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
+
+    //     branch_controller_pipeline_control_request.active               = 1;
+    //     branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+    // end
+
+    // /* jsr */
+    // if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jsr) begin
+    //     pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
+
+    //     branch_controller_pipeline_control_request.active               = 1;
+    //     branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+    // end
+
+    //  trap 
+    // if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_trap) begin
+    //     branch_controller_pipeline_control_request.active               = 1;
+    //     branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+    // end
+
+    // /* trap */
+    // if (barrier_MEM_WB_valid && barrier_MEM_WB_opcode == op_trap) begin
+    //     pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
+
+    //     branch_controller_pipeline_control_request.active               = 1;
+    //     branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+    //     branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+    //     branch_controller_pipeline_control_request.barrier_MEM_WB_reset = 1;
+    // end
+
+    /* barrier_IF_ID */
+    if (barrier_IF_ID_valid && (
+        barrier_IF_ID_opcode == op_jmp ||
+        barrier_IF_ID_opcode == op_jsr ||
+        barrier_IF_ID_opcode == op_trap)) begin
+        ignore_branch_if_next = 1;
+        branch_controller_pipeline_control_request.active               = 1;
+        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+    end
+
+    /* barrier_ID_EX */
+    if (barrier_ID_EX_valid && (
+        barrier_ID_EX_opcode == op_jmp ||
+        barrier_ID_EX_opcode == op_jsr ||
+        barrier_ID_EX_opcode == op_trap)) begin
+        ignore_branch_if_next = 1;
+        branch_controller_pipeline_control_request.active               = 1;
+        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+        branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+
+    end
+
+    /* barrier_EX_MEM */
+    if (barrier_EX_MEM_valid && (
+        barrier_EX_MEM_opcode == op_jmp ||
+        barrier_EX_MEM_opcode == op_jsr ||
+        barrier_EX_MEM_opcode == op_trap)) begin
+        ignore_branch_if_next = 1;
+        branch_controller_pipeline_control_request.active               = 1;
+        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+        branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+        branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+
+        if (barrier_EX_MEM_opcode != op_trap) begin
+            pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
         end
-
-        load_prediction = 1;
     end
 
-    if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
-        if (prediction_out == stage_MEM_br_en) begin
-            debug_branch_prediction_correct = 1;
-            correct_prediction = 1;
-            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
-
-        end else begin
-            debug_branch_prediction_incorrect = 1;
-            correct_prediction = 0;
-            pc_mux_sel = lc3b_pc_mux_sel_mispredict_address;
-
-            branch_controller_pipeline_control_request.active               = 1;
-            branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
-            branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
-            branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
-        end
-
-        update_predictions = 1;
-    end
-
-    /* jmp */
-    if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jmp) begin
-        pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
-
-        branch_controller_pipeline_control_request.active               = 1;
-        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
-    end
-
-    /* jsr */
-    if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_jsr) begin
-        pc_mux_sel = barrier_EX_MEM_control.pc_mux_sel;
-
-        branch_controller_pipeline_control_request.active               = 1;
-        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
-    end
-
-    /* trap */
-    if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_trap) begin
-        branch_controller_pipeline_control_request.active               = 1;
-        branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
-        branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
-    end
-
-    /* trap */
+    /* barrier_MEM_WB */
     if (barrier_MEM_WB_valid && barrier_MEM_WB_opcode == op_trap) begin
-        pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
-
+        ignore_branch_if_next = 1;
         branch_controller_pipeline_control_request.active               = 1;
         branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
         branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
         branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
         branch_controller_pipeline_control_request.barrier_MEM_WB_reset = 1;
+
+        pc_mux_sel = barrier_MEM_WB_control.pc_mux_sel;
+    end
+
+    /* br */
+    if (~ignore_branch_if_next) begin
+        if (stage_IF_valid && stage_IF_opcode == op_br) begin
+            prediction_in = branch_prediction;
+            if (branch_prediction) begin
+                mispredict_address_in = pc_plus2_out;
+                pc_mux_sel = lc3b_pc_mux_sel_branch_address;
+            end else begin
+                mispredict_address_in = branch_address;
+                pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+            end
+
+            load_prediction = 1;
+        end
+
+        if (barrier_EX_MEM_valid && barrier_EX_MEM_opcode == op_br) begin
+            if (prediction_out == stage_MEM_br_en) begin
+                debug_branch_prediction_correct = 1;
+                correct_prediction = 1;
+                pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
+
+            end else begin
+                debug_branch_prediction_incorrect = 1;
+                correct_prediction = 0;
+                pc_mux_sel = lc3b_pc_mux_sel_mispredict_address;
+
+                branch_controller_pipeline_control_request.active               = 1;
+                branch_controller_pipeline_control_request.barrier_IF_ID_reset  = 1;
+                branch_controller_pipeline_control_request.barrier_ID_EX_reset  = 1;
+                branch_controller_pipeline_control_request.barrier_EX_MEM_reset = 1;
+            end
+
+            update_predictions = 1;
+        end
     end
 end
 
