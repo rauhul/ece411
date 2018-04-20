@@ -50,7 +50,7 @@ always_ff @(posedge clk) begin
 
         end else if (update_predictions & correct_prediction & load_prediction) begin
             for (int i = 0; i < QUEUE_SIZE - 1; i++) begin
-                if (queue_top_ptr == i) begin
+                if (queue_top_ptr_dn1 == i) begin
                     mispredict_address_queue[i] = mispredict_address_in;
                     prediction_queue[i]         = prediction_in;
                 end else begin
@@ -59,7 +59,7 @@ always_ff @(posedge clk) begin
                 end
             end
 
-            if (queue_top_ptr == QUEUE_SIZE - 1) begin
+            if (queue_top_ptr_dn1 == QUEUE_SIZE - 1) begin
                 mispredict_address_queue[QUEUE_SIZE - 1] = mispredict_address_in;
                 prediction_queue[QUEUE_SIZE - 1]         = prediction_in;
             end else begin

@@ -95,6 +95,7 @@ always_comb begin : state_actions
                     output_wishbone_STB = 0;
 
                 end else begin : miss
+                    input_wishbone_DAT_S_x = 1;
                     debug_cache_miss = 1;
 
                     input_wishbone_ACK = 0;
