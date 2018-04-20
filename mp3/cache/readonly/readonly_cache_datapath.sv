@@ -12,6 +12,7 @@ module readonly_cache_datapath #(
     input logic input_data_source_sel,
     input logic load,
     input logic load_lru,
+    input logic input_wishbone_DAT_S_x,
 
     /* input_wishbone->cache */
     input logic [11:0] input_wishbone_ADR,
@@ -23,7 +24,6 @@ module readonly_cache_datapath #(
     /* OUTPUTS */
     /* datapath->controller */
     output logic [ASSOCIATIVITY-1:0] hit,
-    output logic dirty,
     output logic [$clog2(ASSOCIATIVITY)-1:0] lru,
 
     /* cache_datapath->CPU */
@@ -96,20 +96,35 @@ mux #(
     .out(output_data_mux_out)
 );
 
-assign input_wishbone_DAT_S = output_data_mux_out;
+logic       [WIDTH-1:0] output_data_x_mux_out;
+logic [1:0] [WIDTH-1:0] output_data_x_mux_in;
+assign output_data_x_mux_in[0] = output_data_mux_out;
+assign output_data_x_mux_in[1] = 'x;
+mux #(
+    2,
+    WIDTH
+) output_data_x_mux (
+    /* INPUTS */
+    .sel(input_wishbone_DAT_S_x),
+    .in(output_data_x_mux_in),
+
+    /* OUTPUTS */
+    .out(output_data_x_mux_out)
+);
+
+assign input_wishbone_DAT_S = output_data_x_mux_out;
 assign output_wishbone_DAT_M = 0;
 assign output_wishbone_ADR = input_wishbone_ADR;
 
 /*
  * WAYS
  */
-cache_way #(
+readonly_cache_way #(
     NUM_LINES
 ) _cache_way[ASSOCIATIVITY-1:0] (
     /* INPUTS */
     .clk,
     .load(load_demux_out),
-    .load_type(input_data_source_sel),
     .byte_sel(input_byte_sel_mux_out),
     .tag_in,
     .index_in(index),

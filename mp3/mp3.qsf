@@ -69,11 +69,13 @@ set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/branch_controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/branch_predictor.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_predictor.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_waterfall_queue.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/control_rom.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/demux.sv

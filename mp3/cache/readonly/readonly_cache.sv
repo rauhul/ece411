@@ -21,6 +21,7 @@ logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel;
 logic input_data_source_sel;
 logic load;
 logic load_lru;
+logic input_wishbone_DAT_S_x;
 
 logic [ASSOCIATIVITY-1:0] hit;
 logic [$clog2(ASSOCIATIVITY)-1:0] lru;
@@ -38,6 +39,7 @@ readonly_cache_datapath #(
     .input_data_source_sel,
     .load,
     .load_lru,
+    .input_wishbone_DAT_S_x,
 
     /* input_wishbone->cache */
     .input_wishbone_ADR(input_wishbone.ADR),
@@ -84,6 +86,7 @@ readonly_cache_controller #(
     .input_data_source_sel,
     .load,
     .load_lru,
+    .input_wishbone_DAT_S_x,
 
     /* cache->input_wishbone */
     .input_wishbone_ACK(input_wishbone.ACK),

@@ -9,6 +9,7 @@ module stage_IF (
     /* OUTPUTS */
     output lc3b_word ir_out,
     output lc3b_word pc_out,
+    output logic valid_out,
     output lc3b_pipeline_control_word i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
@@ -38,6 +39,7 @@ always_comb begin
 end
 
 assign ir_out = instruction_memory_wishbone.DAT_S[pc_out[3:1]*16 +: 16];
+assign valid_out = |ir_out; // instruction_is_not_NOP
 
 /* i_cache_pipeline_control_request */
 assign i_cache_pipeline_control_request.active                       = (instruction_memory_wishbone.CYC) & (~instruction_memory_wishbone.ACK | instruction_memory_wishbone.RTY);
