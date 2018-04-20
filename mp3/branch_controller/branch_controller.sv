@@ -217,7 +217,6 @@ always_comb begin
         if (branch_waterfall_queue_prediction == stage_MEM_br_en) begin
             debug_branch_prediction_correct = 1;
             branch_waterfall_queue_correct = 1;
-            pc_mux_sel = lc3b_pc_mux_sel_pc_plus2;
 
         end else begin
             debug_branch_prediction_incorrect = 1;
