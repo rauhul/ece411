@@ -23,7 +23,7 @@ wishbone d_cache_memory_wishbone(clk);
 wishbone cache_arbiter_memory_wishbone(clk);
 wishbone l2_cache_memory_wishbone(clk);
 
-cache #(
+readonly_cache #(
     .NUM_LINES(8),
     .ASSOCIATIVITY(2)
 ) i_cache (
@@ -84,7 +84,7 @@ barrier_wishbone _barrier_wishbone (
     .input_wishbone(l2_cache_memory_wishbone),
 
     /* MASTERS */
-    .output_wishbone(physical_memory_wishbone),
+    .output_wishbone(physical_memory_wishbone)
 );
 
 endmodule : compound_cache

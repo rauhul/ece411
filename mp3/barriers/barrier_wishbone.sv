@@ -5,7 +5,7 @@ module barrier_wishbone (
     wishbone.slave input_wishbone,
 
     /* MASTERS */
-    wishbone.master output_wishbone,
+    wishbone.master output_wishbone
 );
 
 barrier_wishbone_master _barrier_wishbone_master (
@@ -34,12 +34,12 @@ barrier_wishbone_slave _barrier_wishbone_slave (
     /* INPUT */
     .DAT_S_in(output_wishbone.DAT_S),
     .ACK_in(output_wishbone.ACK),
-    .RTY_in(output_wishbone.RTY)
+    .RTY_in(output_wishbone.RTY),
 
     /* OUTPUT */
     .DAT_S_out(input_wishbone.DAT_S),
     .ACK_out(input_wishbone.ACK),
-    .RTY_out(input_wishbone.RTY),
+    .RTY_out(input_wishbone.RTY)
 );
 
 endmodule : barrier_wishbone

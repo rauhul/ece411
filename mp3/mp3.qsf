@@ -55,6 +55,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_IF_ID.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_MEM_WB.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_master.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_slave.sv
+set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_arbiter.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_controller.sv
@@ -62,9 +63,12 @@ set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_datapath.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_lru.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/compound_cache.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffer.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered_cache.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffered_cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffered_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_datapath.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
