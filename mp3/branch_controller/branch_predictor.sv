@@ -1,11 +1,12 @@
-import lc3b_types::*;
-
 module branch_predictor #(
-    parameter BRANCH_HISTORY_REGISTER_SIZE = 4
+    parameter BRANCH_HISTORY_REGISTER_SIZE = 4,
+    parameter NUM_INDEXING_PC_BITS = 3
 ) (
     /* INPUTS */
     input logic clk,
     input logic stall,
+
+    input logic [15:0] pc,
 
     input logic update,
     input logic update_value,
@@ -15,27 +16,36 @@ module branch_predictor #(
 );
 
 localparam integer PATTERN_HISTORY_TABLE_SIZE = 2**BRANCH_HISTORY_REGISTER_SIZE;
+localparam integer NUM_PATTERN_HISTORY_TABLES = 2**NUM_INDEXING_PC_BITS;
 
+/** CONNECTIONS **/
+logic [NUM_INDEXING_PC_BITS-1:0]         pattern_history_table_sel;
+logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_update;
+logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;
 logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register;
-logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_table_update;
-logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_table_prediction;
+
+/** MODULES **/
+assign pattern_history_table_sel = pc[NUM_INDEXING_PC_BITS:1];
 
 demux #(
-    PATTERN_HISTORY_TABLE_SIZE,
+    NUM_PATTERN_HISTORY_TABLES,
     1
 ) update_demux (
     /* INPUTS */
-    .sel(branch_history_register),
+    .sel(pattern_history_table_sel),
     .in(update),
 
     /* OUTPUTS */
     .out(pattern_history_table_update)
 );
 
-branch_predictor_2bit pattern_history_table[PATTERN_HISTORY_TABLE_SIZE-1:0] (
+pattern_history_table #(
+    PATTERN_HISTORY_TABLE_SIZE
+) _pattern_history_table[NUM_PATTERN_HISTORY_TABLES-1:0] (
     /* INPUTS */
     .clk,
     .stall,
+    .index(branch_history_register),
     .update(pattern_history_table_update),
     .update_value,
 
@@ -44,11 +54,11 @@ branch_predictor_2bit pattern_history_table[PATTERN_HISTORY_TABLE_SIZE-1:0] (
 );
 
 mux #(
-    PATTERN_HISTORY_TABLE_SIZE,
+    NUM_PATTERN_HISTORY_TABLES,
     1
 ) prediction_mux (
     /* INPUTS */
-    .sel(branch_history_register),
+    .sel(pattern_history_table_sel),
     .in(pattern_history_table_prediction),
 
     /* OUTPUTS */

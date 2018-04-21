@@ -96,6 +96,8 @@ branch_predictor _branch_predictor (
     .clk,
     .stall,
 
+    .pc(stage_IF_pc),
+
     .update(branch_predictor_update),
     .update_value(branch_predictor_update_value),
 

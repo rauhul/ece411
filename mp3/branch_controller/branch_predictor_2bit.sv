@@ -1,5 +1,3 @@
-import lc3b_types::*;
-
 module branch_predictor_2bit (
     /* INPUTS */
     input logic clk,
