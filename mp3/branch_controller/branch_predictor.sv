@@ -32,9 +32,7 @@ demux #(
     .out(pattern_history_table_update)
 );
 
-branch_predictor_2bit #(
-    NUM_LINES
-) pattern_history_table[PATTERN_HISTORY_TABLE_SIZE-1:0] (
+branch_predictor_2bit pattern_history_table[PATTERN_HISTORY_TABLE_SIZE-1:0] (
     /* INPUTS */
     .clk,
     .stall,
@@ -61,7 +59,7 @@ initial begin
     branch_history_register = 0;
 end
 
-always_ff @(posedge clk or negedge rst_n) begin
+always_ff @(posedge clk) begin
     if (update && ~stall) begin
         branch_history_register = {branch_history_register[BRANCH_HISTORY_REGISTER_SIZE-2:0], update_value};
     end
