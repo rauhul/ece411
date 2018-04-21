@@ -145,6 +145,9 @@ always_comb begin
     branch_waterfall_queue_update                = 0;
     branch_waterfall_queue_correct               = 0;
 
+    branch_predictor_update       = 0;
+    branch_predictor_update_value = 0;
+
     /* barrier_IF_ID */
     if (barrier_IF_ID_valid && (
         barrier_IF_ID_opcode == op_jmp ||

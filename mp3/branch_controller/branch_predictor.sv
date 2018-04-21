@@ -1,6 +1,8 @@
 import lc3b_types::*;
 
-module branch_predictor (
+module branch_predictor #(
+    parameter BRANCH_HISTORY_REGISTER_SIZE = 4
+) (
     /* INPUTS */
     input logic clk,
     input logic stall,
@@ -12,72 +14,56 @@ module branch_predictor (
     output logic prediction
 );
 
-enum int unsigned {
-    /* List of states */
-    s_taken_2,
-    s_taken,
-    s_ntaken,
-    s_ntaken_2
-} state, next_state;
+localparam integer PATTERN_HISTORY_TABLE_SIZE = 2**BRANCH_HISTORY_REGISTER_SIZE;
 
-always_comb begin : state_actions
-    /* Default output assignments */
-    prediction = 'x;
+logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register;
+logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_table_update;
+logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_table_prediction;
 
-    /* Actions for each state */
-     case(state)
-        s_taken_2:  prediction = 1;
-        s_taken:    prediction = 1;
-        s_ntaken:   prediction = 0;
-        s_ntaken_2: prediction = 0;
-    endcase
+demux #(
+    PATTERN_HISTORY_TABLE_SIZE,
+    1
+) update_demux (
+    /* INPUTS */
+    .sel(branch_history_register),
+    .in(update),
+
+    /* OUTPUTS */
+    .out(pattern_history_table_update)
+);
+
+branch_predictor_2bit #(
+    NUM_LINES
+) pattern_history_table[PATTERN_HISTORY_TABLE_SIZE-1:0] (
+    /* INPUTS */
+    .clk,
+    .stall,
+    .update(pattern_history_table_update),
+    .update_value,
+
+    /* OUTPUTS */
+    .prediction(pattern_history_table_prediction)
+);
+
+mux #(
+    PATTERN_HISTORY_TABLE_SIZE,
+    1
+) prediction_mux (
+    /* INPUTS */
+    .sel(branch_history_register),
+    .in(pattern_history_table_prediction),
+
+    /* OUTPUTS */
+    .out(prediction)
+);
+
+initial begin
+    branch_history_register = 0;
 end
 
-always_comb begin : next_state_logic
-    /* Default next state assignment */
-    next_state = state;
-
-    /* Next state information and conditions (if any)
-     * for transitioning between states */
-    case(state)
-        s_taken_2: begin
-            if (update_value) begin
-                next_state = s_taken_2;
-            end else begin
-                next_state = s_taken;
-            end
-        end
-
-        s_taken: begin
-            if (update_value) begin
-                next_state = s_taken_2;
-            end else begin
-                next_state = s_ntaken;
-            end
-        end
-
-        s_ntaken: begin
-            if (update_value) begin
-                next_state = s_taken;
-            end else begin
-                next_state = s_ntaken_2;
-            end
-        end
-
-        s_ntaken_2: begin
-            if (update_value) begin
-                next_state = s_ntaken;
-            end else begin
-                next_state = s_ntaken_2;
-            end
-        end
-    endcase // state
-end
-
-always_ff @(posedge clk) begin: next_state_assignment
-    /* Assignment of next state on clock edge */
+always_ff @(posedge clk or negedge rst_n) begin
     if (update && ~stall) begin
-        state <= next_state;
+        branch_history_register = {branch_history_register[BRANCH_HISTORY_REGISTER_SIZE-2:0], update_value};
     end
 end
 
