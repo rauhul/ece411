@@ -91,7 +91,10 @@ branch_waterfall_queue _branch_waterfall_queue (
     .prediction(branch_waterfall_queue_prediction)
 );
 
-branch_predictor _branch_predictor (
+branch_predictor #(
+    .BRANCH_HISTORY_REGISTER_SIZE(4),
+    .NUM_INDEXING_PC_BITS(1)
+) _branch_predictor (
     /* INPUTS */
     .clk,
     .stall,

@@ -25,7 +25,7 @@ logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;
 logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register;
 
 /** MODULES **/
-assign pattern_history_table_sel = pc[NUM_INDEXING_PC_BITS:1];
+assign pattern_history_table_sel = pc[NUM_INDEXING_PC_BITS-1+4:4];
 
 demux #(
     NUM_PATTERN_HISTORY_TABLES,

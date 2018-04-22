@@ -1,3 +1,5 @@
+import lc3b_types::*;
+
 module branch_predictor_2bit (
     /* INPUTS */
     input logic clk,
@@ -10,13 +12,7 @@ module branch_predictor_2bit (
     output logic prediction
 );
 
-enum int unsigned {
-    /* List of states */
-    s_taken_2,
-    s_taken,
-    s_ntaken,
-    s_ntaken_2
-} state, next_state;
+lc3b_branch_predictor_2bit_state state, next_state;
 
 always_comb begin : state_actions
     /* Default output assignments */
