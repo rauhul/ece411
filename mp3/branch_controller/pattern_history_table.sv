@@ -58,7 +58,7 @@ mux #(
 
 generate
     genvar i;
-    for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin
+    for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin : gen_initial_state_assignment
         initial begin
             int j = i % 4;
 
