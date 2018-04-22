@@ -1,4 +1,4 @@
-module cache_controller #(
+module readonly_cache_controller #(
     parameter ASSOCIATIVITY = 2 // Min 2, must be power of 2
 ) (
     /* INPUTS */
@@ -6,13 +6,11 @@ module cache_controller #(
 
     /* datapath->controller */
     input logic [ASSOCIATIVITY-1:0] hit,
-    input logic dirty,
     input logic [$clog2(ASSOCIATIVITY)-1:0] lru,
 
     /* input_wishbone->cache */
     input logic input_wishbone_CYC,
     input logic input_wishbone_STB,
-    input logic input_wishbone_WE,
 
     /* output_wishbone->cache */
     input logic output_wishbone_ACK,
@@ -22,9 +20,9 @@ module cache_controller #(
     /* controller->datapath */
     output logic [$clog2(ASSOCIATIVITY)-1:0] cache_way_sel,
     output logic input_data_source_sel,
-    output logic tag_bypass_sel,
     output logic load,
     output logic load_lru,
+    output logic input_wishbone_DAT_S_x,
 
     /* cache->input_wishbone */
     output logic input_wishbone_ACK,
@@ -43,26 +41,25 @@ module cache_controller #(
 enum int unsigned {
     /* List of states */
     s_idle_hit,
-    s_flush,
-    s_flush_2,
     s_fetch,
     s_fetch_2
 } state, next_state;
 
+assign output_wishbone_WE = 0;
+
 always_comb begin : state_actions
     /* Default output assignments */
-    cache_way_sel         = 0;
-    input_data_source_sel = 0;
-    tag_bypass_sel        = 0;
-    load                  = 0;
-    load_lru              = 0;
+    cache_way_sel          = 0;
+    input_data_source_sel  = 0;
+    load                   = 0;
+    load_lru               = 0;
+    input_wishbone_DAT_S_x = 1;
 
     input_wishbone_ACK    = 0;
     input_wishbone_RTY    = 1;
 
     output_wishbone_CYC   = 0;
     output_wishbone_STB   = 0;
-    output_wishbone_WE    = 0;
 
     debug_cache_hit       = 0;
     debug_cache_miss      = 0;
@@ -70,6 +67,7 @@ always_comb begin : state_actions
     /* Actions for each state */
     case(state)
         s_idle_hit: begin
+            input_wishbone_DAT_S_x = 0;
 
             // set input data source to input_wishbone_DAT_M
             input_data_source_sel = 0;
@@ -89,17 +87,15 @@ always_comb begin : state_actions
 
                     // update lru bit
                     load_lru = 1;
-                    // load if cpu_write
-                    load = input_wishbone_WE;
 
                     input_wishbone_ACK = 1;
                     input_wishbone_RTY = 0;
 
                     output_wishbone_CYC = 0;
                     output_wishbone_STB = 0;
-                    output_wishbone_WE  = 0;
 
                 end else begin : miss
+                    input_wishbone_DAT_S_x = 1;
                     debug_cache_miss = 1;
 
                     input_wishbone_ACK = 0;
@@ -107,62 +103,32 @@ always_comb begin : state_actions
 
                     output_wishbone_CYC = 1;
                     output_wishbone_STB = 0;
-                    output_wishbone_WE  = 0;
                 end
             end
-        end
-
-        s_flush: begin
-            // select the lru
-            cache_way_sel = lru;
-            // pass the cache_line tag to the output_wishbone_ADR
-            tag_bypass_sel = 0;
-
-
-            input_wishbone_ACK = 0;
-            input_wishbone_RTY = 1;
-
-            output_wishbone_CYC = 1;
-            output_wishbone_STB = 1;
-            output_wishbone_WE  = 1;
-        end
-
-        s_flush_2: begin
-            input_wishbone_ACK = 0;
-            input_wishbone_RTY = 1;
-
-            output_wishbone_CYC = 1;
-            output_wishbone_STB = 0;
-            output_wishbone_WE  = 1;
         end
 
         s_fetch: begin
             // select the lru
             cache_way_sel = lru;
-            // pass the cpu_address tag to the output_wishbone_ADR
-            tag_bypass_sel = 1;
+
             // set input data source to output_wishbone_DAT_S
             input_data_source_sel = 1;
-            // load if cpu_write
-            load = 1;
 
+            load = 1;
 
             input_wishbone_ACK = 0;
             input_wishbone_RTY = 1;
 
             output_wishbone_CYC = 1;
             output_wishbone_STB = 1;
-            output_wishbone_WE  = 0;
         end
 
         s_fetch_2: begin
             input_wishbone_ACK = 0;
             input_wishbone_RTY = 1;
 
-
             output_wishbone_CYC = 1;
             output_wishbone_STB = 0;
-            output_wishbone_WE  = 0;
         end
     endcase
 end
@@ -178,24 +144,10 @@ always_comb begin : next_state_logic
             if (input_wishbone_CYC & input_wishbone_STB) begin : memory_request
                 if (~(|hit)) begin : miss
                     if (~output_wishbone_RTY) begin : downstream_ready
-                        if (dirty) begin : dirty_miss
-                            next_state = s_flush;
-                        end else begin: clean_miss
-                            next_state = s_fetch;
-                        end
+                        next_state = s_fetch;
                     end
                 end
             end
-        end
-
-        s_flush: begin
-            if (output_wishbone_ACK == 1)
-                next_state = s_flush_2;
-        end
-
-        s_flush_2: begin
-            if (output_wishbone_ACK == 0)
-                next_state = s_fetch;
         end
 
         s_fetch: begin
@@ -215,4 +167,4 @@ always_ff @(posedge clk) begin: next_state_assignment
     state <= next_state;
 end
 
-endmodule : cache_controller
+endmodule : readonly_cache_controller

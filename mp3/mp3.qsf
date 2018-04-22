@@ -48,14 +48,20 @@ set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "SYSTEMVERILOG HDL" -section_
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_SETUP_SCRIPT simulation/modelsim/modelsim_launch.do -section_id eda_simulation
-set_global_assignment -name SYSTEMVERILOG_FILE library/forwarding_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_EX_MEM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_ID_EX.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_IF_ID.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_MEM_WB.sv
+set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_master.sv
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_slave.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_predictor.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_history_table.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_history_register.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_waterfall_queue.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/pattern_history_fsm.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/pattern_history_table.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_arbiter.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_controller.sv
@@ -63,17 +69,20 @@ set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_datapath.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_lru.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cache/compound_cache.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffer.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered_cache.sv
-set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffered_cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/eviction_buffered/eviction_buffered_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_datapath.sv
+set_global_assignment -name SYSTEMVERILOG_FILE cache/readonly/readonly_cache_way.sv
 set_global_assignment -name SYSTEMVERILOG_FILE cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/adder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/alu.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/branch_controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE library/branch_predictor.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/cccomp.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/control_rom.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/demux.sv
+set_global_assignment -name SYSTEMVERILOG_FILE library/forwarding_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/gencc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/ir.sv
 set_global_assignment -name SYSTEMVERILOG_FILE library/lc3b_types.sv
@@ -101,7 +110,7 @@ set_global_assignment -name EDA_TEST_BENCH_NAME mp3_tb -section_id eda_simulatio
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mp3_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id mp3_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mp3_tb -section_id mp3_tb
-# set_global_assignment -name EDA_NATIVELINK_SIMULATION_SETUP_SCRIPT simulation/modelsim/modelsim_launch.do -section_id eda_simulation
 set_global_assignment -name EDA_TEST_BENCH_FILE mp3_tb.sv -section_id mp3_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE library/physical_memory.sv -section_id mp3_tb
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+

@@ -23,14 +23,14 @@ TESTCODE_DIR=$HOME/ece411_team_3/testcode
 #See line :183
 #If regfile not found comment out 184 and uncomment 183 and the following line
 REG_FILE={/mp3_tb/dut/_cpu/_stage_ID/_regfile/data}
-RUN_TIME=80us
+RUN_TIME=1.5ms #20.0ms
 
 #Other debug signals
 #signals can be prefixed with -radix
 #multiple signals need to be separated by a ;
 #EXAMPLE:
 #DBG_SIGNALS="{/mp/dut/datapath/ir/opcode}; -radix unsigned {/mp/dut/datapath/pc/data}"
-DBG_SIGNALS=""
+DBG_SIGNALS="-radix unsigned {/mp3_tb/dut/_cpu/_stage_MEM/_performace_counters/branch_predictions_correct}; -radix unsigned {/mp3_tb/dut/_cpu/_stage_MEM/_performace_counters/branch_predictions_incorrect}"
 ####
 ####
 

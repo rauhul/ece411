@@ -14,11 +14,13 @@ typedef logic  [3:0] lc3b_imm4;
 
 /* CONTROL WORD TYPES */
 /* IF TYPES */
-typedef enum bit [1:0] {
+typedef enum bit [2:0] {
     lc3b_pc_mux_sel_pc_plus2,
     lc3b_pc_mux_sel_alu,
     lc3b_pc_mux_sel_pcn,
-    lc3b_pc_mux_sel_mdr
+    lc3b_pc_mux_sel_mdr,
+    lc3b_pc_mux_sel_branch_address,
+    lc3b_pc_mux_sel_mispredict_address
 } lc3b_pc_mux_sel;
 
 /* ID TYPES */
@@ -168,4 +170,14 @@ typedef struct packed {
 
 } lc3b_pipeline_control_word;
 
+/* BRANCH PREDICTION */
+typedef enum int unsigned {
+    /* List of states */
+    s_taken_2,
+    s_taken,
+    s_ntaken,
+    s_ntaken_2
+} lc3b_pattern_history_fsm_state;
+
 endpackage : lc3b_types
+

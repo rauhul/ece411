@@ -28,9 +28,6 @@ lc3b_forward_EX_mux_sel     forward_EX_A_mux_sel;
 lc3b_forward_EX_mux_sel     forward_EX_B_mux_sel;
 lc3b_pipeline_control_word  forwarding_controller_pipeline_control_request;
 
-/* BRANCH_PREDICTOR */
-logic                       branch_predictor_prediction;
-
 /* BRANCH_CONTROLLER */
 lc3b_pipeline_control_word  branch_controller_pipeline_control_request;
 lc3b_word                   branch_controller_pc;
@@ -41,6 +38,7 @@ logic                       debug_branch_prediction_incorrect;
 /* STAGE_IF */
 lc3b_word                   stage_IF_ir;
 lc3b_word                   stage_IF_pc;
+logic                       stage_IF_valid;
 lc3b_pipeline_control_word  i_cache_pipeline_control_request;
 
 /* BARRIER_IF_ID */
@@ -124,17 +122,20 @@ forwarding_controller _forwarding_controller (
     .forwarding_controller_pipeline_control_request
 );
 
-branch_predictor _branch_predictor (
-    /* OUTPUTS */
-    .prediction(branch_predictor_prediction)
-);
-
 branch_controller _branch_controller (
     /* INPUTS */
     .clk,
-    .branch_prediction(branch_predictor_prediction),
+    .stall(pipeline_control_out.stage_IF_stall | i_cache_pipeline_control_request.active),
 
+    .stage_IF_ir,
     .stage_IF_pc,
+    .stage_IF_valid,
+
+    .barrier_IF_ID_opcode(lc3b_opcode'(barrier_IF_ID_ir[15:12])),
+    .barrier_IF_ID_valid,
+
+    .barrier_ID_EX_opcode(lc3b_opcode'(barrier_ID_EX_ir[15:12])),
+    .barrier_ID_EX_valid,
 
     .barrier_EX_MEM_alu,
     .barrier_EX_MEM_pcn,
@@ -168,6 +169,7 @@ stage_IF _stage_IF (
     /* OUTPUTS */
     .ir_out(stage_IF_ir),
     .pc_out(stage_IF_pc),
+    .valid_out(stage_IF_valid),
     .i_cache_pipeline_control_request,
 
     /* MEMORY INTERFACE */
@@ -181,6 +183,7 @@ barrier_IF_ID _barrier_IF_ID (
     .stall(pipeline_control_out.barrier_IF_ID_stall),
     .ir_in(stage_IF_ir),
     .pc_in(branch_controller_pc_plus2),
+    .valid_in(stage_IF_valid),
 
     /* OUTPUTS */
     .ir_out(barrier_IF_ID_ir),

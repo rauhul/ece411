@@ -74,10 +74,12 @@ always_comb begin
 
     // MEM_WB to EX forwarding
     barrier_MEM_WB_to_stage_EX_sr1 =
+       ~barrier_EX_MEM_to_stage_EX_sr1 &
         barrier_MEM_WB_control.regfile_load &
         barrier_ID_EX_control.requires_sr1 &
         barrier_ID_EX_control.regfile_sr1 == barrier_MEM_WB_control.regfile_dest;
     barrier_MEM_WB_to_stage_EX_sr2 =
+       ~barrier_EX_MEM_to_stage_EX_sr2 &
         barrier_MEM_WB_control.regfile_load &
         barrier_ID_EX_control.requires_sr2 &
         barrier_ID_EX_control.regfile_sr2 == barrier_MEM_WB_control.regfile_dest;
