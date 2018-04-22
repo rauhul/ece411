@@ -56,21 +56,22 @@ mux #(
     .out(prediction)
 );
 
-genvar i;
-for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin
-    initial begin
-        int j = i % 4;
+generate
+    genvar i;
+    for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin
+        initial begin
+            int j = i % 4;
 
-        if (j == 0)
-            _pattern_history_fsm[i].state = s_taken_2;
-        else if (j == 1)
-            _pattern_history_fsm[i].state = s_taken;
-        else if (j == 2)
-            _pattern_history_fsm[i].state = s_ntaken;
-        else
-            _pattern_history_fsm[i].state = s_ntaken_2;
+            if (j == 0)
+                _pattern_history_fsm[i].state = s_taken_2;
+            else if (j == 1)
+                _pattern_history_fsm[i].state = s_taken;
+            else if (j == 2)
+                _pattern_history_fsm[i].state = s_ntaken;
+            else
+                _pattern_history_fsm[i].state = s_ntaken_2;
+        end
     end
-end
+endgenerate
 
 endmodule : pattern_history_table
-

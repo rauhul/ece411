@@ -78,15 +78,4 @@ mux #(
     .out(prediction)
 );
 
-
-initial begin
-    branch_history_register = 0;
-end
-
-always_ff @(posedge clk) begin
-    if (update && ~stall) begin
-        branch_history_register = {branch_history_register[BRANCH_HISTORY_REGISTER_SIZE-2:0], update_value};
-    end
-end
-
 endmodule : branch_predictor
