@@ -170,4 +170,14 @@ typedef struct packed {
 
 } lc3b_pipeline_control_word;
 
+/* BRANCH PREDICTION */
+typedef enum int unsigned {
+    /* List of states */
+    s_taken_2,
+    s_taken,
+    s_ntaken,
+    s_ntaken_2
+} lc3b_pattern_history_fsm_state;
+
 endpackage : lc3b_types
+

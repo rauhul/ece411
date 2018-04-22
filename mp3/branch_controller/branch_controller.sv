@@ -91,10 +91,16 @@ branch_waterfall_queue _branch_waterfall_queue (
     .prediction(branch_waterfall_queue_prediction)
 );
 
-branch_predictor _branch_predictor (
+branch_predictor #(
+    .BRANCH_HISTORY_REGISTER_SIZE(3),
+    .NUM_PHT_INDEXING_PC_BITS(1),
+    .NUM_BHT_INDEXING_PC_BITS(1)
+) _branch_predictor (
     /* INPUTS */
     .clk,
     .stall,
+
+    .pc(stage_IF_pc),
 
     .update(branch_predictor_update),
     .update_value(branch_predictor_update_value),
@@ -144,6 +150,9 @@ always_comb begin
     branch_waterfall_queue_load                  = 0;
     branch_waterfall_queue_update                = 0;
     branch_waterfall_queue_correct               = 0;
+
+    branch_predictor_update       = 0;
+    branch_predictor_update_value = 0;
 
     /* barrier_IF_ID */
     if (barrier_IF_ID_valid && (
