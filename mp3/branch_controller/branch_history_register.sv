@@ -11,7 +11,7 @@ module branch_history_register #(
     output logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] history
 );
 
-logic [width-1:0] in;
+logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] in;
 logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] data;
 
 assign in = {data[BRANCH_HISTORY_REGISTER_SIZE-2:0], update_value};

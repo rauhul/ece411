@@ -21,7 +21,7 @@ localparam integer NUM_PATTERN_HISTORY_TABLES = 2**NUM_PHT_INDEXING_PC_BITS;
 /** CONNECTIONS **/
 logic [NUM_PHT_INDEXING_PC_BITS-1:0]     pattern_history_table_sel;
 logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_update;
-logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;;
+logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;
 logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register_history;
 
 /** MODULES **/
@@ -58,7 +58,7 @@ pattern_history_table #(
     /* INPUTS */
     .clk,
     .stall,
-    .index(branch_history_register),
+    .index(branch_history_register_history),
     .update(pattern_history_table_update),
     .update_value,
 
