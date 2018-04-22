@@ -1,6 +1,6 @@
 module branch_predictor #(
     parameter BRANCH_HISTORY_REGISTER_SIZE = 4,
-    parameter NUM_INDEXING_PC_BITS = 3
+    parameter NUM_PHT_INDEXING_PC_BITS = 3
 ) (
     /* INPUTS */
     input logic clk,
@@ -16,16 +16,29 @@ module branch_predictor #(
 );
 
 localparam integer PATTERN_HISTORY_TABLE_SIZE = 2**BRANCH_HISTORY_REGISTER_SIZE;
-localparam integer NUM_PATTERN_HISTORY_TABLES = 2**NUM_INDEXING_PC_BITS;
+localparam integer NUM_PATTERN_HISTORY_TABLES = 2**NUM_PHT_INDEXING_PC_BITS;
 
 /** CONNECTIONS **/
-logic [NUM_INDEXING_PC_BITS-1:0]         pattern_history_table_sel;
+logic [NUM_PHT_INDEXING_PC_BITS-1:0]     pattern_history_table_sel;
 logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_update;
-logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;
-logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register;
+logic [NUM_PATTERN_HISTORY_TABLES-1:0]   pattern_history_table_prediction;;
+logic [BRANCH_HISTORY_REGISTER_SIZE-1:0] branch_history_register_history;
 
 /** MODULES **/
-assign pattern_history_table_sel = pc[NUM_INDEXING_PC_BITS-1+4:4];
+assign pattern_history_table_sel = pc[NUM_PHT_INDEXING_PC_BITS-1+4:4];
+
+branch_history_register #(
+    BRANCH_HISTORY_REGISTER_SIZE
+) _branch_history_register (
+    /* INPUTS */
+    .clk,
+    .stall,
+    .update,
+    .update_value,
+
+    /* OUTPUTS */
+    .history(branch_history_register_history)
+);
 
 demux #(
     NUM_PATTERN_HISTORY_TABLES,
@@ -64,6 +77,7 @@ mux #(
     /* OUTPUTS */
     .out(prediction)
 );
+
 
 initial begin
     branch_history_register = 0;

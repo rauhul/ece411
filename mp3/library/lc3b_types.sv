@@ -177,7 +177,7 @@ typedef enum int unsigned {
     s_taken,
     s_ntaken,
     s_ntaken_2
-} lc3b_branch_predictor_2bit_state;
+} lc3b_pattern_history_fsm_state;
 
 endpackage : lc3b_types
 

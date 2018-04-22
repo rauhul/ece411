@@ -26,20 +26,22 @@ taken:
 3180    1510    0.6780  878345ns
 -       -       -      >8000000ns
 
-3bit BHR, 2bit paPHT, rand initial:
+3bit BHR, 2bit paPHT:
 11655   6170    0.6538  1252015ns
 1084    1096    0.4972  880145ns
 46009   25612   0.6423  9553805ns
 
-3bit BHR, 2bit paPHT, pc[4+], rand initial:
+3bit BHR, 2bit paPHT, pc[4+]:
 12354   5471    0.6930  1231075ns
 3022    1636    0.6487  878455ns
 49847   21774   0.6959  9438665ns
 
-4bit BHR, 1bit paPHT, pc[4+], rand initial:
-12120   5705    0.6799  1238065ns
+4bit BHR, 1bit paPHT, pc[4+]:
+11385   6379    0.6409  1258285ns
 2701    1680    0.6165  879455ns
 47849   23772   0.6680  9498635ns
 
-
-879455000 {427e ecf8 0998 e980 b204 8f00 8cd9 d41d} 2701 1680
+4bit BHR, 1bit paPHT, pc[4+], rand initial:
+12120   5705    0.6799  1238065ns
+2985    1840    0.6186  879165ns
+45982   25673   0.6417  9555565000

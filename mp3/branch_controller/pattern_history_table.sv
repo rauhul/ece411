@@ -17,8 +17,8 @@ module pattern_history_table #(
 );
 
 /** CONNECTIONS **/
-logic [PATTERN_HISTORY_TABLE_SIZE-1:0] branch_predictor_2bit_update;
-logic [PATTERN_HISTORY_TABLE_SIZE-1:0] branch_predictor_2bit_prediction;
+logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_fsm_update;
+logic [PATTERN_HISTORY_TABLE_SIZE-1:0] pattern_history_fsm_prediction;
 
 /** MODULES **/
 demux #(
@@ -30,18 +30,18 @@ demux #(
     .in(update),
 
     /* OUTPUTS */
-    .out(branch_predictor_2bit_update)
+    .out(pattern_history_fsm_update)
 );
 
-branch_predictor_2bit _branch_predictor_2bit[PATTERN_HISTORY_TABLE_SIZE-1:0] (
+pattern_history_fsm _pattern_history_fsm[PATTERN_HISTORY_TABLE_SIZE-1:0] (
     /* INPUTS */
     .clk,
     .stall,
-    .update(branch_predictor_2bit_update),
+    .update(pattern_history_fsm_update),
     .update_value,
 
     /* OUTPUTS */
-    .prediction(branch_predictor_2bit_prediction)
+    .prediction(pattern_history_fsm_prediction)
 );
 
 mux #(
@@ -50,7 +50,7 @@ mux #(
 ) prediction_mux (
     /* INPUTS */
     .sel(index),
-    .in(branch_predictor_2bit_prediction),
+    .in(pattern_history_fsm_prediction),
 
     /* OUTPUTS */
     .out(prediction)
@@ -62,15 +62,13 @@ for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin
         int j = i % 4;
 
         if (j == 0)
-            _branch_predictor_2bit[i].state = s_taken_2;
+            _pattern_history_fsm[i].state = s_taken_2;
         else if (j == 1)
-            _branch_predictor_2bit[i].state = s_taken;
+            _pattern_history_fsm[i].state = s_taken;
         else if (j == 2)
-            _branch_predictor_2bit[i].state = s_ntaken;
+            _pattern_history_fsm[i].state = s_ntaken;
         else
-            _branch_predictor_2bit[i].state = s_ntaken_2;
-
-        $display("initial: %0d", _branch_predictor_2bit[i].state);
+            _pattern_history_fsm[i].state = s_ntaken_2;
     end
 end
 

@@ -1,6 +1,6 @@
 import lc3b_types::*;
 
-module branch_predictor_2bit (
+module pattern_history_fsm (
     /* INPUTS */
     input logic clk,
     input logic stall,
@@ -12,7 +12,7 @@ module branch_predictor_2bit (
     output logic prediction
 );
 
-lc3b_branch_predictor_2bit_state state, next_state;
+lc3b_pattern_history_fsm_state state, next_state;
 
 always_comb begin : state_actions
     /* Default output assignments */
@@ -75,4 +75,4 @@ always_ff @(posedge clk) begin: next_state_assignment
     end
 end
 
-endmodule : branch_predictor_2bit
+endmodule : pattern_history_fsm
