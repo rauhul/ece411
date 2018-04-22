@@ -56,7 +56,7 @@ mux #(
     .out(prediction)
 );
 
-generate
+/* generate
     genvar i;
     for (i = 0; i < PATTERN_HISTORY_TABLE_SIZE; i++) begin : gen_initial_state_assignment
         initial begin
@@ -72,6 +72,6 @@ generate
                 _pattern_history_fsm[i].state = s_ntaken_2;
         end
     end
-endgenerate
+endgenerate */
 
 endmodule : pattern_history_table

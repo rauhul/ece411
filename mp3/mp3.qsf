@@ -57,6 +57,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_master.
 set_global_assignment -name SYSTEMVERILOG_FILE barriers/barrier_wishbone_slave.sv
 set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_predictor.sv
+set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_history_table.sv
 set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_history_register.sv
 set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/branch_waterfall_queue.sv
 set_global_assignment -name SYSTEMVERILOG_FILE branch_controller/pattern_history_fsm.sv
