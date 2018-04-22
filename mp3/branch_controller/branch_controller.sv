@@ -93,7 +93,7 @@ branch_waterfall_queue _branch_waterfall_queue (
 
 branch_predictor #(
     .BRANCH_HISTORY_REGISTER_SIZE(4),
-    .NUM_INDEXING_PC_BITS(1)
+    .NUM_PHT_INDEXING_PC_BITS(1)
 ) _branch_predictor (
     /* INPUTS */
     .clk,
