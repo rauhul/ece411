@@ -59,7 +59,7 @@ demux #(
 );
 
 pattern_history_table #(
-    .PATTERN_HISTORY_TABLE_SIZE
+    PATTERN_HISTORY_TABLE_SIZE
 ) _pattern_history_table[NUM_PATTERN_HISTORY_TABLES-1:0] (
     /* INPUTS */
     .clk,

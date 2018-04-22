@@ -32,7 +32,7 @@ demux #(
 );
 
 branch_history_register #(
-    .BRANCH_HISTORY_REGISTER_SIZE
+    BRANCH_HISTORY_REGISTER_SIZE
 ) _branch_history_register[BRANCH_HISTORY_TABLE_SIZE-1:0] (
     /* INPUTS */
     .clk,
