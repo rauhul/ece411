@@ -45,3 +45,12 @@ taken:
 12120   5705    0.6799  1238065ns
 2985    1840    0.6186  879165ns
 45982   25673   0.6417  9555565000
+
+3bit BHR, 1bit paPHT, 1bit BHT:
+11143 6682 1265545ns
+
+4bit BHR, 2bit paPHT, 2bit BHT:
+11970 5855 1240735ns
+
+5bit BHR, 1bit paPHT, 2bit BHT:
+
