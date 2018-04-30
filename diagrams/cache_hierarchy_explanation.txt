@@ -1,0 +1,6 @@
+The master ports of the icache, dcache, L2-cache attach to the interconnect.
+The slave ports of the L2-cache and physical memory attach to the interconnect.
+The issue of having 2 master ports from the L1 caches and only 1 slave port on the L2 cache is resolved by maintaining select signals within the interconnect for muxed/demuxed inputs of the L1 caches into the L2 cache - in other words, only one L1 cache is allowed to communicate with the L2 cache at a time. 
+In the case of a double hit, it doesn't matter. 
+In the case of a single hit, we set the select signals to connect the appropriate L1 cache's master port to the L2 cache's slave port. 
+In the case of a double miss, we keep track of states to perform one L1-L2 communication at a time.
