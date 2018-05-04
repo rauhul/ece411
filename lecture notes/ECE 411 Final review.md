@@ -65,7 +65,7 @@ register alias table records results of instrucition immediately and knows mappi
 
 ##### register renaming
 
-problem just like slide
+!! problem just like slide
 
 given set of instructions, show how registers are renamed and how things are stored
 
@@ -233,7 +233,7 @@ mark a b c d as obsolete
 
 #### why multi-core
 
-~hard to make single-core clock frequency higher
+hard to make single-core clock frequency higher
 
 hard to extract more ILP b/c larger instruction windows are very expensive/slow/power-hungry
 
@@ -258,7 +258,7 @@ SMT sometime non-determinstic
 
 multichoice on pros/cons on private/shared caches
 
-cache corherence is an issue, dont need to know much more
+cache coherence is an issue, dont need to know much more
 
 - get inconsistencies across cores
 - no questions on this
@@ -343,8 +343,6 @@ multiple choice on device reliabillity
 
 transient faults SEU
 
-- ​
-
 Time dependent dieletric break down
 
 - chip damaged permenantly 
@@ -359,19 +357,4 @@ large wasted voltage, b/c frequency is based on worst voltage flucuations
 SRAM needs minimum voltage
 
 - failures if below
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
